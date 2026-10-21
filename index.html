@@ -8,9 +8,15 @@
   <!-- SEO & Redes Sociales -->
   <meta name="description" content="Tiendas Yolo - Insumos profesionales para uñas en Maracaibo. Kits para principiantes, esmaltes semipermanentes, geles, pinceles y todo para la manicurista. Delivery gratis y envíos nacionales.">
   <meta name="theme-color" content="#701a49">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Tiendas Yolo">
+  
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="manifest" href="manifest.webmanifest">
+  <link rel="manifest" href="manifest.json">
 
   <!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,6 +26,31 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="theme-light">
+
+  <!-- =================================================================== -->
+  <!-- BARRA FLOTANTE DE MODO EDICIÓN EN VIVO (WYSIWYG PARA LA DUEÑA)     -->
+  <!-- =================================================================== -->
+  <div class="editor-control-bar" id="editor-control-bar" style="display:none;">
+    <div class="editor-bar-badge">
+      <span class="pulse-dot-red"></span>
+      <span class="editor-bar-title">Modo Edición Dueña</span>
+    </div>
+    <button type="button" class="editor-action-btn" id="btn-toggle-editor" title="Activar/Desactivar edición de textos en pantalla">
+      ✏️ <span id="editor-btn-text">Edición: OFF</span>
+    </button>
+    <button type="button" class="editor-action-btn" id="btn-editor-add-product" title="Añadir un nuevo producto al catálogo">
+      ➕ Nuevo Producto
+    </button>
+    <button type="button" class="editor-action-btn btn-save-highlight" id="btn-editor-save-all" title="Guardar todos los textos y cambios">
+      💾 Guardar Cambios
+    </button>
+    <a href="admin.html" class="editor-action-btn editor-btn-admin" title="Abrir Backoffice de Finanzas">
+      💼 App Interna
+    </a>
+    <button type="button" class="editor-btn-close" id="btn-editor-exit" title="Salir del Modo Editor">
+      ✕
+    </button>
+  </div>
 
   <!-- TOP BANNER DE INFORMACIÓN Y TASA EN VIVO -->
   <aside class="top-info-bar">
@@ -32,9 +63,9 @@
       <div class="info-item rate-ticker" id="rate-ticker-box" title="Haz clic para actualizar la tasa del día" style="cursor:pointer;">
         <span class="info-label">💵 Tasa Hoy:</span>
         <span class="rate-val" id="top-rate-display">Bs. 395.50 / $</span>
-        <span style="font-size:0.7rem; opacity:0.8; margin-left:2px;">✏️</span>
+        <span style="font-size:0.75rem; opacity:0.85; margin-left:3px;">✏️</span>
       </div>
-      <div class="info-item">
+      <div class="info-item hide-on-mobile">
         <a href="https://instagram.com/tiendasyolo" target="_blank" rel="noopener noreferrer" class="social-top-link">
           📸 @tiendasyolo
         </a>
@@ -52,20 +83,32 @@
           <img src="logo-yolo.png" alt="Logo Tiendas Yolo" class="brand-logo" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
         </div>
         <div class="brand-titles">
-          <h1 class="brand-title">Tiendas Yolo<span class="brand-reg">®</span></h1>
-          <p class="brand-subtitle">Insumos para uñas y todo para la manicurista</p>
+          <h1 class="brand-title" data-editable="true" id="txt-brand-name">Tiendas Yolo<span class="brand-reg">®</span></h1>
+          <p class="brand-subtitle" data-editable="true" id="txt-brand-slogan">Insumos para uñas y todo para la manicurista</p>
         </div>
       </a>
 
       <!-- BUSCADOR RÁPIDO DE INSUMOS -->
       <div class="search-box-header" id="header-search-wrapper">
         <span class="search-icon">🔍</span>
-        <input type="text" id="global-search-input" placeholder="Buscar esmaltes, geles, kits, pinceles, tips..." autocomplete="off">
+        <input type="text" id="global-search-input" placeholder="Buscar esmaltes, geles, kits, pinceles..." autocomplete="off">
         <button class="clear-search-btn" id="btn-clear-search" style="display:none;">✕</button>
       </div>
 
       <!-- ACCIONES DE CABECERA -->
       <div class="nav-actions">
+        <!-- BOTÓN INSTALAR APP PWA -->
+        <button class="btn-install-header" id="btn-install-pwa" title="Instalar Tiendas Yolo en tu teléfono">
+          <span class="install-icon">📲</span>
+          <span class="install-text">Instalar App</span>
+        </button>
+
+        <!-- BOTÓN MI CUENTA / CLUB MANICURISTA -->
+        <button class="account-btn" id="btn-open-account" title="Club Manicurista & Mis Datos">
+          <span class="account-icon">👤</span>
+          <span class="account-badge-text" id="header-user-status">Mi Cuenta</span>
+        </button>
+
         <!-- BOTÓN DE CARRITO -->
         <button class="cart-btn" id="btn-open-cart" title="Ver pedido actual">
           <span class="cart-icon">🛒</span>
@@ -125,7 +168,7 @@
     </section>
 
     <!-- =================================================================== -->
-    <!-- HERO BANNER GLAMOUR -->
+    <!-- HERO BANNER GLAMOUR COMPACTO & ELEGANTE -->
     <!-- =================================================================== -->
     <section class="hero-glam-card">
       <div class="hero-inner">
@@ -133,21 +176,24 @@
           <div class="hero-badge">
             <span>✨ COLECCIÓN EXCLUSIVA 2026</span>
           </div>
-          <h2 class="hero-headline">Insumos Profesionales para Manicuristas de Alto Nivel</h2>
-          <p class="hero-description">
-            Encuentra todo lo que necesitas para tu mesa de trabajo: <strong>Esmaltes M&Y, Base Rubber, Geles Constructores, Spider Gel, Pinceles Liner y Kits para Principiantes</strong> con entrega inmediata en Maracaibo y envíos a toda Venezuela.
+          <h2 class="hero-headline" data-editable="true" id="txt-hero-title">Insumos Profesionales para Manicuristas de Alto Nivel</h2>
+          <p class="hero-description" data-editable="true" id="txt-hero-desc">
+            Todo para tu mesa de trabajo: <strong>Esmaltes M&Y, Base Rubber, Geles Constructores, Spider Gel, Pinceles Liner y Kits para Principiantes</strong> con entrega inmediata en Maracaibo y envíos a toda Venezuela.
           </p>
           <div class="hero-quote-box">
             <span class="quote-mark">“</span>
-            <span class="quote-text">Yo lo compro, Yo lo merezco.</span>
+            <span class="quote-text" data-editable="true" id="txt-hero-quote">Yo lo compro, Yo lo merezco.</span>
             <span class="quote-author">— Filosofía Tiendas Yolo</span>
           </div>
           <div class="hero-cta-group">
             <button class="btn-primary" id="btn-hero-explore-kits">
-              📦 Ver Kits para Principiantes
+              📦 Ver Kits Manicuristas
+            </button>
+            <button class="btn-secondary" id="btn-hero-quote-generator">
+              📄 Generar Presupuesto / Cotización
             </button>
             <a href="https://wa.me/584265604070?text=Hola%20Tiendas%20Yolo%2C%20deseo%20m%C3%A1s%20informaci%C3%B3n%20sobre%20sus%20insumos" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-outline">
-              💬 Escribir al WhatsApp
+              💬 WhatsApp
             </a>
           </div>
         </div>
@@ -200,6 +246,35 @@
   </main>
 
   <!-- =================================================================== -->
+  <!-- BARRA DE NAVEGACIÓN INFERIOR PARA MÓVILES (EXPERIENCIA APP NATIVA)  -->
+  <!-- =================================================================== -->
+  <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+    <button type="button" class="m-nav-item active" id="btn-m-home">
+      <span class="m-nav-icon">🏠</span>
+      <span class="m-nav-label">Inicio</span>
+    </button>
+    <button type="button" class="m-nav-item" id="btn-m-catalog">
+      <span class="m-nav-icon">💅</span>
+      <span class="m-nav-label">Insumos</span>
+    </button>
+    <button type="button" class="m-nav-item m-nav-cart" id="btn-m-cart">
+      <span class="m-nav-icon-wrap">
+        <span class="m-nav-icon">🛒</span>
+        <span class="m-cart-badge" id="m-cart-badge">0</span>
+      </span>
+      <span class="m-nav-label">Carrito</span>
+    </button>
+    <button type="button" class="m-nav-item" id="btn-m-quote">
+      <span class="m-nav-icon">📄</span>
+      <span class="m-nav-label">Cotizar</span>
+    </button>
+    <button type="button" class="m-nav-item" id="btn-m-account">
+      <span class="m-nav-icon">👤</span>
+      <span class="m-nav-label">Mi Cuenta</span>
+    </button>
+  </nav>
+
+  <!-- =================================================================== -->
   <!-- FOOTER INSTITUCIONAL (CON BOTÓN DE ADMIN OCULTO POR DEFECTO) -->
   <!-- =================================================================== -->
   <footer class="store-footer">
@@ -223,8 +298,11 @@
       <!-- BOTÓN OCULTO PARA CLIENTES: Solo visible tras activar atajo secreto -->
       <div class="footer-admin-link" id="footer-admin-box" style="display:none;">
         <span class="footer-col-title">Administración</span>
+        <button type="button" class="btn-footer-admin" onclick="window.YoloApp.toggleLiveEditMode()">
+          ✏️ Modo Edición en Vivo (Fotos y Textos)
+        </button>
         <a href="admin.html" class="btn-footer-admin">
-          💼 Acceso al Sistema Interno
+          💼 App Interna de Finanzas y Gestión
         </a>
         <span class="admin-hint">Portal exclusivo para la dueña y despacho</span>
       </div>
@@ -235,7 +313,7 @@
   </footer>
 
   <!-- =================================================================== -->
-  <!-- MODAL / DRAWER: CARRITO DE COMPRAS & CHECKOUT A WHATSAPP -->
+  <!-- MODAL / DRAWER: CARRITO DE COMPRAS & CHECKOUT                       -->
   <!-- =================================================================== -->
   <div class="modal-overlay" id="cart-drawer-modal" style="display:none;">
     <div class="cart-drawer-sheet">
@@ -252,6 +330,17 @@
 
       <div class="cart-drawer-body">
         
+        <!-- BARRA DE DELIVERY GRATIS MARACAIBO -->
+        <div class="delivery-progress-wrap" id="delivery-progress-box">
+          <div class="delivery-progress-header">
+            <span id="delivery-progress-text">🚚 Agrega $15.00 para Delivery GRATIS en Maracaibo</span>
+            <strong id="delivery-progress-status">$0.00 / $15.00</strong>
+          </div>
+          <div class="delivery-progress-bar">
+            <div class="delivery-progress-fill" id="delivery-progress-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+
         <!-- LISTA DE PRODUCTOS EN EL CARRITO -->
         <div class="cart-items-list" id="cart-items-list">
           <!-- Renderizado dinámico -->
@@ -259,45 +348,50 @@
 
         <!-- FORMULARIO DE DESPACHO Y CLIENTE -->
         <div class="cart-delivery-section">
-          <h4 class="section-micro-heading">📋 Datos de Entrega y Pago</h4>
+          <div class="section-title-with-pill">
+            <h4 class="section-micro-heading">📋 Datos de Entrega y Facturación</h4>
+            <button type="button" class="btn-autofill-account" id="btn-cart-autofill" style="display:none;">
+              ✨ Usar mis datos guardados
+            </button>
+          </div>
           
           <div class="form-group">
             <label for="cart-client-name" class="form-label">Nombre de la Manicurista / Cliente: *</label>
-            <input type="text" id="cart-client-name" class="form-input" placeholder="Ej: Valentina Morales (Studio)">
+            <input type="text" id="cart-client-name" class="form-input" placeholder="Ej: Valentina Morales">
           </div>
 
           <div class="form-grid-2">
             <div class="form-group">
               <label for="cart-client-phone" class="form-label">Teléfono WhatsApp: *</label>
-              <input type="tel" id="cart-client-phone" class="form-input" placeholder="0414-1234567">
+              <input type="tel" id="cart-client-phone" class="form-input" placeholder="0426-1234567">
             </div>
             <div class="form-group">
-              <label for="cart-client-instagram" class="form-label">Instagram (@usuario):</label>
-              <input type="text" id="cart-client-instagram" class="form-input" placeholder="@valentinails">
+              <label for="cart-client-salon" class="form-label">Nombre del Salón / Estudio:</label>
+              <input type="text" id="cart-client-salon" class="form-input" placeholder="Ej: Nails Studio Glam">
             </div>
           </div>
 
           <div class="form-group">
-            <label for="cart-delivery-type" class="form-label">Tipo de Entrega:</label>
+            <label for="cart-delivery-type" class="form-label">Modalidad de Entrega:</label>
             <select id="cart-delivery-type" class="select-styled">
               <option value="delivery-maracaibo">🚚 Delivery en Maracaibo (¡Gratis desde $15!)</option>
               <option value="envio-nacional">📦 Envío Nacional (MRW / Tealca / Zoom)</option>
-              <option value="retiro-personal">📍 Retiro Personalmente</option>
+              <option value="retiro-personal">📍 Retiro Personalmente en Maracaibo</option>
             </select>
           </div>
 
           <div class="form-group">
-            <label for="cart-delivery-address" class="form-label">Dirección / Sector / Punto de Referencia:</label>
-            <input type="text" id="cart-delivery-address" class="form-input" placeholder="Ej: Sector La Paragua, Calle 57, Casa #12">
+            <label for="cart-delivery-address" class="form-label">Dirección / Sector / Punto de Referencia: *</label>
+            <input type="text" id="cart-delivery-address" class="form-input" placeholder="Ej: Cecilio Acosta con Av. 10, Edif. Los Samanes">
           </div>
 
           <div class="form-group">
-            <label for="cart-payment-method" class="form-label">Método de Pago Preferido:</label>
+            <label for="cart-payment-method" class="form-label">Método de Pago:</label>
             <select id="cart-payment-method" class="select-styled">
-              <option value="Pago Móvil">📲 Pago Móvil (Bs)</option>
-              <option value="Efectivo $">💵 Dólares en Efectivo ($)</option>
+              <option value="Pago Móvil">📲 Pago Móvil (Banesco - Bs al cambio)</option>
+              <option value="Efectivo $">💵 Dólares en Efectivo ($ en entrega)</option>
               <option value="Zelle">🇺🇸 Zelle ($)</option>
-              <option value="Zinli / Binance">💳 Zinli / Binance Pay</option>
+              <option value="Zinli / Binance">💳 Zinli / Binance Pay ($)</option>
             </select>
           </div>
 
@@ -331,10 +425,16 @@
         </div>
 
         <div class="cart-action-buttons">
+          <button class="btn-primary-payment" id="btn-cart-proceed-payment">
+            <span class="pay-icon">💳</span>
+            <span class="pay-txt">Pagar & Autenticar Pago en App</span>
+          </button>
+          
           <button class="btn-whatsapp-full" id="btn-cart-send-whatsapp">
             <span class="wa-icon">💬</span>
-            <span class="wa-txt">Enviar Pedido a WhatsApp</span>
+            <span class="wa-txt">Enviar Pedido Directo a WhatsApp</span>
           </button>
+
           <div class="secondary-cart-actions">
             <button class="btn-secondary" id="btn-cart-download-quote">📄 Cotización Formal</button>
             <button class="btn-ghost" id="btn-cart-clear">Vaciar Carrito</button>
@@ -346,7 +446,221 @@
   </div>
 
   <!-- =================================================================== -->
-  <!-- MODAL: COTIZACIÓN FORMAL (IMPRIMIBLE / PDF PARA ACADEMIAS) -->
+  <!-- MODAL: MÓDULO DE PAGO & AUTENTICACIÓN BANCARIA EN LA APP           -->
+  <!-- =================================================================== -->
+  <div class="modal-overlay" id="modal-payment-auth" style="display:none;">
+    <div class="modal-window payment-auth-modal">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-icon">🛡️</span>
+          <div>
+            <h3 class="modal-title">Pagar & Autenticar Transacción</h3>
+            <span class="modal-subtitle">Datos oficiales de Tiendas Yolo® • Verificación Segura</span>
+          </div>
+        </div>
+        <button class="close-modal-btn" data-close-modal="modal-payment-auth">✕</button>
+      </div>
+
+      <div class="modal-body">
+        
+        <!-- RESUMEN DE TOTAL -->
+        <div class="payment-order-summary-card">
+          <div class="summary-col">
+            <span class="summary-label">Monto en Dólares ($):</span>
+            <strong class="summary-amount-usd" id="pay-modal-usd">$0.00</strong>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-col">
+            <span class="summary-label">Monto en Bolívares (Bs):</span>
+            <strong class="summary-amount-bs" id="pay-modal-bs">Bs. 0.00</strong>
+            <span class="summary-rate" id="pay-modal-rate-note">Tasa: Bs. 395.50 / $</span>
+          </div>
+        </div>
+
+        <!-- DATOS BANCARIOS OFICIALES -->
+        <div class="payment-accounts-box">
+          <h4 class="payment-box-heading">🏦 Cuentas Oficiales para Transferir / Pagar:</h4>
+          
+          <div class="bank-pill-card active" data-bank-card="pago-movil">
+            <div class="bank-pill-header">
+              <strong>📲 PAGO MÓVIL BANESCO (0134)</strong>
+              <button type="button" class="btn-copy-data" id="btn-copy-pm">📋 Copiar Datos</button>
+            </div>
+            <div class="bank-pill-details">
+              <p>• <strong>Banco:</strong> Banesco (0134)</p>
+              <p>• <strong>Teléfono:</strong> <span id="copy-pm-phone">04265604070</span></p>
+              <p>• <strong>Cédula / RIF:</strong> <span id="copy-pm-id">V-28123456</span></p>
+              <p>• <strong>Monto exacto:</strong> <span id="copy-pm-bs">Bs. 0.00</span></p>
+            </div>
+          </div>
+
+          <div class="bank-pill-card" data-bank-card="efectivo">
+            <div class="bank-pill-header">
+              <strong>💵 DÓLARES EN EFECTIVO (MARACAIBO)</strong>
+            </div>
+            <div class="bank-pill-details">
+              <p>• Pago contra entrega en mano al motorizado.</p>
+              <p>• Por favor entregar billetes en buen estado (sin roturas ni rayones).</p>
+            </div>
+          </div>
+
+          <div class="bank-pill-card" data-bank-card="zelle">
+            <div class="bank-pill-header">
+              <strong>🇺🇸 ZELLE / ZINLI / BINANCE</strong>
+              <button type="button" class="btn-copy-data" id="btn-copy-zelle">📋 Copiar Correo</button>
+            </div>
+            <div class="bank-pill-details">
+              <p>• <strong>Zelle:</strong> <span id="copy-zelle-email">tiendasyolo.pagos@gmail.com</span> (Tiendas Yolo)</p>
+              <p>• <strong>Zinli:</strong> tiendasyolo.pagos@gmail.com</p>
+              <p>• <strong>Binance Pay ID:</strong> 82937102</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- FORMULARIO DE AUTENTICACIÓN DEL PAGO -->
+        <form id="form-auth-payment" class="payment-validation-form">
+          <h4 class="payment-box-heading">📝 Registrar Datos del Pago para Autenticación:</h4>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="pay-input-method" class="form-label">Método Realizado: *</label>
+              <select id="pay-input-method" class="select-styled" required>
+                <option value="Pago Móvil">📲 Pago Móvil</option>
+                <option value="Efectivo $">💵 Dólares en Efectivo</option>
+                <option value="Zelle">🇺🇸 Zelle</option>
+                <option value="Zinli">💳 Zinli</option>
+                <option value="Binance">🟡 Binance Pay</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="pay-input-bank" class="form-label">Banco Emisor del Cliente: *</label>
+              <input type="text" id="pay-input-bank" class="form-input" placeholder="Ej: Banesco, Mercantil, BDV" required>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="pay-input-ref" class="form-label">Número de Referencia (Últimos dígitos): *</label>
+              <input type="text" id="pay-input-ref" class="form-input" placeholder="Ej: 849201" maxlength="12" required>
+            </div>
+
+            <div class="form-group">
+              <label for="pay-input-amount" class="form-label">Monto Transferido: *</label>
+              <input type="text" id="pay-input-amount" class="form-input" placeholder="Ej: Bs. 3950.00 o $10.00" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="pay-input-holder" class="form-label">Nombre del Titular / Teléfono Emisor: *</label>
+            <input type="text" id="pay-input-holder" class="form-input" placeholder="Ej: Andrea Gómez (0414-9876543)" required>
+          </div>
+
+          <div class="auth-security-notice">
+            <span class="notice-icon">🔒</span>
+            <p>La app autenticará la estructura de la referencia y vinculará tu pago de inmediato para generar tu <strong>Nota de Entrega Digital</strong> y notificar a despacho.</p>
+          </div>
+
+          <button type="submit" class="btn-verify-payment" id="btn-submit-verify-payment">
+            🛡️ Autenticar Pago & Generar Nota de Entrega
+          </button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- =================================================================== -->
+  <!-- MODAL: MINI NOTA DE ENTREGA DIGITAL (TICKET GLAMOUR)               -->
+  <!-- =================================================================== -->
+  <div class="modal-overlay" id="modal-delivery-note" style="display:none;">
+    <div class="modal-window delivery-note-window">
+      <div class="modal-header no-print">
+        <h3 class="modal-title">🧾 Mini Nota de Entrega Digital</h3>
+        <div class="modal-header-actions">
+          <button class="btn-primary" id="btn-print-delivery-note">🖨️ Imprimir Ticket</button>
+          <button class="btn-whatsapp-outline" id="btn-wa-delivery-note">📲 Enviar a WhatsApp</button>
+          <button class="close-modal-btn" data-close-modal="modal-delivery-note">✕</button>
+        </div>
+      </div>
+
+      <div class="delivery-ticket-container" id="printable-delivery-ticket">
+        <div class="ticket-header">
+          <img src="logo-yolo.png" alt="Tiendas Yolo" class="ticket-logo" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
+          <h2 class="ticket-store-name">TIENDAS YOLO®</h2>
+          <p class="ticket-slogan">Insumos para Uñas & Todo para la Manicurista</p>
+          <p class="ticket-location">Maracaibo, Zulia — Venezuela • WhatsApp: 0426-5604070</p>
+          <div class="ticket-badge-pill" id="ticket-badge-auth">
+            ✅ PAGO AUTENTICADO & REGISTRADO
+          </div>
+        </div>
+
+        <div class="ticket-meta-grid">
+          <div><strong>Nota de Entrega:</strong> <span id="ticket-id">#NE-2026-0001</span></div>
+          <div><strong>Fecha / Hora:</strong> <span id="ticket-date">-</span></div>
+          <div><strong>Código Verif.:</strong> <span id="ticket-auth-code">AUTH-YOLO-0000</span></div>
+          <div><strong>Modalidad:</strong> <span id="ticket-delivery-type">Delivery Maracaibo</span></div>
+        </div>
+
+        <div class="ticket-client-box">
+          <h5 class="ticket-subheading">CLIENTA / SALÓN:</h5>
+          <p><strong>Manicurista:</strong> <span id="ticket-client-name">-</span></p>
+          <p><strong>Teléfono:</strong> <span id="ticket-client-phone">-</span></p>
+          <p><strong>Salón / Estudio:</strong> <span id="ticket-client-salon">-</span></p>
+          <p><strong>Dirección:</strong> <span id="ticket-client-address">-</span></p>
+        </div>
+
+        <div class="ticket-items-table-wrap">
+          <table class="ticket-table">
+            <thead>
+              <tr>
+                <th>Cant.</th>
+                <th>Insumo</th>
+                <th>P. Unit ($)</th>
+                <th>Total ($)</th>
+              </tr>
+            </thead>
+            <tbody id="ticket-items-tbody"></tbody>
+          </table>
+        </div>
+
+        <div class="ticket-totals-section">
+          <div class="ticket-total-row">
+            <span>Subtotal:</span>
+            <span id="ticket-subtotal-usd">$0.00</span>
+          </div>
+          <div class="ticket-total-row">
+            <span>Delivery:</span>
+            <span id="ticket-delivery-usd" class="text-success">¡GRATIS!</span>
+          </div>
+          <div class="ticket-total-row total-highlight">
+            <strong>TOTAL A PAGAR:</strong>
+            <div class="ticket-grand-numbers">
+              <strong id="ticket-total-usd">$0.00</strong>
+              <span id="ticket-total-bs">(Bs. 0.00)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ticket-payment-auth-box">
+          <h5 class="ticket-subheading">AUTENTICACIÓN DEL PAGO:</h5>
+          <p>• <strong>Método:</strong> <span id="ticket-pay-method">-</span></p>
+          <p>• <strong>Banco Emisor:</strong> <span id="ticket-pay-bank">-</span></p>
+          <p>• <strong>Referencia:</strong> <span id="ticket-pay-ref" class="text-highlight">-</span></p>
+          <p>• <strong>Titular:</strong> <span id="ticket-pay-holder">-</span></p>
+        </div>
+
+        <div class="ticket-footer-strip">
+          <p class="ticket-barcode">||||| ||||||| |||| |||||| |||||||</p>
+          <p class="ticket-footer-msg"><em>“Yo lo compro, Yo lo merezco”</em></p>
+          <p class="ticket-footer-thanks">¡Gracias por preferir a Tiendas Yolo®!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =================================================================== -->
+  <!-- MODAL: COTIZACIÓN FORMAL (IMPRIMIBLE / PDF PARA SALONES Y ACADEMIAS)-->
   <!-- =================================================================== -->
   <div class="modal-overlay" id="modal-quote-viewer" style="display:none;">
     <div class="modal-window quote-modal-window">
@@ -374,7 +688,7 @@
           <div class="quote-meta-box">
             <div class="quote-pill-id" id="print-quote-id">COT-2026-0001</div>
             <p><strong>Fecha:</strong> <span id="print-quote-date">21/10/2026</span></p>
-            <p><strong>Validez:</strong> <span id="print-quote-validity">7 días hábiles</span></p>
+            <p><strong>Validez:</strong> <span id="print-quote-validity">7 días continuos</span></p>
             <p><strong>Tasa referencial:</strong> <span id="print-quote-rate">Bs. 395.50 / $</span></p>
           </div>
         </div>
@@ -422,8 +736,226 @@
           <p><strong>Condiciones Comerciales:</strong> Precios calculados a la tasa del día. El apartado de mercancía se confirma al verificar el comprobante de pago móvil o divisa. Delivery gratis en compras desde $15 en Maracaibo.</p>
           <p class="quote-signature-note"><em>“Yo lo compro, Yo lo merezco” — Gracias por preferir a Tiendas Yolo®.</em></p>
         </div>
+
+        <div class="quote-bottom-actions no-print">
+          <button type="button" class="btn-primary-payment" id="btn-quote-proceed-to-pay">
+            💳 Proceder al Pago de esta Cotización
+          </button>
+        </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- =================================================================== -->
+  <!-- MODAL: CLUB MANICURISTA YOLO (CLIENTE FRECUENTE & CUENTA)           -->
+  <!-- =================================================================== -->
+  <div class="modal-overlay" id="modal-client-account" style="display:none;">
+    <div class="modal-window account-modal-window">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-icon">🌟</span>
+          <div>
+            <h3 class="modal-title" id="account-modal-header-title">Club Manicurista Yolo®</h3>
+            <span class="modal-subtitle">Tu cuenta de cliente frecuente y compras guardadas</span>
+          </div>
+        </div>
+        <button class="close-modal-btn" data-close-modal="modal-client-account">✕</button>
+      </div>
+
+      <div class="modal-body">
+        
+        <!-- VISTA: REGISTRO / EDICIÓN DE PERFIL -->
+        <div id="account-view-form">
+          <div class="club-intro-card">
+            <h4>💎 ¡Crea tu perfil y ahorra tiempo en cada pedido!</h4>
+            <p>Al guardar tus datos, tus notas de entrega y pedidos se llenarán solos sin tener que volver a escribirlos. Además acumularás tus compras en el club.</p>
+          </div>
+
+          <form id="form-account-profile">
+            <div class="form-group">
+              <label for="acc-input-name" class="form-label">Nombre y Apellido: *</label>
+              <input type="text" id="acc-input-name" class="form-input" placeholder="Ej: Andrea González" required>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="acc-input-phone" class="form-label">Teléfono WhatsApp: *</label>
+                <input type="tel" id="acc-input-phone" class="form-input" placeholder="0426-5604070" required>
+              </div>
+              <div class="form-group">
+                <label for="acc-input-doc" class="form-label">Cédula / RIF:</label>
+                <input type="text" id="acc-input-doc" class="form-input" placeholder="V-28123456">
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="acc-input-salon" class="form-label">Salón o Estudio de Uñas:</label>
+                <input type="text" id="acc-input-salon" class="form-input" placeholder="Ej: Glow Nails Studio">
+              </div>
+              <div class="form-group">
+                <label for="acc-input-instagram" class="form-label">Instagram (@usuario):</label>
+                <input type="text" id="acc-input-instagram" class="form-input" placeholder="@glownails">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="acc-input-address" class="form-label">Dirección Habitual de Entrega / Despacho: *</label>
+              <input type="text" id="acc-input-address" class="form-input" placeholder="Ej: Sector La Lago, Av. 3C con Calle 72, Edif. Paraíso" required>
+            </div>
+
+            <button type="submit" class="btn-primary-payment" id="btn-save-account-profile">
+              💾 Guardar Mi Perfil en la App
+            </button>
+          </form>
+        </div>
+
+        <!-- VISTA: PERFIL ACTIVO (SI YA TIENE CUENTA) -->
+        <div id="account-view-profile" style="display:none;">
+          <div class="profile-card-active">
+            <div class="profile-avatar">💅</div>
+            <div class="profile-info">
+              <h4 id="prof-display-name">Andrea González</h4>
+              <span class="vip-badge" id="prof-display-level">🌟 Manicurista VIP Yolo</span>
+              <p id="prof-display-salon">Salón: Glow Nails Studio • @glownails</p>
+              <p id="prof-display-phone">WhatsApp: 0426-5604070</p>
+              <p id="prof-display-address">Dirección: Maracaibo</p>
+            </div>
+          </div>
+
+          <div class="account-actions-row">
+            <button type="button" class="btn-secondary" id="btn-edit-profile">✏️ Editar Mis Datos</button>
+            <button type="button" class="btn-ghost" id="btn-logout-account">🚪 Cerrar Sesión</button>
+          </div>
+
+          <div class="history-orders-box">
+            <h5 class="history-heading">🧾 Mis Notas de Entrega & Pedidos:</h5>
+            <div id="account-orders-history-list" class="orders-history-list">
+              <!-- Renderizado dinámico -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- =================================================================== -->
+  <!-- MODAL: GESTOR DE PRODUCTOS & FOTOS (MODO EDITOR EN VIVO)            -->
+  <!-- =================================================================== -->
+  <div class="modal-overlay" id="modal-product-editor" style="display:none;">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 class="modal-title" id="prod-editor-modal-title">✏️ Editar Producto del Catálogo</h3>
+        <button class="close-modal-btn" data-close-modal="modal-product-editor">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-product-editor">
+          <input type="hidden" id="pe-input-id">
+
+          <div class="form-group">
+            <label for="pe-input-name" class="form-label">Nombre del Insumo / Producto: *</label>
+            <input type="text" id="pe-input-name" class="form-input" required>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="pe-input-cat" class="form-label">Categoría: *</label>
+              <select id="pe-input-cat" class="select-styled" required>
+                <option value="Esmaltes">Esmaltes</option>
+                <option value="Geles y Acrílicos">Geles y Acrílicos</option>
+                <option value="Pinceles y Herramientas">Pinceles y Herramientas</option>
+                <option value="Lámparas y Equipos">Lámparas y Equipos</option>
+                <option value="Kits">Kits</option>
+                <option value="Líquidos y Preparación">Líquidos y Preparación</option>
+                <option value="Pestañas y Belleza">Pestañas y Belleza</option>
+                <option value="Decoración">Decoración</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="pe-input-sku" class="form-label">Código / SKU:</label>
+              <input type="text" id="pe-input-sku" class="form-input">
+            </div>
+          </div>
+
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label for="pe-input-price" class="form-label">Precio Venta ($): *</label>
+              <input type="number" step="0.01" id="pe-input-price" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label for="pe-input-cost" class="form-label">Costo ($):</label>
+              <input type="number" step="0.01" id="pe-input-cost" class="form-input">
+            </div>
+            <div class="form-group">
+              <label for="pe-input-stock" class="form-label">Stock Actual:</label>
+              <input type="number" id="pe-input-stock" class="form-input" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="pe-input-desc" class="form-label">Descripción:</label>
+            <textarea id="pe-input-desc" class="form-textarea" rows="2"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="pe-input-img" class="form-label">URL de la Imagen o Nombre de archivo: *</label>
+            <div class="image-input-preview-group">
+              <input type="text" id="pe-input-img" class="form-input" placeholder="logo-yolo.png o enlace https://...">
+              <img id="pe-img-preview" src="logo-yolo.png" alt="Preview" class="pe-preview-thumb" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
+            </div>
+          </div>
+
+          <div class="modal-footer-buttons">
+            <button type="button" class="btn-danger-outline" id="btn-pe-delete-prod" style="display:none;">🗑️ Eliminar</button>
+            <div style="flex:1;"></div>
+            <button type="submit" class="btn-primary" id="btn-pe-save">💾 Guardar en Catálogo</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- =================================================================== -->
+  <!-- MODAL: GUÍA DE INSTALACIÓN PWA (IPHONE / ANDROID)                   -->
+  <!-- =================================================================== -->
+  <div class="modal-overlay" id="modal-pwa-install-guide" style="display:none;">
+    <div class="modal-window pwa-guide-window">
+      <div class="modal-header">
+        <h3 class="modal-title">📲 Instalar Tiendas Yolo® en tu Teléfono</h3>
+        <button class="close-modal-btn" data-close-modal="modal-pwa-install-guide">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="pwa-guide-card">
+          <img src="logo-yolo.png" alt="Tiendas Yolo" class="pwa-guide-icon" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
+          <h4>Tiendas Yolo® como App Nativa</h4>
+          <p>Disfruta de la tienda a pantalla completa, rápida, sin barras del navegador y con acceso directo desde tu menú de aplicaciones.</p>
+        </div>
+
+        <div class="pwa-steps-box" id="pwa-ios-instructions">
+          <h5>🍎 Para iPhone / iPad (Safari):</h5>
+          <ol class="pwa-steps-list">
+            <li>Toca el botón <strong>Compartir (⎋)</strong> en la barra inferior de Safari.</li>
+            <li>Baja un poco y selecciona <strong>"Agregar a pantalla de inicio" (➕)</strong>.</li>
+            <li>Presiona <strong>"Agregar"</strong> arriba a la derecha. ¡Listo!</li>
+          </ol>
+        </div>
+
+        <div class="pwa-steps-box" id="pwa-android-instructions">
+          <h5>🤖 Para Android (Google Chrome):</h5>
+          <ol class="pwa-steps-list">
+            <li>Toca los <strong>tres puntos (⋮)</strong> en la esquina superior derecha.</li>
+            <li>Selecciona <strong>"Instalar aplicación"</strong> o <strong>"Agregar a la pantalla principal"</strong>.</li>
+            <li>Confirma la instalación. ¡Listo!</li>
+          </ol>
+        </div>
+
+        <button type="button" class="btn-primary-payment" data-close-modal="modal-pwa-install-guide">
+          ✨ Entendido
+        </button>
+      </div>
     </div>
   </div>
 
