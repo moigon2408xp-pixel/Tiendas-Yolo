@@ -109,6 +109,12 @@
           <span class="account-badge-text" id="header-user-status">Mi Cuenta</span>
         </button>
 
+        <!-- BOTÓN GUÍA DE LA APP / APRENDER A USAR -->
+        <button class="help-btn" id="btn-open-help" title="Manual y Enseñanza de Uso de la App">
+          <span class="help-icon">🎓</span>
+          <span class="help-badge-text">Guía</span>
+        </button>
+
         <!-- BOTÓN DE CARRITO -->
         <button class="cart-btn" id="btn-open-cart" title="Ver pedido actual">
           <span class="cart-icon">🛒</span>
@@ -297,18 +303,18 @@
 
       <!-- BOTÓN OCULTO PARA CLIENTES: Solo visible tras activar atajo secreto -->
       <div class="footer-admin-link" id="footer-admin-box" style="display:none;">
-        <span class="footer-col-title">Administración</span>
-        <button type="button" class="btn-footer-admin" onclick="window.YoloApp.toggleLiveEditMode()">
-          ✏️ Modo Edición en Vivo (Fotos y Textos)
+        <span class="footer-col-title">Acceso de Administración</span>
+        <button type="button" class="btn-footer-admin" onclick="window.YoloApp.triggerLiveEditor()">
+          ✏️ Activar Modo Edición en Vivo (Fotos y Textos)
         </button>
-        <a href="admin.html" class="btn-footer-admin">
-          💼 App Interna de Finanzas y Gestión
-        </a>
-        <span class="admin-hint">Portal exclusivo para la dueña y despacho</span>
+        <button type="button" class="btn-footer-admin" onclick="window.YoloApp.triggerAdminApp()">
+          💼 Ir al Backoffice & Finanzas (admin.html)
+        </button>
+        <span class="admin-hint">Atajos de teclado: Ctrl+Shift+E (Edición) • Ctrl+Shift+A (Finanzas)</span>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2026 Tiendas Yolo®. Todos los derechos reservados.</p>
+      <p id="footer-copyright-trigger" style="cursor:pointer;" title="Doble toque para acceder a la App Interna">© 2026 Tiendas Yolo®. Todos los derechos reservados.</p>
     </div>
   </footer>
 
@@ -772,6 +778,17 @@
             <p>Al guardar tus datos, tus notas de entrega y pedidos se llenarán solos sin tener que volver a escribirlos. Además acumularás tus compras en el club.</p>
           </div>
 
+          <div class="learning-guide-banner" id="btn-help-guide-banner" style="background:linear-gradient(135deg, rgba(112, 26, 73, 0.08), rgba(212, 143, 160, 0.16)); border:1px solid var(--ty-rose-gold); border-radius:var(--radius-md); padding:10px 14px; margin-bottom:14px; cursor:pointer; display:flex; align-items:center; justify-content:space-between;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size:1.4rem;">🎓</span>
+              <div>
+                <strong style="font-size:0.85rem; color:var(--ty-primary);">¿Cómo usar la App y el Club?</strong>
+                <p style="font-size:0.75rem; color:var(--text-secondary); margin:0;">Toca aquí para ver la guía interactiva paso a paso.</p>
+              </div>
+            </div>
+            <span style="font-weight:700; color:var(--ty-rose-gold); font-size:0.85rem;">Ver Guía →</span>
+          </div>
+
           <form id="form-account-profile">
             <div class="form-group">
               <label for="acc-input-name" class="form-label">Nombre y Apellido: *</label>
@@ -875,8 +892,8 @@
             </div>
 
             <div class="form-group">
-              <label for="pe-input-sku" class="form-label">Código / SKU:</label>
-              <input type="text" id="pe-input-sku" class="form-input">
+              <label for="pe-input-sku" class="form-label">Código Único (SKU): <span style="font-size:0.75rem; color:var(--ty-rose-gold); font-weight:700;">🔒 Automático Único</span></label>
+              <input type="text" id="pe-input-sku" class="form-input" readonly style="background:var(--bg-subtle); font-weight:700; letter-spacing:0.04em;">
             </div>
           </div>
 
@@ -955,6 +972,76 @@
         <button type="button" class="btn-primary-payment" data-close-modal="modal-pwa-install-guide">
           ✨ Entendido
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =================================================================== -->
+  <!-- MODAL: GUÍA & ENSEÑANZA DE USO DE LA APP (ESCUELA TIENDAS YOLO)     -->
+  <!-- =================================================================== -->
+  <div class="modal-overlay" id="modal-learning-guide" style="display:none; z-index:1200;">
+    <div class="modal-window learning-modal-window">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-icon">🎓</span>
+          <div>
+            <h3 class="modal-title">Guía de Uso — Tiendas Yolo®</h3>
+            <span class="modal-subtitle">Aprende a usar la app, cotizar, pagar y gestionar tus pedidos</span>
+          </div>
+        </div>
+        <button class="close-modal-btn" data-close-modal="modal-learning-guide">✕</button>
+      </div>
+      <div class="modal-body" style="max-height:75vh; overflow-y:auto; padding:20px;">
+        
+        <div class="learning-cards-grid">
+          <div class="learning-step-card">
+            <div class="learning-step-badge">Paso 1</div>
+            <div class="learning-step-icon">🛍️</div>
+            <h4>Explora y Arma tu Carrito</h4>
+            <p>Filtra por categorías (Esmaltes, Geles, Lámparas, Kits). Usa los botones <strong>+</strong> y <strong>-</strong> para seleccionar cantidades. En compras desde <strong>$15</strong>, ¡el delivery en Maracaibo es 100% GRATIS!</p>
+          </div>
+
+          <div class="learning-step-card">
+            <div class="learning-step-badge">Paso 2</div>
+            <div class="learning-step-icon">📄</div>
+            <h4>Cotizaciones Formales</h4>
+            <p>Si tienes un salón, academia o necesitas presupuesto para tus alumnas, presiona <strong>"Cotizar"</strong>. Genera al instante un documento formal con precios en $ y Bs., validez de 7 días, exportable a PDF o WhatsApp.</p>
+          </div>
+
+          <div class="learning-step-card">
+            <div class="learning-step-badge">Paso 3</div>
+            <div class="learning-step-icon">💳</div>
+            <h4>Pago Móvil & Zelle con Validación</h4>
+            <p>La app te muestra los datos oficiales de Banesco y Zelle con botones para copiar en 1 clic. Paga el monto exacto en Bs. a la tasa oficial y escribe la referencia: la app autenticará tu pago con el código <strong>AUTH-YOLO-XXXXXX</strong>.</p>
+          </div>
+
+          <div class="learning-step-card">
+            <div class="learning-step-badge">Paso 4</div>
+            <div class="learning-step-icon">🧾</div>
+            <h4>Mini Nota de Entrega Digital</h4>
+            <p>Al confirmar el pago recibes tu ticket boutique digital membretado con código QR de seguridad. Puedes descargarlo, imprimirlo o enviarlo directamente al WhatsApp de despacho para alistar tu paquete.</p>
+          </div>
+
+          <div class="learning-step-card">
+            <div class="learning-step-badge">Paso 5</div>
+            <div class="learning-step-icon">🌟</div>
+            <h4>Club Manicurista VIP</h4>
+            <p>Regístrate en <strong>"Mi Cuenta"</strong> una sola vez. Tus datos de entrega se guardarán automáticamente para que no tengas que escribirlos de nuevo y acumularás tu historial de notas de entrega.</p>
+          </div>
+
+          <div class="learning-step-card">
+            <div class="learning-step-badge">Dueña</div>
+            <div class="learning-step-icon">✏️</div>
+            <h4>Atajos Exclusivos de la Dueña</h4>
+            <p>• <strong>Ctrl + Shift + E</strong> (o triple toque en el logo): Activa el Modo Edición en vivo para modificar fotos, textos y precios.<br>
+            • <strong>Ctrl + Shift + A</strong> (o doble toque en el copyright): Ingresa al Backoffice de Finanzas y Control de Caja.</p>
+          </div>
+        </div>
+
+        <button type="button" class="btn-primary-payment" style="margin-top:16px;" data-close-modal="modal-learning-guide">
+          ✨ ¡Entendido! Empezar a Usar la App
+        </button>
+
       </div>
     </div>
   </div>
