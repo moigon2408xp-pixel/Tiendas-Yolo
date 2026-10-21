@@ -770,8 +770,8 @@ body.theme-dark .catalog-section-title {
    ============================================================================ */
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 22px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
 }
 
 .product-card {
@@ -2162,63 +2162,215 @@ body.theme-dark .card-heading {
   }
 }
 
-/* RESPONSIVE SMARTPHONES */
+/* ============================================================================
+   RESPONSIVE SMARTPHONES & APP NATIVA MÓVIL
+   ============================================================================ */
 @media (max-width: 768px) {
+  body {
+    padding-bottom: 75px; /* Espacio para barra de navegación inferior */
+  }
+
+  .main-content {
+    padding: 12px 10px;
+    max-width: 100%;
+  }
+
   .header-container {
-    padding: 8px 12px;
+    padding: 6px 10px;
+    gap: 8px;
+  }
+
+  .brand-group {
+    gap: 8px;
+  }
+
+  .logo-wrapper {
+    width: 38px;
+    height: 38px;
+  }
+
+  .brand-title {
+    font-size: 1.15rem;
+  }
+
+  .brand-subtitle {
+    font-size: 0.68rem;
   }
 
   .search-box-header {
-    display: none; /* Se accede vía botón en móvil */
+    display: none; /* En móvil se busca desde filtros o cabecera compacta */
+  }
+
+  .nav-actions {
+    gap: 6px;
+  }
+
+  .btn-install-header {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+
+  .install-text, .account-badge-text, .cart-total-badge {
+    display: none; /* Solo mostrar iconos en cabecera móvil */
+  }
+
+  .account-btn, .cart-btn {
+    padding: 6px 10px;
+  }
+
+  .hide-on-mobile {
+    display: none !important;
   }
 
   .hero-glam-card {
-    padding: 24px 20px;
+    padding: 18px 14px;
+    border-radius: var(--radius-md);
+    margin-bottom: 16px;
   }
 
   .hero-inner {
     flex-direction: column;
     text-align: center;
+    gap: 14px;
   }
 
   .hero-headline {
-    font-size: 1.7rem;
+    font-size: 1.35rem;
+    line-height: 1.2;
+  }
+
+  .hero-description {
+    font-size: 0.82rem;
+    margin-bottom: 12px;
+  }
+
+  .hero-quote-box {
+    margin-bottom: 12px;
+    padding: 6px 12px;
   }
 
   .hero-cta-group {
     justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-primary, .btn-secondary, .btn-whatsapp-outline {
+    font-size: 0.8rem;
+    padding: 8px 14px;
   }
 
   .hero-visual-side {
     display: none;
   }
 
+  .social-hub-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .social-hub-btn {
+    padding: 8px 10px;
+    font-size: 0.78rem;
+  }
+
+  .hub-texts .hub-title {
+    font-size: 0.78rem;
+  }
+
+  .hub-texts .hub-sub {
+    font-size: 0.68rem;
+  }
+
+  /* CUADRÍCULA DE 2 COLUMNAS COMPACTA EN MÓVIL (NUNCA 1 COLUMNA) */
   .products-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .product-card {
+    border-radius: var(--radius-md);
   }
 
   .product-image-container {
-    height: 140px;
+    height: 130px !important;
+    padding: 6px;
+  }
+
+  .product-details {
+    padding: 8px 10px;
   }
 
   .product-title {
-    font-size: 0.95rem;
+    font-size: 0.82rem !important;
+    line-height: 1.25;
+    min-height: 2.5em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .product-desc {
-    display: none;
+    display: none !important;
   }
 
-  .kpi-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+  .product-price-row {
+    margin: 6px 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
   }
-}
 
-@media (max-width: 480px) {
-  .products-grid {
-    grid-template-columns: 1fr;
+  .price-usd {
+    font-size: 1.05rem;
+    font-weight: 800;
+  }
+
+  .price-bs {
+    font-size: 0.72rem;
+  }
+
+  .product-card-actions-wrapper {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .card-qty-stepper {
+    width: 100%;
+    justify-content: space-between;
+    padding: 2px 8px;
+  }
+
+  .btn-stepper {
+    width: 24px;
+    height: 24px;
+    font-size: 0.8rem;
+  }
+
+  .btn-add-cart-primary {
+    width: 100%;
+    padding: 7px 10px;
+    font-size: 0.78rem;
+    justify-content: center;
+  }
+
+  .cart-drawer-sheet {
+    max-width: 100%;
+  }
+
+  .editor-control-bar {
+    bottom: 74px !important;
+    left: 10px !important;
+    right: 10px !important;
+    transform: none !important;
+    width: auto !important;
+    padding: 6px 10px !important;
+    justify-content: space-between;
+  }
+
+  .editor-action-btn {
+    font-size: 0.72rem !important;
+    padding: 6px 8px !important;
   }
 }
 
@@ -2437,4 +2589,785 @@ body.theme-dark .footer-col-title {
   font-size: 0.8rem;
   color: var(--text-muted);
 }
+
+/* ============================================================================
+   NUEVOS COMPONENTES: PWA, BOTTOM NAV, EDITOR, PAGOS & NOTAS DE ENTREGA
+   ============================================================================ */
+
+/* BOTÓN INSTALAR PWA HEADER */
+.btn-install-header {
+  background: linear-gradient(135deg, #e7b1a2, #c77383);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 8px 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(199, 115, 131, 0.35);
+  transition: var(--trans-fast);
+  animation: pulseInstall 3s infinite ease-in-out;
+}
+
+@keyframes pulseInstall {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); box-shadow: 0 4px 14px rgba(199, 115, 131, 0.55); }
+}
+
+/* BOTÓN MI CUENTA / CLUB MANICURISTA */
+.account-btn {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  color: var(--text-main);
+  border-radius: var(--radius-pill);
+  padding: 8px 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: var(--trans-fast);
+}
+
+.account-btn:hover {
+  border-color: var(--ty-primary);
+  background: var(--bg-surface);
+}
+
+/* BARRA DE NAVEGACIÓN INFERIOR PARA SMARTPHONES (APP NATIVA) */
+.mobile-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 62px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border-light);
+    z-index: 1000;
+    align-items: center;
+    justify-content: space-around;
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
+  }
+
+  body.theme-dark .mobile-bottom-nav {
+    background: rgba(30, 16, 24, 0.96);
+    border-top-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .m-nav-item {
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 6px 10px;
+    transition: var(--trans-fast);
+  }
+
+  .m-nav-item.active {
+    color: var(--ty-primary);
+  }
+
+  body.theme-dark .m-nav-item.active {
+    color: var(--ty-rose-gold-light);
+  }
+
+  .m-nav-icon {
+    font-size: 1.15rem;
+  }
+
+  .m-nav-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+  }
+
+  .m-nav-icon-wrap {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .m-cart-badge {
+    position: absolute;
+    top: -6px;
+    right: -10px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 800;
+    border-radius: var(--radius-pill);
+    padding: 1px 5px;
+    min-width: 16px;
+    text-align: center;
+  }
+}
+
+/* BARRA FLOTANTE DE MODO EDICIÓN EN VIVO */
+.editor-control-bar {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(25, 12, 19, 0.95);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(231, 177, 162, 0.4);
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 10001;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  animation: slideUpBar 0.3s ease-out;
+}
+
+@keyframes slideUpBar {
+  from { opacity: 0; transform: translate(-50%, 20px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.editor-bar-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pulse-dot-red {
+  width: 8px;
+  height: 8px;
+  background: #ef4444;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #ef4444;
+  display: inline-block;
+  animation: pulseRed 1.5s infinite;
+}
+
+@keyframes pulseRed {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.3); }
+}
+
+.editor-bar-title {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #fed7aa;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.editor-action-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: var(--trans-fast);
+  text-decoration: none;
+}
+
+.editor-action-btn:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.editor-action-btn.active {
+  background: #10b981;
+  border-color: #059669;
+  color: #fff;
+}
+
+.editor-action-btn.btn-save-highlight {
+  background: linear-gradient(135deg, #d47a94, #c77383);
+  border-color: transparent;
+}
+
+.editor-btn-close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.editor-btn-close:hover {
+  color: #fff;
+}
+
+/* MARCADOR DE ELEMENTOS EDITABLES */
+body.editor-mode-active [data-editable="true"] {
+  outline: 2px dashed #c77383 !important;
+  outline-offset: 3px;
+  cursor: text;
+  background: rgba(199, 115, 131, 0.08) !important;
+  border-radius: 4px;
+}
+
+.card-edit-overlay {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: none;
+  gap: 4px;
+  z-index: 10;
+}
+
+body.editor-mode-active .card-edit-overlay {
+  display: flex;
+}
+
+.btn-edit-card-action {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--trans-fast);
+}
+
+.btn-edit-card-action:hover {
+  transform: scale(1.15);
+  background: var(--ty-primary);
+}
+
+/* BOTÓN DE PAGO Y AUTENTICACIÓN */
+.btn-primary-payment {
+  width: 100%;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #701a49, #9c276a);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-weight: 800;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(112, 26, 73, 0.35);
+  transition: var(--trans-fast);
+}
+
+.btn-primary-payment:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(112, 26, 73, 0.45);
+}
+
+/* MODAL DE PAGO Y AUTENTICACIÓN BANCARIA */
+.payment-auth-modal {
+  max-width: 600px;
+}
+
+.payment-order-summary-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: linear-gradient(135deg, var(--bg-subtle), var(--bg-surface));
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.summary-col {
+  text-align: center;
+}
+
+.summary-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  display: block;
+}
+
+.summary-amount-usd {
+  font-size: 1.45rem;
+  color: var(--ty-primary);
+}
+
+body.theme-dark .summary-amount-usd {
+  color: var(--ty-rose-gold-light);
+}
+
+.summary-amount-bs {
+  font-size: 1.45rem;
+  color: #059669;
+  display: block;
+}
+
+.summary-rate {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.summary-divider {
+  width: 1px;
+  height: 40px;
+  background: var(--border-light);
+}
+
+.payment-box-heading {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--ty-primary);
+  margin-bottom: 8px;
+}
+
+body.theme-dark .payment-box-heading {
+  color: var(--ty-rose-gold-light);
+}
+
+.bank-pill-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  margin-bottom: 10px;
+  transition: var(--trans-fast);
+}
+
+.bank-pill-card.active {
+  border-color: var(--ty-primary);
+  box-shadow: 0 0 0 2px rgba(112, 26, 73, 0.15);
+}
+
+.bank-pill-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.btn-copy-data {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-pill);
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  cursor: pointer;
+  color: var(--ty-primary);
+}
+
+.btn-copy-data:hover {
+  background: var(--ty-primary);
+  color: #fff;
+}
+
+.bank-pill-details p {
+  font-size: 0.82rem;
+  margin: 2px 0;
+  color: var(--text-secondary);
+}
+
+.auth-security-notice {
+  display: flex;
+  gap: 10px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  margin: 14px 0;
+  font-size: 0.8rem;
+  color: var(--text-main);
+}
+
+.btn-verify-payment {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #059669, #10b981);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-weight: 800;
+  font-size: 0.92rem;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+  transition: var(--trans-fast);
+}
+
+.btn-verify-payment:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.5);
+}
+
+/* MINI NOTA DE ENTREGA DIGITAL (TICKET BOUTIQUE) */
+.delivery-note-window {
+  max-width: 480px;
+}
+
+.delivery-ticket-container {
+  background: #fff;
+  color: #1c1917;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  border: 1px dashed #d6d3d1;
+}
+
+.ticket-header {
+  text-align: center;
+  border-bottom: 2px dashed #e7e5e4;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+}
+
+.ticket-logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin: 0 auto 8px;
+  display: block;
+}
+
+.ticket-store-name {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #701a49;
+  margin-bottom: 2px;
+}
+
+.ticket-slogan {
+  font-size: 0.76rem;
+  color: #78716c;
+}
+
+.ticket-location {
+  font-size: 0.72rem;
+  color: #a8a29e;
+}
+
+.ticket-badge-pill {
+  display: inline-block;
+  background: #dcfce7;
+  color: #166534;
+  font-size: 0.74rem;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  margin-top: 8px;
+  border: 1px solid #bbf7d0;
+}
+
+.ticket-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  font-size: 0.78rem;
+  border-bottom: 1px dashed #e7e5e4;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.ticket-client-box {
+  font-size: 0.78rem;
+  border-bottom: 1px dashed #e7e5e4;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.ticket-client-box p {
+  margin: 2px 0;
+}
+
+.ticket-subheading {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #701a49;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.ticket-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  margin: 8px 0;
+}
+
+.ticket-table th {
+  text-align: left;
+  border-bottom: 1px solid #e7e5e4;
+  padding: 4px 0;
+  font-size: 0.72rem;
+  color: #78716c;
+}
+
+.ticket-table td {
+  padding: 6px 0;
+  border-bottom: 1px solid #f5f5f4;
+}
+
+.ticket-totals-section {
+  border-top: 1px dashed #e7e5e4;
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
+.ticket-total-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  margin: 3px 0;
+}
+
+.ticket-total-row.total-highlight {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #701a49;
+  border-top: 1px solid #e7e5e4;
+  padding-top: 6px;
+  margin-top: 6px;
+}
+
+.ticket-payment-auth-box {
+  font-size: 0.76rem;
+  background: #fdf4f7;
+  border-radius: 6px;
+  padding: 8px;
+  margin-top: 10px;
+}
+
+.ticket-payment-auth-box p {
+  margin: 2px 0;
+}
+
+.ticket-footer-strip {
+  text-align: center;
+  margin-top: 16px;
+  border-top: 1px dashed #e7e5e4;
+  padding-top: 12px;
+}
+
+.ticket-barcode {
+  font-family: monospace;
+  letter-spacing: 3px;
+  font-size: 0.85rem;
+  color: #a8a29e;
+}
+
+.ticket-footer-msg {
+  font-size: 0.78rem;
+  color: #701a49;
+  font-weight: 600;
+}
+
+.ticket-footer-thanks {
+  font-size: 0.72rem;
+  color: #a8a29e;
+}
+
+/* CLUB MANICURISTA & PERFIL */
+.account-modal-window {
+  max-width: 520px;
+}
+
+.club-intro-card {
+  background: linear-gradient(135deg, #fdf2f6, #fce7f0);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.club-intro-card h4 {
+  color: var(--ty-primary);
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.club-intro-card p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.profile-card-active {
+  display: flex;
+  gap: 14px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.profile-avatar {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #e7b1a2, #c77383);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.profile-info h4 {
+  font-size: 1.05rem;
+  color: var(--text-main);
+}
+
+.vip-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  margin: 4px 0 6px;
+}
+
+.profile-info p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin: 2px 0;
+}
+
+.account-actions-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.history-orders-box {
+  border-top: 1px solid var(--border-light);
+  padding-top: 14px;
+}
+
+.history-heading {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--ty-primary);
+  margin-bottom: 8px;
+}
+
+.order-history-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+}
+
+.history-card-info strong {
+  display: block;
+  color: var(--ty-primary);
+}
+
+.btn-history-view {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+/* PWA GUÍA */
+.pwa-guide-window {
+  max-width: 480px;
+}
+
+.pwa-guide-card {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.pwa-guide-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin: 0 auto 10px;
+  border: 3px solid var(--ty-rose-gold);
+}
+
+.pwa-steps-box {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.pwa-steps-box h5 {
+  font-size: 0.88rem;
+  color: var(--ty-primary);
+  margin-bottom: 8px;
+}
+
+.pwa-steps-list {
+  padding-left: 20px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.image-input-preview-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.pe-preview-thumb {
+  width: 46px;
+  height: 46px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid var(--border-light);
+}
+
+.btn-autofill-account {
+  background: none;
+  border: 1px solid var(--ty-rose-gold);
+  color: var(--ty-primary);
+  font-size: 0.74rem;
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+  padding: 3px 8px;
+  cursor: pointer;
+}
+
+.section-title-with-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
 
