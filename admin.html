@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Tiendas Yolo® | Aplicación Interna de Gestión & Finanzas</title>
+  
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#701a49">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Estilos adicionales específicos del Panel Administrativo */
+    .admin-topbar {
+      background: linear-gradient(90deg, #450c2c, #701a49);
+      color: #fff;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+    }
+    .admin-brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .admin-badge-role {
+      background: #fed7aa;
+      color: #451a03;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+      text-transform: uppercase;
+    }
+    .pin-lock-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 5, 13, 0.95);
+      backdrop-filter: blur(12px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .pin-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-rose);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      max-width: 360px;
+      width: 100%;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+    }
+    .pin-logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      margin: 0 auto 12px;
+      border: 2px solid var(--ty-rose-gold);
+    }
+    .pin-input {
+      font-size: 1.8rem;
+      letter-spacing: 0.3em;
+      text-align: center;
+      width: 100%;
+      padding: 10px;
+      margin: 16px 0;
+      background: var(--bg-subtle);
+      border: 2px solid var(--border-light);
+      border-radius: var(--radius-md);
+    }
+  </style>
+</head>
+<body class="theme-light">
+
+  <!-- PANTALLA DE SEGURIDAD / PIN DE ACCESO -->
+  <div id="pin-lock-modal" class="pin-lock-overlay" style="display:none;">
+    <div class="pin-box">
+      <img src="assets/logo-yolo.png" alt="Tiendas Yolo" class="pin-logo">
+      <h3 style="font-family:var(--font-serif); font-size:1.3rem; color:var(--ty-primary); margin-bottom:4px;">Tiendas Yolo®</h3>
+      <p style="font-size:0.84rem; color:var(--text-secondary); margin-bottom:12px;">Ingresa el PIN de seguridad para acceder al panel de gestión.</p>
+      
+      <input type="password" id="input-admin-pin" class="pin-input" maxlength="6" placeholder="••••" autofocus>
+      
+      <button class="btn-primary" id="btn-unlock-pin" style="width:100%; justify-content:center; padding:12px;">
+        🔓 Desbloquear Sistema
+      </button>
+
+      <p style="font-size:0.75rem; color:var(--text-muted); margin-top:14px;">
+        PIN inicial predeterminado: <strong>2026</strong>
+      </p>
+      <div style="margin-top:10px;">
+        <a href="./" style="font-size:0.8rem; color:var(--ty-rose-gold); text-decoration:none;">← Volver a la Tienda Pública</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- BARRA SUPERIOR ADMINISTRATIVA -->
+  <header class="admin-topbar">
+    <div class="admin-brand-wrap">
+      <img src="assets/logo-yolo.png" alt="Tiendas Yolo" style="width:36px; height:36px; border-radius:50%; border:2px solid #fff;">
+      <div>
+        <strong style="font-family:var(--font-serif); font-size:1.15rem; letter-spacing:-0.02em;">Tiendas Yolo®</strong>
+        <span class="admin-badge-role">Backoffice & Finanzas</span>
+      </div>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:12px;">
+      <span class="cloud-badge offline" id="cloud-status-indicator" title="Estado de conexión con Google Sheets">
+        <span class="cloud-dot"></span>
+        <span id="cloud-status-text">Local / Offline</span>
+      </span>
+
+      <a href="./" class="btn-secondary" style="padding:6px 14px; font-size:0.8rem; text-decoration:none;">
+        🛍️ Ver Tienda Pública
+      </a>
+
+      <button class="theme-toggle-btn" id="btn-toggle-theme" title="Modo Claro/Oscuro">
+        🌓
+      </button>
+
+      <button class="btn-micro" id="btn-lock-session" title="Bloquear sesión con PIN">
+        🔒
+      </button>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL ADMINISTRATIVO -->
+  <main class="main-content" style="padding-top:16px;">
+
+    <!-- BARRA DE SUB-MÓDULOS ADMINISTRATIVOS -->
+    <nav class="admin-subnav-bar">
+      <button class="admin-tab-btn active" data-tab="admin-dashboard">
+        <span class="tab-icon">📊</span>
+        <span class="tab-label">Dashboard General</span>
+      </button>
+      <button class="admin-tab-btn" data-tab="admin-orders">
+        <span class="tab-icon">📦</span>
+        <span class="tab-label">Pedidos (<span id="admin-orders-pending-count">0</span>)</span>
+      </button>
+      <button class="admin-tab-btn" data-tab="admin-quotes">
+        <span class="tab-icon">📝</span>
+        <span class="tab-label">Cotizaciones Pro</span>
+      </button>
+      <button class="admin-tab-btn" data-tab="admin-finances">
+        <span class="tab-icon">💰</span>
+        <span class="tab-label">Finanzas Completas</span>
+      </button>
+      <button class="admin-tab-btn" data-tab="admin-inventory">
+        <span class="tab-icon">🗃️</span>
+        <span class="tab-label">Inventario & Stock</span>
+      </button>
+      <button class="admin-tab-btn" data-tab="admin-clients">
+        <span class="tab-icon">👥</span>
+        <span class="tab-label">Manicuristas (CRM)</span>
+      </button>
+      <button class="admin-tab-btn" data-tab="admin-settings">
+        <span class="tab-icon">⚙️</span>
+        <span class="tab-label">Config & Nube</span>
+      </button>
+    </nav>
+
+    <!-- SUB-VISTA 1: DASHBOARD EJECUTIVO -->
+    <div id="subtab-admin-dashboard" class="admin-subtab-content active">
+      
+      <!-- TARJETAS KPI -->
+      <div class="kpi-grid">
+        <div class="kpi-card card-revenue">
+          <div class="kpi-icon-wrap">💵</div>
+          <div class="kpi-info">
+            <span class="kpi-title">Ventas Totales</span>
+            <h3 class="kpi-value" id="kpi-total-sales-usd">$0.00</h3>
+            <span class="kpi-sub" id="kpi-total-sales-bs">Bs. 0.00</span>
+          </div>
+        </div>
+        <div class="kpi-card card-net-profit">
+          <div class="kpi-icon-wrap">📈</div>
+          <div class="kpi-info">
+            <span class="kpi-title">Ganancia Neta</span>
+            <h3 class="kpi-value highlight-profit" id="kpi-net-profit-usd">$0.00</h3>
+            <span class="kpi-sub" id="kpi-profit-margin">Margen neto: 0%</span>
+          </div>
+        </div>
+        <div class="kpi-card card-orders">
+          <div class="kpi-icon-wrap">📦</div>
+          <div class="kpi-info">
+            <span class="kpi-title">Pedidos Activos</span>
+            <h3 class="kpi-value" id="kpi-active-orders-count">0</h3>
+            <span class="kpi-sub" id="kpi-orders-delivered-count">0 entregados</span>
+          </div>
+        </div>
+        <div class="kpi-card card-inventory-alert">
+          <div class="kpi-icon-wrap">⚠️</div>
+          <div class="kpi-info">
+            <span class="kpi-title">Stock Crítico</span>
+            <h3 class="kpi-value" id="kpi-low-stock-count">0</h3>
+            <span class="kpi-sub">Insumos por reponer</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DOS COLUMNAS: CUENTAS Y PEDIDOS RECIENTES -->
+      <div class="dashboard-two-cols">
+        <div class="panel-box">
+          <div class="panel-header">
+            <h4 class="panel-title">👛 Balance de Cajas y Cuentas</h4>
+            <button class="btn-micro" id="btn-dash-new-movement">+ Movimiento</button>
+          </div>
+          <div class="accounts-grid" id="dashboard-accounts-container"></div>
+        </div>
+
+        <div class="panel-box">
+          <div class="panel-header">
+            <h4 class="panel-title">🚚 Pedidos Recientes por Despachar</h4>
+            <button class="btn-micro" id="btn-dash-see-all-orders">Ver Todos</button>
+          </div>
+          <div class="recent-orders-list" id="dashboard-recent-orders-container"></div>
+        </div>
+      </div>
+
+      <!-- DESGLOSE FINANCIERO -->
+      <div class="panel-box full-width-panel">
+        <div class="panel-header">
+          <h4 class="panel-title">📊 Desglose Financiero (Ingresos vs Costos vs Gastos)</h4>
+          <span class="panel-tag">Tiempo Real</span>
+        </div>
+        <div class="finance-bars-summary" id="dashboard-finance-bars"></div>
+      </div>
+
+    </div>
+
+    <!-- SUB-VISTA 2: GESTIÓN DE PEDIDOS -->
+    <div id="subtab-admin-orders" class="admin-subtab-content" style="display:none;">
+      <div class="module-action-bar">
+        <div class="filters-row">
+          <button class="filter-pill active" data-order-filter="all">Todos (<span id="count-filter-all">0</span>)</button>
+          <button class="filter-pill" data-order-filter="Pendiente">Pendientes (<span id="count-filter-pending">0</span>)</button>
+          <button class="filter-pill" data-order-filter="Confirmado">Confirmados (<span id="count-filter-confirmed">0</span>)</button>
+          <button class="filter-pill" data-order-filter="En Preparación">En Preparación (<span id="count-filter-prep">0</span>)</button>
+          <button class="filter-pill" data-order-filter="En Delivery">En Delivery (<span id="count-filter-delivery">0</span>)</button>
+          <button class="filter-pill" data-order-filter="Entregado">Entregados (<span id="count-filter-delivered">0</span>)</button>
+        </div>
+        <div class="action-buttons">
+          <button class="btn-secondary" id="btn-export-orders-csv">📥 Exportar CSV</button>
+        </div>
+      </div>
+
+      <div class="orders-cards-container" id="admin-orders-container"></div>
+    </div>
+
+    <!-- SUB-VISTA 3: COTIZACIONES PROFESIONALES -->
+    <div id="subtab-admin-quotes" class="admin-subtab-content" style="display:none;">
+      <div class="module-action-bar">
+        <div class="action-bar-info">
+          <h4 class="module-subheading">Presupuestos y Cotizaciones para Manicuristas y Academias</h4>
+          <p class="module-help-txt">Genera proformas formales membretadas listas para imprimir en PDF o compartir por WhatsApp.</p>
+        </div>
+        <button class="btn-primary" id="btn-open-quote-builder">+ Nueva Cotización</button>
+      </div>
+
+      <div class="orders-cards-container" id="admin-quotes-container"></div>
+    </div>
+
+    <!-- SUB-VISTA 4: FINANZAS COMPLETAS -->
+    <div id="subtab-admin-finances" class="admin-subtab-content" style="display:none;">
+      <div class="module-action-bar">
+        <div class="finance-summary-pills">
+          <div class="fin-pill fin-in">
+            <span class="fin-pill-lbl">Ingresos Totales:</span>
+            <strong id="fin-pill-in-val">$0.00</strong>
+          </div>
+          <div class="fin-pill fin-out">
+            <span class="fin-pill-lbl">Costos & Gastos:</span>
+            <strong id="fin-pill-out-val">$0.00</strong>
+          </div>
+          <div class="fin-pill fin-net">
+            <span class="fin-pill-lbl">Utilidad Operativa:</span>
+            <strong id="fin-pill-net-val">$0.00</strong>
+          </div>
+        </div>
+        <div class="action-buttons">
+          <button class="btn-primary" id="btn-new-finance-entry">+ Registrar Movimiento</button>
+          <button class="btn-secondary" id="btn-export-finances-csv">📥 Exportar a Excel</button>
+        </div>
+      </div>
+
+      <div class="panel-box full-width-panel">
+        <div class="panel-header">
+          <h4 class="panel-title">Libro Diario de Movimientos</h4>
+          <div class="search-micro-box">
+            <input type="text" id="finances-search-input" placeholder="Buscar por concepto, cuenta o pedido...">
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="styled-table" id="finances-table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>ID</th>
+                <th>Tipo</th>
+                <th>Categoría</th>
+                <th>Descripción</th>
+                <th>Cuenta / Método</th>
+                <th>Monto USD</th>
+                <th>Monto Bs</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="finances-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB-VISTA 5: INVENTARIO & STOCK -->
+    <div id="subtab-admin-inventory" class="admin-subtab-content" style="display:none;">
+      <div class="module-action-bar">
+        <div class="search-micro-box wide-search">
+          <input type="text" id="inv-search-input" placeholder="Filtrar insumo por nombre, categoría o SKU...">
+        </div>
+        <div class="action-buttons">
+          <button class="btn-primary" id="btn-new-product">+ Nuevo Insumo</button>
+          <button class="btn-secondary" id="btn-export-inventory-csv">📥 Exportar Stock</button>
+        </div>
+      </div>
+
+      <div class="panel-box full-width-panel">
+        <div class="table-responsive">
+          <table class="styled-table" id="inventory-table">
+            <thead>
+              <tr>
+                <th>Insumo</th>
+                <th>Categoría</th>
+                <th>SKU</th>
+                <th>P. Venta ($)</th>
+                <th>Costo ($)</th>
+                <th>Margen</th>
+                <th>Stock Actual</th>
+                <th>Estado Stock</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="inventory-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB-VISTA 6: CLIENTES Y MANICURISTAS (CRM) -->
+    <div id="subtab-admin-clients" class="admin-subtab-content" style="display:none;">
+      <div class="module-action-bar">
+        <div class="search-micro-box wide-search">
+          <input type="text" id="clients-search-input" placeholder="Buscar por nombre, salón, zona o teléfono...">
+        </div>
+      </div>
+
+      <div class="clients-cards-grid" id="admin-clients-container"></div>
+    </div>
+
+    <!-- SUB-VISTA 7: CONFIGURACIÓN & NUBE -->
+    <div id="subtab-admin-settings" class="admin-subtab-content" style="display:none;">
+      <div class="settings-grid">
+        
+        <!-- CONEXIÓN CON GOOGLE SHEETS -->
+        <div class="settings-card highlight-card">
+          <div class="card-icon-title">
+            <span class="card-icon">☁️</span>
+            <div>
+              <h4 class="card-heading">Respaldo y Base de Datos en Google Sheets</h4>
+              <p class="card-subheading">Sincroniza todos los pedidos, finanzas e insumos en tu Google Drive.</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="cfg-sheets-api-url" class="form-label">URL del Web App de Google Apps Script:</label>
+            <input type="url" id="cfg-sheets-api-url" class="form-input" placeholder="https://script.google.com/macros/s/.../exec">
+            <span class="form-hint">Pega la URL generada al hacer "Implementar > Nueva Implementación > Aplicación Web" en Apps Script.</span>
+          </div>
+
+          <div class="buttons-row">
+            <button class="btn-primary" id="btn-save-sheets-config">💾 Guardar URL</button>
+            <button class="btn-secondary" id="btn-test-sheets-connection">🔄 Probar Conexión</button>
+            <button class="btn-whatsapp-outline" id="btn-force-cloud-sync">☁️ Sincronizar Ahora</button>
+          </div>
+
+          <div class="sync-logs-box" id="cloud-sync-logs">
+            <span class="log-line">ℹ️ El sistema cuenta con persistencia local permanente. Al conectar Sheets, tendrás sincronización continua.</span>
+          </div>
+        </div>
+
+        <!-- AJUSTES COMERCIALES -->
+        <div class="settings-card">
+          <div class="card-icon-title">
+            <span class="card-icon">⚙️</span>
+            <div>
+              <h4 class="card-heading">Parámetros de Tiendas Yolo</h4>
+              <p class="card-subheading">Tasa del día, números oficiales y PIN de seguridad.</p>
+            </div>
+          </div>
+
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label for="cfg-rate-bcv" class="form-label">Tasa del Día (Bs / USD):</label>
+              <input type="number" step="0.01" id="cfg-rate-bcv" class="form-input" value="395.50">
+            </div>
+            <div class="form-group">
+              <label for="cfg-whatsapp" class="form-label">WhatsApp de Pedidos:</label>
+              <input type="text" id="cfg-whatsapp" class="form-input" value="584265604070">
+            </div>
+            <div class="form-group">
+              <label for="cfg-admin-pin" class="form-label">PIN de Acceso al Panel:</label>
+              <input type="text" id="cfg-admin-pin" class="form-input" value="2026" maxlength="6">
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="cfg-delivery-free-min" class="form-label">Mínimo para Delivery Gratis ($):</label>
+              <input type="number" step="0.50" id="cfg-delivery-free-min" class="form-input" value="15.00">
+            </div>
+            <div class="form-group">
+              <label for="cfg-delivery-flat-fee" class="form-label">Tarifa Estándar Delivery ($):</label>
+              <input type="number" step="0.50" id="cfg-delivery-flat-fee" class="form-input" value="2.00">
+            </div>
+          </div>
+
+          <button class="btn-primary" id="btn-save-commercial-config">💾 Guardar Parámetros</button>
+        </div>
+
+        <!-- COPIA DE SEGURIDAD -->
+        <div class="settings-card">
+          <div class="card-icon-title">
+            <span class="card-icon">💾</span>
+            <div>
+              <h4 class="card-heading">Copia de Seguridad y Restauración</h4>
+              <p class="card-subheading">Descarga un respaldo en JSON con todos los datos contables y productos.</p>
+            </div>
+          </div>
+          <div class="buttons-row">
+            <button class="btn-secondary" id="btn-download-backup-json">📥 Descargar Respaldo JSON</button>
+            <label class="btn-secondary file-upload-label">
+              📤 Restaurar desde JSON
+              <input type="file" id="input-restore-backup-json" accept=".json" style="display:none;">
+            </label>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- =================================================================== -->
+  <!-- MODALES: PRODUCTO, FINANZAS, COTIZACIÓN -->
+  <!-- =================================================================== -->
+
+  <!-- MODAL FINANCIERO -->
+  <div class="modal-overlay" id="modal-finance-entry" style="display:none;">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 class="modal-title">💰 Registrar Movimiento Financiero</h3>
+        <button class="close-modal-btn" data-close-modal="modal-finance-entry">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-finance-entry">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="fin-type" class="form-label">Tipo de Movimiento: *</label>
+              <select id="fin-type" class="select-styled" required>
+                <option value="Ingreso">🟢 Ingreso (Venta de Insumos)</option>
+                <option value="Costo">🔴 Costo de Mercancía / Reposición</option>
+                <option value="Gasto">🟠 Gasto Operativo (Delivery, Bolsas, Redes)</option>
+                <option value="Retiro">🔵 Retiro de Utilidad</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="fin-category" class="form-label">Categoría: *</label>
+              <select id="fin-category" class="select-styled" required>
+                <option value="Venta Insumos">Venta de Insumos</option>
+                <option value="Compra Mercancía">Compra de Mercancía / Stock</option>
+                <option value="Delivery y Traslados">Delivery y Traslados</option>
+                <option value="Empaques y Bolsas">Empaques y Bolsas</option>
+                <option value="Publicidad e Instagram">Publicidad e Instagram</option>
+                <option value="Servicios y Alquiler">Servicios y Local</option>
+                <option value="Retiro Personal">Retiro Personal</option>
+                <option value="Otro">Otro Concepto</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="fin-description" class="form-label">Descripción: *</label>
+            <input type="text" id="fin-description" class="form-input" placeholder="Ej: Pago de lote de geles M&Y" required>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="fin-account" class="form-label">Cuenta / Caja: *</label>
+              <select id="fin-account" class="select-styled" required>
+                <option value="Efectivo $">💵 Efectivo Dólares ($)</option>
+                <option value="Pago Móvil">📲 Banesco Pago Móvil (Bs)</option>
+                <option value="Zelle">🇺🇸 Zelle ($)</option>
+                <option value="Zinli">💳 Zinli ($)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="fin-date" class="form-label">Fecha: *</label>
+              <input type="date" id="fin-date" class="form-input" required>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="fin-amount-usd" class="form-label">Monto en Dólares ($): *</label>
+              <input type="number" step="0.01" id="fin-amount-usd" class="form-input" placeholder="0.00" required>
+            </div>
+            <div class="form-group">
+              <label for="fin-amount-bs" class="form-label">Equivalente en Bs:</label>
+              <input type="number" step="0.01" id="fin-amount-bs" class="form-input" placeholder="0.00">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="fin-ref" class="form-label">Nro. de Referencia (opcional):</label>
+            <input type="text" id="fin-ref" class="form-input" placeholder="Ej: Ref #981245">
+          </div>
+
+          <div class="modal-footer-buttons">
+            <button type="button" class="btn-secondary" data-close-modal="modal-finance-entry">Cancelar</button>
+            <button type="submit" class="btn-primary">Guardar Movimiento</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL PRODUCTO -->
+  <div class="modal-overlay" id="modal-product-entry" style="display:none;">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-product-title">🗃️ Insumo de Uñas</h3>
+        <button class="close-modal-btn" data-close-modal="modal-product-entry">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-product-entry">
+          <input type="hidden" id="prod-id">
+
+          <div class="form-group">
+            <label for="prod-name" class="form-label">Nombre del Insumo: *</label>
+            <input type="text" id="prod-name" class="form-input" placeholder="Ej: Base Rubber Tiendas Yolo" required>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="prod-category" class="form-label">Categoría: *</label>
+              <select id="prod-category" class="select-styled" required>
+                <option value="Esmaltes y Geles">💅 Esmaltes y Geles</option>
+                <option value="Kits">📦 Kits para Principiantes</option>
+                <option value="Pinceles y Herramientas">🖌️ Pinceles y Herramientas</option>
+                <option value="Tips y Extensiones">📐 Tips y Dual System</option>
+                <option value="Líquidos y Preparación">🧪 Líquidos y Preparación</option>
+                <option value="Pestañas y Belleza">👁️ Pestañas y Belleza</option>
+                <option value="Decoración">💎 Decoración y Cristales</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="prod-sku" class="form-label">Código SKU:</label>
+              <input type="text" id="prod-sku" class="form-input" placeholder="Ej: TY-BR-01">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="prod-desc" class="form-label">Descripción del Insumo:</label>
+            <textarea id="prod-desc" class="form-textarea" rows="2"></textarea>
+          </div>
+
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label for="prod-price-usd" class="form-label">P. Venta ($): *</label>
+              <input type="number" step="0.10" id="prod-price-usd" class="form-input" placeholder="4.50" required>
+            </div>
+            <div class="form-group">
+              <label for="prod-cost-usd" class="form-label">Costo ($): *</label>
+              <input type="number" step="0.10" id="prod-cost-usd" class="form-input" placeholder="2.20" required>
+            </div>
+            <div class="form-group">
+              <label for="prod-stock" class="form-label">Stock Actual: *</label>
+              <input type="number" id="prod-stock" class="form-input" placeholder="20" required>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="prod-stock-min" class="form-label">Alerta Stock Mínimo:</label>
+              <input type="number" id="prod-stock-min" class="form-input" value="5">
+            </div>
+            <div class="form-group">
+              <label for="prod-featured" class="form-label">¿Destacado en Tienda?</label>
+              <select id="prod-featured" class="select-styled">
+                <option value="SI">Sí, mostrar en destacados</option>
+                <option value="NO">No, catálogo estándar</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="modal-footer-buttons">
+            <button type="button" class="btn-secondary" data-close-modal="modal-product-entry">Cancelar</button>
+            <button type="submit" class="btn-primary">Guardar Insumo</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL COTIZACIÓN IMPRIMIBLE -->
+  <div class="modal-overlay" id="modal-quote-viewer" style="display:none;">
+    <div class="modal-window quote-modal-window">
+      <div class="modal-header no-print">
+        <h3 class="modal-title">📄 Cotización Formal — Tiendas Yolo</h3>
+        <div class="modal-header-actions">
+          <button class="btn-primary" id="btn-print-quote">🖨️ Imprimir / Guardar en PDF</button>
+          <button class="btn-whatsapp-outline" id="btn-quote-send-wa">📲 Enviar por WhatsApp</button>
+          <button class="close-modal-btn" data-close-modal="modal-quote-viewer">✕</button>
+        </div>
+      </div>
+      
+      <div class="printable-quote-document" id="printable-quote-area">
+        <div class="quote-header">
+          <div class="quote-brand">
+            <img src="assets/logo-yolo.png" alt="Tiendas Yolo" class="quote-logo">
+            <div class="quote-company-info">
+              <h2 class="quote-company-name">TIENDAS YOLO®</h2>
+              <p class="quote-company-tagline">Insumos para uñas y todo para la manicurista</p>
+              <p class="quote-company-sub">Maracaibo, Zulia — Venezuela | WhatsApp: 0426-5604070</p>
+            </div>
+          </div>
+          <div class="quote-meta-box">
+            <div class="quote-pill-id" id="print-quote-id">COT-2026-0001</div>
+            <p><strong>Fecha:</strong> <span id="print-quote-date">21/10/2026</span></p>
+            <p><strong>Validez:</strong> <span id="print-quote-validity">7 días hábiles</span></p>
+            <p><strong>Tasa referencial:</strong> <span id="print-quote-rate">Bs. 395.50 / $</span></p>
+          </div>
+        </div>
+
+        <div class="quote-client-info-box">
+          <h4 class="quote-box-title">DATOS DE LA CLIENTA / SALÓN:</h4>
+          <div class="quote-client-grid">
+            <p><strong>Manicurista / Contacto:</strong> <span id="print-client-name">-</span></p>
+            <p><strong>Teléfono WhatsApp:</strong> <span id="print-client-phone">-</span></p>
+            <p><strong>Estudio / Salón:</strong> <span id="print-client-salon">-</span></p>
+            <p><strong>Ubicación:</strong> <span id="print-client-address">Maracaibo</span></p>
+          </div>
+        </div>
+
+        <table class="quote-items-table">
+          <thead>
+            <tr>
+              <th>Cant.</th>
+              <th>Descripción del Insumo</th>
+              <th>Precio Unit. ($)</th>
+              <th>Total ($)</th>
+              <th>Total (Bs)</th>
+            </tr>
+          </thead>
+          <tbody id="print-quote-items-body"></tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3" class="text-right font-bold">Subtotal Insumos:</td>
+              <td class="font-bold" id="print-quote-subtotal-usd">$0.00</td>
+              <td class="font-bold" id="print-quote-subtotal-bs">Bs. 0.00</td>
+            </tr>
+            <tr class="grand-total-quote-row">
+              <td colspan="3" class="text-right font-bold">TOTAL GENERAL:</td>
+              <td class="font-bold highlight-val" id="print-quote-grand-usd">$0.00</td>
+              <td class="font-bold highlight-val" id="print-quote-grand-bs">Bs. 0.00</td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <div class="quote-terms-box">
+          <p><strong>Condiciones Comerciales:</strong> Precios calculados a la tasa del día. Delivery gratis en compras desde $15 en Maracaibo.</p>
+          <p class="quote-signature-note"><em>“Yo lo compro, Yo lo merezco” — Tiendas Yolo®.</em></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="toast-notification-container" class="toast-container"></div>
+
+  <!-- SCRIPT PRIVADO DEL PANEL DE GESTIÓN -->
+  <script src="admin.js"></script>
+</body>
+</html>

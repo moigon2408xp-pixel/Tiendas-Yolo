@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Tiendas Yolo® | Catálogo Oficial & Insumos para Uñas</title>
+  
+  <!-- SEO & Redes Sociales -->
+  <meta name="description" content="Tiendas Yolo - Insumos profesionales para uñas en Maracaibo. Kits para principiantes, esmaltes semipermanentes, geles, pinceles y todo para la manicurista. Delivery gratis y envíos nacionales.">
+  <meta name="theme-color" content="#701a49">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="theme-light">
+
+  <!-- TOP BANNER DE INFORMACIÓN Y TASA EN VIVO -->
+  <aside class="top-info-bar">
+    <div class="top-info-content">
+      <div class="info-item">
+        <span class="pulse-dot"></span>
+        <span class="info-label">💅 Maracaibo:</span>
+        <span class="info-highlight" id="top-delivery-badge">Delivery Gratis desde $15</span>
+      </div>
+      <div class="info-item rate-ticker">
+        <span class="info-label">💵 Tasa Hoy:</span>
+        <span class="rate-val" id="top-rate-display">Bs. 395.50 / $</span>
+      </div>
+      <div class="info-item">
+        <a href="https://instagram.com/tiendasyolo" target="_blank" rel="noopener noreferrer" class="social-top-link">
+          📸 @tiendasyolo
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- NAVBAR INSTITUCIONAL DE TIENDAS YOLO -->
+  <header class="main-header">
+    <div class="header-container">
+      
+      <!-- LOGO DE MARCA -->
+      <a href="./" class="brand-group">
+        <div class="logo-wrapper">
+          <img src="assets/logo-yolo.png" alt="Logo Tiendas Yolo" class="brand-logo" onerror="this.src='assets/logo-yolo.jpeg'">
+        </div>
+        <div class="brand-titles">
+          <h1 class="brand-title">Tiendas Yolo<span class="brand-reg">®</span></h1>
+          <p class="brand-subtitle">Insumos para uñas y todo para la manicurista</p>
+        </div>
+      </a>
+
+      <!-- BUSCADOR RÁPIDO DE INSUMOS -->
+      <div class="search-box-header" id="header-search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="global-search-input" placeholder="Buscar esmaltes, geles, kits, pinceles, tips..." autocomplete="off">
+        <button class="clear-search-btn" id="btn-clear-search" style="display:none;">✕</button>
+      </div>
+
+      <!-- ACCIONES DE CABECERA -->
+      <div class="nav-actions">
+        <!-- BOTÓN DE CARRITO -->
+        <button class="cart-btn" id="btn-open-cart" title="Ver pedido actual">
+          <span class="cart-icon">🛒</span>
+          <span class="cart-count-badge" id="cart-counter">0</span>
+          <span class="cart-total-badge" id="cart-total-header">$0.00</span>
+        </button>
+
+        <!-- TEMA CLARO / OSCURO -->
+        <button class="theme-toggle-btn" id="btn-toggle-theme" title="Modo Claro/Oscuro">
+          🌓
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="main-content">
+
+    <!-- =================================================================== -->
+    <!-- SOCIAL HUB / LINK-IN-BIO BAR (CONECTA CON TIENDAS YOLO) -->
+    <!-- =================================================================== -->
+    <section class="social-hub-section">
+      <div class="social-hub-container">
+        <a href="https://wa.me/584265604070" target="_blank" rel="noopener noreferrer" class="social-hub-btn wa-pill">
+          <span class="hub-icon">📲</span>
+          <div class="hub-texts">
+            <span class="hub-title">WhatsApp Oficial</span>
+            <span class="hub-sub">0426-5604070</span>
+          </div>
+        </a>
+
+        <a href="https://instagram.com/tiendasyolo" target="_blank" rel="noopener noreferrer" class="social-hub-btn ig-pill">
+          <span class="hub-icon">📸</span>
+          <div class="hub-texts">
+            <span class="hub-title">Instagram</span>
+            <span class="hub-sub">@tiendasyolo</span>
+          </div>
+        </a>
+
+        <div class="social-hub-btn deliv-pill">
+          <span class="hub-icon">🚚</span>
+          <div class="hub-texts">
+            <span class="hub-title">Delivery Maracaibo</span>
+            <span class="hub-sub">Gratis desde $15</span>
+          </div>
+        </div>
+
+        <div class="social-hub-btn envios-pill">
+          <span class="hub-icon">📦</span>
+          <div class="hub-texts">
+            <span class="hub-title">Envíos Nacionales</span>
+            <span class="hub-sub">MRW • Tealca • Zoom</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- HERO BANNER GLAMOUR -->
+    <!-- =================================================================== -->
+    <section class="hero-glam-card">
+      <div class="hero-inner">
+        <div class="hero-text-side">
+          <div class="hero-badge">
+            <span>✨ COLECCIÓN EXCLUSIVA 2026</span>
+          </div>
+          <h2 class="hero-headline">Insumos Profesionales para Manicuristas de Alto Nivel</h2>
+          <p class="hero-description">
+            Encuentra todo lo que necesitas para tu mesa de trabajo: <strong>Esmaltes M&Y, Base Rubber, Geles Constructores, Spider Gel, Pinceles Liner y Kits para Principiantes</strong> con entrega inmediata en Maracaibo y envíos a toda Venezuela.
+          </p>
+          <div class="hero-quote-box">
+            <span class="quote-mark">“</span>
+            <span class="quote-text">Yo lo compro, Yo lo merezco.</span>
+            <span class="quote-author">— Filosofía Tiendas Yolo</span>
+          </div>
+          <div class="hero-cta-group">
+            <button class="btn-primary" id="btn-hero-explore-kits">
+              📦 Ver Kits para Principiantes
+            </button>
+            <a href="https://wa.me/584265604070?text=Hola%20Tiendas%20Yolo%2C%20deseo%20m%C3%A1s%20informaci%C3%B3n%20sobre%20sus%20insumos" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-outline">
+              💬 Escribir al WhatsApp
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-visual-side">
+          <div class="hero-card-floating">
+            <img src="assets/logo-yolo.png" alt="Tiendas Yolo" class="hero-floating-logo">
+            <div class="hero-promo-badge">
+              <span class="promo-title">🚚 Delivery Gratis</span>
+              <span class="promo-sub">En todo Maracaibo desde $15</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- SELECTOR DE CATEGORÍAS -->
+    <!-- =================================================================== -->
+    <section class="store-filter-bar">
+      <div class="categories-scroll-wrapper" id="categories-container">
+        <!-- Render dinámico de categorías -->
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- CABECERA Y GRID DE INSUMOS -->
+    <!-- =================================================================== -->
+    <section class="catalog-header-row">
+      <div class="catalog-title-group">
+        <h3 class="catalog-section-title" id="catalog-section-title">Todos los Insumos</h3>
+        <span class="catalog-count-pill" id="catalog-products-count">Cargando catálogo...</span>
+      </div>
+      <div class="catalog-controls">
+        <label for="catalog-sort-select" class="sort-label">Ordenar:</label>
+        <select id="catalog-sort-select" class="select-styled">
+          <option value="featured">✨ Más Populares</option>
+          <option value="price-asc">💵 Precio: Menor a Mayor</option>
+          <option value="price-desc">💎 Precio: Mayor a Menor</option>
+          <option value="name-asc">🔤 Nombre: A - Z</option>
+          <option value="stock-desc">📦 Mayor Stock Disponible</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="products-grid" id="products-grid-container">
+      <!-- Tarjetas de productos inyectadas dinámicamente -->
+    </section>
+
+  </main>
+
+  <!-- =================================================================== -->
+  <!-- FOOTER INSTITUCIONAL CON ENLACE DISCRETO A LA APP INTERNA -->
+  <!-- =================================================================== -->
+  <footer class="store-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <img src="assets/logo-yolo.png" alt="Tiendas Yolo" class="footer-logo">
+        <div>
+          <h4 class="footer-title">Tiendas Yolo®</h4>
+          <p class="footer-desc">Insumos para uñas y todo para la manicurista en Maracaibo, Zulia.</p>
+          <p class="footer-desc"><em>“Yo lo compro, Yo lo merezco”</em></p>
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <span class="footer-col-title">Contacto & Envíos</span>
+        <a href="https://wa.me/584265604070" target="_blank" rel="noopener noreferrer">📲 WhatsApp: 0426-5604070</a>
+        <a href="https://instagram.com/tiendasyolo" target="_blank" rel="noopener noreferrer">📸 Instagram: @tiendasyolo</a>
+        <span>📍 Maracaibo, Zulia — Venezuela</span>
+      </div>
+
+      <div class="footer-admin-link">
+        <span class="footer-col-title">Administración</span>
+        <a href="admin.html" class="btn-footer-admin">
+          💼 Acceso al Sistema Interno
+        </a>
+        <span class="admin-hint">Portal exclusivo para la dueña y despacho</span>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Tiendas Yolo®. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- =================================================================== -->
+  <!-- MODAL / DRAWER: CARRITO DE COMPRAS & CHECKOUT A WHATSAPP -->
+  <!-- =================================================================== -->
+  <div class="modal-overlay" id="cart-drawer-modal" style="display:none;">
+    <div class="cart-drawer-sheet">
+      <div class="cart-drawer-header">
+        <div class="cart-drawer-title-wrap">
+          <span class="cart-drawer-icon">🛍️</span>
+          <div>
+            <h3 class="cart-drawer-title">Tu Pedido de Insumos</h3>
+            <span class="cart-drawer-sub">Tiendas Yolo — Maracaibo</span>
+          </div>
+        </div>
+        <button class="close-modal-btn" id="btn-close-cart" title="Cerrar">✕</button>
+      </div>
+
+      <div class="cart-drawer-body">
+        
+        <!-- LISTA DE PRODUCTOS EN EL CARRITO -->
+        <div class="cart-items-list" id="cart-items-list">
+          <!-- Renderizado dinámico -->
+        </div>
+
+        <!-- FORMULARIO DE DESPACHO Y CLIENTE -->
+        <div class="cart-delivery-section">
+          <h4 class="section-micro-heading">📋 Datos de Entrega y Pago</h4>
+          
+          <div class="form-group">
+            <label for="cart-client-name" class="form-label">Nombre de la Manicurista / Cliente: *</label>
+            <input type="text" id="cart-client-name" class="form-input" placeholder="Ej: Valentina Morales (Studio)">
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="cart-client-phone" class="form-label">Teléfono WhatsApp: *</label>
+              <input type="tel" id="cart-client-phone" class="form-input" placeholder="0414-1234567">
+            </div>
+            <div class="form-group">
+              <label for="cart-client-instagram" class="form-label">Instagram (@usuario):</label>
+              <input type="text" id="cart-client-instagram" class="form-input" placeholder="@valentinails">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="cart-delivery-type" class="form-label">Tipo de Entrega:</label>
+            <select id="cart-delivery-type" class="select-styled">
+              <option value="delivery-maracaibo">🚚 Delivery en Maracaibo (¡Gratis desde $15!)</option>
+              <option value="envio-nacional">📦 Envío Nacional (MRW / Tealca / Zoom)</option>
+              <option value="retiro-personal">📍 Retiro Personalmente</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="cart-delivery-address" class="form-label">Dirección / Sector / Punto de Referencia:</label>
+            <input type="text" id="cart-delivery-address" class="form-input" placeholder="Ej: Sector La Paragua, Calle 57, Casa #12">
+          </div>
+
+          <div class="form-group">
+            <label for="cart-payment-method" class="form-label">Método de Pago Preferido:</label>
+            <select id="cart-payment-method" class="select-styled">
+              <option value="Pago Móvil">📲 Pago Móvil (Bs)</option>
+              <option value="Efectivo $">💵 Dólares en Efectivo ($)</option>
+              <option value="Zelle">🇺🇸 Zelle ($)</option>
+              <option value="Zinli / Binance">💳 Zinli / Binance Pay</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="cart-notes" class="form-label">Tonos o detalles específicos (opcional):</label>
+            <input type="text" id="cart-notes" class="form-input" placeholder="Ej: Esmalte M&Y tono #03, spider gel blanco">
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- FOOTER DEL CARRITO: TOTALES Y ACCIONES -->
+      <div class="cart-drawer-footer">
+        <div class="cart-totals-breakdown">
+          <div class="total-line">
+            <span>Subtotal Insumos:</span>
+            <span id="cart-summary-subtotal">$0.00</span>
+          </div>
+          <div class="total-line" id="cart-delivery-fee-row">
+            <span>Delivery Maracaibo:</span>
+            <span id="cart-summary-delivery" class="free-delivery">¡GRATIS!</span>
+          </div>
+          <div class="total-line grand-total">
+            <span>Total a Pagar:</span>
+            <div class="grand-total-numbers">
+              <span class="total-usd" id="cart-summary-total-usd">$0.00</span>
+              <span class="total-bs" id="cart-summary-total-bs">Bs. 0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cart-action-buttons">
+          <button class="btn-whatsapp-full" id="btn-cart-send-whatsapp">
+            <span class="wa-icon">💬</span>
+            <span class="wa-txt">Enviar Pedido a WhatsApp</span>
+          </button>
+          <div class="secondary-cart-actions">
+            <button class="btn-secondary" id="btn-cart-download-quote">📄 Cotización Formal</button>
+            <button class="btn-ghost" id="btn-cart-clear">Vaciar Carrito</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =================================================================== -->
+  <!-- MODAL: COTIZACIÓN FORMAL (IMPRIMIBLE / PDF PARA ACADEMIAS) -->
+  <!-- =================================================================== -->
+  <div class="modal-overlay" id="modal-quote-viewer" style="display:none;">
+    <div class="modal-window quote-modal-window">
+      <div class="modal-header no-print">
+        <h3 class="modal-title">📄 Cotización Formal — Tiendas Yolo</h3>
+        <div class="modal-header-actions">
+          <button class="btn-primary" id="btn-print-quote">🖨️ Imprimir / Guardar en PDF</button>
+          <button class="btn-whatsapp-outline" id="btn-quote-send-wa">📲 Enviar por WhatsApp</button>
+          <button class="close-modal-btn" data-close-modal="modal-quote-viewer">✕</button>
+        </div>
+      </div>
+      
+      <!-- DOCUMENTO MEMBRETADO PARA IMPRIMIR -->
+      <div class="printable-quote-document" id="printable-quote-area">
+        <div class="quote-header">
+          <div class="quote-brand">
+            <img src="assets/logo-yolo.png" alt="Tiendas Yolo" class="quote-logo">
+            <div class="quote-company-info">
+              <h2 class="quote-company-name">TIENDAS YOLO®</h2>
+              <p class="quote-company-tagline">Insumos para uñas y todo para la manicurista</p>
+              <p class="quote-company-sub">Maracaibo, Zulia — Venezuela | WhatsApp: 0426-5604070</p>
+              <p class="quote-company-sub">Instagram: @tiendasyolo</p>
+            </div>
+          </div>
+          <div class="quote-meta-box">
+            <div class="quote-pill-id" id="print-quote-id">COT-2026-0001</div>
+            <p><strong>Fecha:</strong> <span id="print-quote-date">21/10/2026</span></p>
+            <p><strong>Validez:</strong> <span id="print-quote-validity">7 días hábiles</span></p>
+            <p><strong>Tasa referencial:</strong> <span id="print-quote-rate">Bs. 395.50 / $</span></p>
+          </div>
+        </div>
+
+        <div class="quote-client-info-box">
+          <h4 class="quote-box-title">DATOS DE LA CLIENTA / SALÓN:</h4>
+          <div class="quote-client-grid">
+            <p><strong>Manicurista / Contacto:</strong> <span id="print-client-name">-</span></p>
+            <p><strong>Teléfono WhatsApp:</strong> <span id="print-client-phone">-</span></p>
+            <p><strong>Estudio / Salón:</strong> <span id="print-client-salon">-</span></p>
+            <p><strong>Ubicación / Entrega:</strong> <span id="print-client-address">Maracaibo</span></p>
+          </div>
+        </div>
+
+        <table class="quote-items-table">
+          <thead>
+            <tr>
+              <th>Cant.</th>
+              <th>Descripción del Insumo</th>
+              <th>Precio Unit. ($)</th>
+              <th>Total ($)</th>
+              <th>Total (Bs)</th>
+            </tr>
+          </thead>
+          <tbody id="print-quote-items-body"></tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3" class="text-right font-bold">Subtotal Insumos:</td>
+              <td class="font-bold" id="print-quote-subtotal-usd">$0.00</td>
+              <td class="font-bold" id="print-quote-subtotal-bs">Bs. 0.00</td>
+            </tr>
+            <tr>
+              <td colspan="3" class="text-right font-bold">Delivery / Despacho:</td>
+              <td colspan="2" class="font-bold text-success" id="print-quote-delivery-status">¡DELIVERY GRATIS EN MARACAIBO!</td>
+            </tr>
+            <tr class="grand-total-quote-row">
+              <td colspan="3" class="text-right font-bold">TOTAL GENERAL:</td>
+              <td class="font-bold highlight-val" id="print-quote-grand-usd">$0.00</td>
+              <td class="font-bold highlight-val" id="print-quote-grand-bs">Bs. 0.00</td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <div class="quote-terms-box">
+          <p><strong>Condiciones Comerciales:</strong> Precios calculados a la tasa del día. El apartado de mercancía se confirma al verificar el comprobante de pago móvil o divisa. Delivery gratis en compras desde $15 en Maracaibo.</p>
+          <p class="quote-signature-note"><em>“Yo lo compro, Yo lo merezco” — Gracias por preferir a Tiendas Yolo®.</em></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TOAST DE NOTIFICACIONES -->
+  <div id="toast-notification-container" class="toast-container"></div>
+
+  <!-- SCRIPT DE TIENDA PÚBLICA -->
+  <script src="app.js"></script>
+</body>
+</html>
