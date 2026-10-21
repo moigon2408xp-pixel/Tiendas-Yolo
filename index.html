@@ -8,8 +8,8 @@
   <!-- SEO & Redes Sociales -->
   <meta name="description" content="Tiendas Yolo - Insumos profesionales para uñas en Maracaibo. Kits para principiantes, esmaltes semipermanentes, geles, pinceles y todo para la manicurista. Delivery gratis y envíos nacionales.">
   <meta name="theme-color" content="#701a49">
-  <link rel="icon" type="image/png" href="assets/favicon.png">
-  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="manifest" href="manifest.webmanifest">
 
   <!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
@@ -29,9 +29,10 @@
         <span class="info-label">💅 Maracaibo:</span>
         <span class="info-highlight" id="top-delivery-badge">Delivery Gratis desde $15</span>
       </div>
-      <div class="info-item rate-ticker">
+      <div class="info-item rate-ticker" id="rate-ticker-box" title="Haz clic para actualizar la tasa del día" style="cursor:pointer;">
         <span class="info-label">💵 Tasa Hoy:</span>
         <span class="rate-val" id="top-rate-display">Bs. 395.50 / $</span>
+        <span style="font-size:0.7rem; opacity:0.8; margin-left:2px;">✏️</span>
       </div>
       <div class="info-item">
         <a href="https://instagram.com/tiendasyolo" target="_blank" rel="noopener noreferrer" class="social-top-link">
@@ -45,10 +46,10 @@
   <header class="main-header">
     <div class="header-container">
       
-      <!-- LOGO DE MARCA -->
-      <a href="./" class="brand-group">
+      <!-- LOGO DE MARCA (CON DETECCIÓN DE TRIPLE TAP PARA ADMIN) -->
+      <a href="./" class="brand-group" id="brand-logo-trigger" title="Tiendas Yolo®">
         <div class="logo-wrapper">
-          <img src="assets/logo-yolo.png" alt="Logo Tiendas Yolo" class="brand-logo" onerror="this.src='assets/logo-yolo.jpeg'">
+          <img src="logo-yolo.png" alt="Logo Tiendas Yolo" class="brand-logo" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
         </div>
         <div class="brand-titles">
           <h1 class="brand-title">Tiendas Yolo<span class="brand-reg">®</span></h1>
@@ -153,7 +154,7 @@
 
         <div class="hero-visual-side">
           <div class="hero-card-floating">
-            <img src="assets/logo-yolo.png" alt="Tiendas Yolo" class="hero-floating-logo">
+            <img src="logo-yolo.png" alt="Tiendas Yolo" class="hero-floating-logo" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
             <div class="hero-promo-badge">
               <span class="promo-title">🚚 Delivery Gratis</span>
               <span class="promo-sub">En todo Maracaibo desde $15</span>
@@ -199,12 +200,12 @@
   </main>
 
   <!-- =================================================================== -->
-  <!-- FOOTER INSTITUCIONAL CON ENLACE DISCRETO A LA APP INTERNA -->
+  <!-- FOOTER INSTITUCIONAL (CON BOTÓN DE ADMIN OCULTO POR DEFECTO) -->
   <!-- =================================================================== -->
   <footer class="store-footer">
     <div class="footer-container">
       <div class="footer-brand">
-        <img src="assets/logo-yolo.png" alt="Tiendas Yolo" class="footer-logo">
+        <img src="logo-yolo.png" alt="Tiendas Yolo" class="footer-logo" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
         <div>
           <h4 class="footer-title">Tiendas Yolo®</h4>
           <p class="footer-desc">Insumos para uñas y todo para la manicurista en Maracaibo, Zulia.</p>
@@ -219,7 +220,8 @@
         <span>📍 Maracaibo, Zulia — Venezuela</span>
       </div>
 
-      <div class="footer-admin-link">
+      <!-- BOTÓN OCULTO PARA CLIENTES: Solo visible tras activar atajo secreto -->
+      <div class="footer-admin-link" id="footer-admin-box" style="display:none;">
         <span class="footer-col-title">Administración</span>
         <a href="admin.html" class="btn-footer-admin">
           💼 Acceso al Sistema Interno
@@ -361,7 +363,7 @@
       <div class="printable-quote-document" id="printable-quote-area">
         <div class="quote-header">
           <div class="quote-brand">
-            <img src="assets/logo-yolo.png" alt="Tiendas Yolo" class="quote-logo">
+            <img src="logo-yolo.png" alt="Tiendas Yolo" class="quote-logo" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
             <div class="quote-company-info">
               <h2 class="quote-company-name">TIENDAS YOLO®</h2>
               <p class="quote-company-tagline">Insumos para uñas y todo para la manicurista</p>
