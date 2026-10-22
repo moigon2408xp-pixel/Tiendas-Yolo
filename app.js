@@ -214,10 +214,64 @@
     rateLastUpdated: new Date().toISOString(),
     whatsappNumber: "584265604070",
     deliveryFreeMinUSD: 15.00,
-    deliveryFlatFeeUSD: 2.00,
+    deliveryFlatFeeUSD: 2.50,
     adminPin: "2026",
-    paymentInfo: "Banesco (0134) | CI: V-28123456 | Telf: 0426-5604070\nZelle: tiendasyolo.pagos@gmail.com\nZinli: tiendasyolo.pagos@gmail.com"
+    paymentInfo: "Banesco (0134) | CI: V-28123456 | Telf: 0426-5604070\nBinance Pay ID: 829140291 (USDT)"
   };
+
+  // Coordenadas oficiales de Tiendas Yolo Maracaibo (Centro / 5 de Julio)
+  const STORE_LOCATION = {
+    name: "Tiendas Yolo® Maracaibo",
+    lat: 10.6427,
+    lng: -71.6125
+  };
+
+  // Fórmula de Haversine para cálculo de distancia en línea recta precisa
+  function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Radio de la Tierra en km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return Math.round((R * c) * 10) / 10; // Redondeado a 1 decimal
+  }
+
+  // Extractor inteligente de coordenadas (lat, lng directas o enlaces de Google Maps)
+  function parseCoordinatesString(str) {
+    if (!str || typeof str !== 'string') return null;
+    const trimmed = str.trim();
+    // 1. Coordenadas directas: "10.6427, -71.6125" o "10.6427 -71.6125"
+    const directMatch = trimmed.match(/(-?\d{1,2}\.\d+)[,\s]+(-?\d{1,3}\.\d+)/);
+    if (directMatch) {
+      return { lat: parseFloat(directMatch[1]), lng: parseFloat(directMatch[2]) };
+    }
+    // 2. URL de Google Maps: maps.google.com/?q=... o @lat,lng
+    const urlMatch = trimmed.match(/@(-?\d{1,2}\.\d+),(-?\d{1,3}\.\d+)/) ||
+                     trimmed.match(/q=(-?\d{1,2}\.\d+),(-?\d{1,3}\.\d+)/);
+    if (urlMatch) {
+      return { lat: parseFloat(urlMatch[1]), lng: parseFloat(urlMatch[2]) };
+    }
+    return null;
+  }
+
+  // Tarificador de Delivery dinámico por distancia (Estilo Yummy)
+  function getDeliveryFeeByKm(km, subtotalUSD) {
+    if (subtotalUSD >= Number(state.config.deliveryFreeMinUSD || 15.00)) {
+      return 0.00; // ¡GRATIS por compra mayor o igual a $15!
+    }
+    if (km === null || km === undefined || isNaN(km)) {
+      return Number(state.config.deliveryFlatFeeUSD || 2.50);
+    }
+    if (km <= 3.0) return 1.50;      // Zona Cercana (Centro, 5 de Julio, Casco)
+    if (km <= 6.0) return 2.50;      // Zona Media (Bella Vista, Indio Mara, La Lago)
+    if (km <= 10.0) return 3.50;     // Zona Ampliada (La Limpia, Delicias Norte, Cumbres)
+    if (km <= 15.0) return 4.50;     // Zona Periférica (San Francisco, Milagro Norte)
+    // Más de 15 km: base $5.00 + $0.50 por km adicional
+    return 5.00 + (Math.ceil(km - 15) * 0.50);
+  }
 
   const state = {
     products: [],
@@ -232,7 +286,9 @@
     cardQuantities: {},
     isEditMode: false,
     deferredPwaPrompt: null,
-    currentPaymentOrder: null
+    currentPaymentOrder: null,
+    deliveryDistanceKm: null,
+    deliveryCoords: null
   };
 
   // ============================================================================
@@ -269,7 +325,7 @@
     try {
       const prof = localStorage.getItem(PROFILE_STORAGE_KEY);
       if (prof) state.clientProfile = JSON.parse(prof);
-    } catch (e) {}
+    } catch (e) { }
 
     updateRateDisplay();
     updateClientStatusBadge();
@@ -339,7 +395,7 @@
       'Decoración': 'DEC'
     };
     const prefix = prefixes[category] || 'YOLO';
-    
+
     const existingNums = (currentProducts || [])
       .map(p => {
         const s = (p.sku || p.id || '').toUpperCase();
@@ -355,8 +411,8 @@
     let nextNum = maxNum + 1;
     let generatedSKU = `${prefix}-${String(nextNum).padStart(3, '0')}`;
 
-    while ((currentProducts || []).some(p => 
-      (p.sku && p.sku.toUpperCase() === generatedSKU) || 
+    while ((currentProducts || []).some(p =>
+      (p.sku && p.sku.toUpperCase() === generatedSKU) ||
       (p.id && p.id.toUpperCase() === generatedSKU)
     )) {
       nextNum++;
@@ -477,7 +533,7 @@
       'Esmaltes': '✨',
       'Geles y Acrílicos': '💎',
       'Pinceles y Herramientas': '🖌️',
-      'Lámparas y Equipos': '⚡',
+      'Lámparas y Equipos': '💡',
       'Kits': '🎁',
       'Líquidos y Preparación': '🌸',
       'Pestañas y Belleza': '👁️',
@@ -651,10 +707,21 @@
 
     const totalQty = state.cart.reduce((sum, item) => sum + item.quantity, 0);
     const subtotalUSD = state.cart.reduce((sum, item) => sum + (item.precioUSD * item.quantity), 0);
-    const rate = Number(state.config.rateBCV || 395.50);
+    const rate = Number(state.config.rateBCV || 883.40);
 
-    const isFreeDelivery = subtotalUSD >= Number(state.config.deliveryFreeMinUSD || 15.00);
-    const deliveryUSD = (subtotalUSD > 0 && !isFreeDelivery) ? Number(state.config.deliveryFlatFeeUSD || 2.00) : 0;
+    const delTypeSelect = document.getElementById('cart-delivery-type');
+    const delType = delTypeSelect ? delTypeSelect.value : 'delivery-maracaibo';
+    const isFreeDelivery = subtotalUSD >= Number(state.config.deliveryFreeMinUSD || 15.00) || delType === 'retiro-personal';
+
+    let deliveryUSD = 0;
+    if (subtotalUSD > 0 && !isFreeDelivery) {
+      if (delType === 'retiro-personal' || delType === 'envio-nacional') {
+        deliveryUSD = 0;
+      } else {
+        deliveryUSD = getDeliveryFeeByKm(state.deliveryDistanceKm, subtotalUSD);
+      }
+    }
+
     const totalUSD = subtotalUSD + deliveryUSD;
     const totalBs = totalUSD * rate;
 
@@ -691,8 +758,19 @@
 
     if (sSub) sSub.textContent = `$${subtotalUSD.toFixed(2)}`;
     if (sDel) {
-      sDel.textContent = isFreeDelivery ? "¡GRATIS!" : `$${deliveryUSD.toFixed(2)}`;
-      sDel.className = isFreeDelivery ? "free-delivery font-bold" : "font-bold";
+      if (delType === 'retiro-personal') {
+        sDel.textContent = "Retiro en Tienda (Gratis)";
+        sDel.className = "free-delivery font-bold";
+      } else if (delType === 'envio-nacional') {
+        sDel.textContent = "Cobro en Destino (MRW / Tealca)";
+        sDel.className = "font-bold";
+      } else if (isFreeDelivery) {
+        sDel.textContent = "¡GRATIS!";
+        sDel.className = "free-delivery font-bold";
+      } else {
+        sDel.textContent = `$${deliveryUSD.toFixed(2)}${state.deliveryDistanceKm ? ` (${state.deliveryDistanceKm} km)` : ''}`;
+        sDel.className = "font-bold";
+      }
     }
     if (sTotUSD) sTotUSD.textContent = `$${totalUSD.toFixed(2)}`;
     if (sTotBs) sTotBs.textContent = `Bs. ${totalBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -779,18 +857,31 @@
     }
 
     const subtotalUSD = state.cart.reduce((sum, item) => sum + (item.precioUSD * item.quantity), 0);
-    const isFree = subtotalUSD >= Number(state.config.deliveryFreeMinUSD || 15.00);
-    const deliveryUSD = isFree ? 0 : Number(state.config.deliveryFlatFeeUSD || 2.00);
+    const delType = document.getElementById('cart-delivery-type').value;
+    const isFree = subtotalUSD >= Number(state.config.deliveryFreeMinUSD || 15.00) || delType === 'retiro-personal';
+    
+    let deliveryUSD = 0;
+    if (subtotalUSD > 0 && !isFree) {
+      if (delType === 'retiro-personal' || delType === 'envio-nacional') {
+        deliveryUSD = 0;
+      } else {
+        deliveryUSD = getDeliveryFeeByKm(state.deliveryDistanceKm, subtotalUSD);
+      }
+    }
+
     const totalUSD = subtotalUSD + deliveryUSD;
-    const rate = Number(state.config.rateBCV || 395.50);
+    const rate = Number(state.config.rateBCV || 883.40);
     const totalBs = totalUSD * rate;
+    const coordsVal = document.getElementById('cart-delivery-coords') ? document.getElementById('cart-delivery-coords').value.trim() : '';
 
     state.currentPaymentOrder = {
       clientName: clientName,
       clientPhone: clientPhone,
       clientSalon: document.getElementById('cart-client-salon').value.trim() || 'Estudio Particular',
       clientAddress: clientAddress || 'Maracaibo',
-      deliveryType: document.getElementById('cart-delivery-type').value,
+      deliveryType: delType,
+      deliveryKm: state.deliveryDistanceKm,
+      deliveryCoords: coordsVal,
       notes: document.getElementById('cart-notes').value.trim(),
       items: JSON.parse(JSON.stringify(state.cart)),
       subtotalUSD: subtotalUSD,
@@ -821,12 +912,11 @@
     const method = document.getElementById('pay-input-method').value;
     const bank = document.getElementById('pay-input-bank').value.trim();
     const ref = document.getElementById('pay-input-ref').value.trim();
-    const amountStr = document.getElementById('pay-input-amount').value.trim();
     const holder = document.getElementById('pay-input-holder').value.trim();
 
-    // Validación algorítmica de referencia bancaria
+    // Validación algorítmica de referencia bancaria o hash
     if (method !== 'Efectivo $' && (!ref || ref.length < 4 || /^(0+|1234+|9999+)$/.test(ref))) {
-      alert("❌ Por favor ingresa un número de referencia bancaria válido (mínimo 4 dígitos del comprobante).");
+      alert("❌ Por favor ingresa un número de referencia válido (mínimo 4 dígitos del comprobante o Pay ID).");
       return;
     }
 
@@ -861,10 +951,121 @@
     // Sincronizar en segundo plano con Google Sheets permanente
     syncOrderToSheets(completedOrder);
 
-    // Cerrar modal de pago y abrir Mini Nota de Entrega
+    // Cerrar modal de pago y abrir Mini Nota de Entrega boutique
     document.getElementById('modal-payment-auth').style.display = 'none';
     renderDeliveryNote(completedOrder);
     showToast("✅ ¡Pago autenticado y registrado con éxito!", "success");
+  }
+
+  // ============================================================================
+  // MINI NOTA DE ENTREGA DIGITAL (TICKET CLIENTE BOUTIQUE GLAMOUR)
+  // ============================================================================
+  function renderDeliveryNote(order) {
+    if (!order) return;
+    const rate = Number(order.rateBCV || state.config.rateBCV || 883.40);
+    const totalBs = Number(order.totalBs || (order.totalUSD * rate));
+
+    const setTxt = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val;
+    };
+
+    setTxt('ticket-id', order.id || '#NE-2026-0001');
+    setTxt('ticket-date', order.date || new Date().toLocaleString('es-VE'));
+    setTxt('ticket-auth-code', order.authCode || 'AUTH-YOLO-000000');
+    
+    let delTypeDesc = order.deliveryType || 'Delivery Maracaibo';
+    if (delTypeDesc === 'delivery-maracaibo') delTypeDesc = '🛵 Delivery a Domicilio (Maracaibo)';
+    if (delTypeDesc === 'retiro-personal') delTypeDesc = '🛍️ Retiro en Tienda Física';
+    if (delTypeDesc === 'envio-nacional') delTypeDesc = '📦 Envío Nacional (MRW/Tealca/Zoom)';
+    setTxt('ticket-delivery-type', delTypeDesc);
+
+    setTxt('ticket-client-name', order.clientName || 'Cliente');
+    setTxt('ticket-client-phone', order.clientPhone || '-');
+    setTxt('ticket-client-salon', order.clientSalon || 'Particular');
+
+    let addrText = order.clientAddress || 'Maracaibo, Zulia';
+    if (order.deliveryKm) {
+      addrText += ` • [GPS: ${order.deliveryKm} km desde Tiendas Yolo]`;
+    }
+    setTxt('ticket-client-address', addrText);
+
+    // Tabla de items
+    const tbody = document.getElementById('ticket-items-tbody');
+    if (tbody) {
+      tbody.innerHTML = (order.items || []).map(item => {
+        const itemTot = Number(item.precioUSD) * item.quantity;
+        return `
+          <tr>
+            <td>${item.quantity}</td>
+            <td><strong>${item.nombre}</strong></td>
+            <td>$${Number(item.precioUSD).toFixed(2)}</td>
+            <td><strong>$${itemTot.toFixed(2)}</strong></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    setTxt('ticket-subtotal-usd', `$${Number(order.subtotalUSD || 0).toFixed(2)}`);
+
+    const delEl = document.getElementById('ticket-delivery-usd');
+    if (delEl) {
+      if (order.deliveryUSD === 0 || Number(order.subtotalUSD) >= 15 || order.deliveryType === 'retiro-personal') {
+        delEl.textContent = "¡GRATIS!";
+        delEl.className = "text-success font-bold";
+      } else {
+        delEl.textContent = `$${Number(order.deliveryUSD).toFixed(2)}${order.deliveryKm ? ` (${order.deliveryKm} km)` : ''}`;
+        delEl.className = "font-bold";
+      }
+    }
+
+    setTxt('ticket-total-usd', `$${Number(order.totalUSD || 0).toFixed(2)}`);
+    setTxt('ticket-total-bs', `(Bs. ${totalBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})`);
+
+    setTxt('ticket-pay-method', order.paymentMethod || 'Pago Móvil');
+    setTxt('ticket-pay-bank', order.paymentBank || 'Banesco');
+    setTxt('ticket-pay-ref', order.paymentRef || order.authCode || '-');
+    setTxt('ticket-pay-holder', order.paymentHolder || order.clientName || '-');
+
+    // Botón Imprimir Ticket (imprime limpiamente solo el ticket boutique)
+    const printBtn = document.getElementById('btn-print-delivery-note');
+    if (printBtn) {
+      printBtn.onclick = () => {
+        document.body.classList.add('printing-delivery-note');
+        window.print();
+        setTimeout(() => document.body.classList.remove('printing-delivery-note'), 600);
+      };
+    }
+
+    // Botón Enviar a WhatsApp Despacho
+    const waBtn = document.getElementById('btn-wa-delivery-note');
+    if (waBtn) {
+      waBtn.onclick = () => {
+        const text =
+          `🧾 *TIENDAS YOLO® — NOTA DE ENTREGA REGISTRADA*\n` +
+          `━━━━━━━━━━━━━━━━━━━━\n` +
+          `🔖 *Nota:* ${order.id}\n` +
+          `🔐 *Código Autenticación:* ${order.authCode}\n` +
+          `📅 *Fecha:* ${order.date}\n` +
+          `👤 *Manicurista:* ${order.clientName}\n` +
+          `📱 *Teléfono:* ${order.clientPhone}\n` +
+          `📍 *Dirección:* ${addrText}\n` +
+          `${order.deliveryCoords ? `🗺️ *GPS:* https://maps.google.com/?q=${order.deliveryCoords.replace(/\s+/g, '')}\n` : ''}` +
+          `💳 *Pago:* ${order.paymentMethod} (Ref: ${order.paymentRef || 'S/R'})\n` +
+          `━━━━━━━━━━━━━━━━━━━━\n` +
+          `📦 *Insumos:*\n${(order.items || []).map(i => `• ${i.quantity}x ${i.nombre} ($${(i.precioUSD * i.quantity).toFixed(2)})`).join('\n')}\n` +
+          `━━━━━━━━━━━━━━━━━━━━\n` +
+          `🚚 *Delivery:* ${order.deliveryUSD === 0 ? '¡GRATIS!' : `$${Number(order.deliveryUSD).toFixed(2)}`}\n` +
+          `💎 *TOTAL PAGADO:* $${Number(order.totalUSD).toFixed(2)} (Bs. ${totalBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})\n` +
+          `━━━━━━━━━━━━━━━━━━━━\n` +
+          `✨ _“Yo lo compro, Yo lo merezco”_`;
+
+        window.open(`https://wa.me/584265604070?text=${encodeURIComponent(text)}`, '_blank');
+      };
+    }
+
+    const modal = document.getElementById('modal-delivery-note');
+    if (modal) modal.style.display = 'flex';
   }
 
   // Sincronizador de pedidos con Google Sheets
@@ -899,7 +1100,7 @@
         headers: { "Content-Type": "text/plain" },
         body: JSON.stringify(payload)
       }).catch(err => console.warn("Sync Sheets error:", err));
-    } catch (e) {}
+    } catch (e) { }
   }
 
   // Sincronizador de cotizaciones con Google Sheets
@@ -930,7 +1131,7 @@
         headers: { "Content-Type": "text/plain" },
         body: JSON.stringify(payload)
       }).catch(err => console.warn("Sync Quote Sheets error:", err));
-    } catch (e) {}
+    } catch (e) { }
   }
 
   // ============================================================================
@@ -1112,6 +1313,23 @@
   // ============================================================================
   // MODO EDITOR EN VIVO (WYSIWYG & GESTOR DE PRODUCTOS/FOTOS)
   // ============================================================================
+  // Lista de selectores editables en modo edición
+  const EDITABLE_SELECTORS = [
+    '[data-editable="true"]',
+    '.hero-headline',
+    '.hero-description',
+    '.quote-text',
+    '.quote-author',
+    '.catalog-section-title',
+    '.footer-title',
+    '.footer-desc',
+    '.social-hub-btn .hub-title',
+    '.social-hub-btn .hub-sub',
+    '.product-title',
+    '.product-desc',
+    '.price-usd'
+  ].join(', ');
+
   function toggleLiveEditMode() {
     state.isEditMode = !state.isEditMode;
     const body = document.body;
@@ -1122,18 +1340,26 @@
       body.classList.add('editor-mode-active');
       if (toggleBtn) toggleBtn.classList.add('active');
       if (textEl) textEl.textContent = 'Edición: ON';
-      document.querySelectorAll('[data-editable="true"]').forEach(el => {
+      
+      document.querySelectorAll(EDITABLE_SELECTORS).forEach((el, index) => {
         el.contentEditable = "true";
+        if (!el.id && !el.closest('.product-card')) {
+          el.id = `ty-auto-edit-${index}`;
+        }
+        el.setAttribute('data-editable', 'true');
       });
+
       renderProducts();
-      showToast("✏️ Modo Edición: ON. Haz clic en cualquier texto o producto para editar.", "success");
+      showToast("✏️ Modo Edición: ON. Haz clic en cualquier texto o producto para editar o eliminar.", "success");
     } else {
       body.classList.remove('editor-mode-active');
       if (toggleBtn) toggleBtn.classList.remove('active');
       if (textEl) textEl.textContent = 'Edición: OFF';
-      document.querySelectorAll('[data-editable="true"]').forEach(el => {
+
+      document.querySelectorAll(EDITABLE_SELECTORS).forEach(el => {
         el.contentEditable = "false";
       });
+
       renderProducts();
       showToast("👁️ Modo Edición: OFF. Vista cliente activada.", "info");
     }
@@ -1142,10 +1368,38 @@
   function saveEditsToStorage() {
     const edits = {};
     document.querySelectorAll('[data-editable="true"]').forEach(el => {
-      if (el.id) edits[el.id] = el.innerHTML;
+      if (el.id && !el.closest('.product-card')) {
+        edits[el.id] = el.innerHTML;
+      }
     });
+
+    // Guardar cambios directos de productos editados en vivo en tarjetas
+    document.querySelectorAll('.product-card').forEach(card => {
+      const prodId = card.dataset.productId;
+      const prod = state.products.find(p => p.id === prodId);
+      if (prod) {
+        const titleEl = card.querySelector('.product-title');
+        const descEl = card.querySelector('.product-desc');
+        const priceEl = card.querySelector('.price-usd');
+        if (titleEl && titleEl.textContent.trim()) {
+          prod.nombre = titleEl.textContent.trim();
+        }
+        if (descEl) {
+          prod.descripcion = descEl.textContent.trim();
+        }
+        if (priceEl) {
+          const parsed = parseFloat(priceEl.textContent.replace(/[^0-9.]/g, ''));
+          if (!isNaN(parsed) && parsed > 0) {
+            prod.precioUSD = parsed;
+          }
+        }
+      }
+    });
+
     localStorage.setItem(EDITS_STORAGE_KEY, JSON.stringify(edits));
     saveData();
+    renderCategories();
+    renderProducts();
     showToast("💾 ¡Todos los textos, fotos y productos fueron guardados!", "success");
   }
 
@@ -1159,7 +1413,7 @@
           if (el) el.innerHTML = edits[id];
         }
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   function openEditProduct(prodId) {
@@ -1553,7 +1807,7 @@
     const formAuthPay = document.getElementById('form-auth-payment');
     if (formAuthPay) formAuthPay.addEventListener('submit', handlePaymentAuthSubmit);
 
-    // Copiar datos de Pago Móvil y Zelle
+    // Copiar datos de Pago Móvil y Binance Pay
     const copyPmBtn = document.getElementById('btn-copy-pm');
     if (copyPmBtn) {
       copyPmBtn.addEventListener('click', () => {
@@ -1564,16 +1818,91 @@
       });
     }
 
-    const copyZelleBtn = document.getElementById('btn-copy-zelle');
-    if (copyZelleBtn) {
-      copyZelleBtn.addEventListener('click', () => {
-        navigator.clipboard.writeText("tiendasyolo.pagos@gmail.com").then(() => {
-          showToast("📋 Correo Zelle copiado: tiendasyolo.pagos@gmail.com", "success");
+    const copyBinanceBtn = document.getElementById('btn-copy-binance');
+    if (copyBinanceBtn) {
+      copyBinanceBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText("829140291").then(() => {
+          showToast("🟡 Pay ID de Binance copiado: 829140291 (USDT)", "success");
         });
       });
     }
 
-    // 8. Enviar pedido regular a WhatsApp
+    // 8. Widget Delivery por Coordenadas / GPS (Estilo Yummy)
+    const btnDetectGps = document.getElementById('btn-detect-gps');
+    const inputCoords = document.getElementById('cart-delivery-coords');
+    const badgeGpsText = document.getElementById('delivery-calc-text');
+    const delTypeSelect = document.getElementById('cart-delivery-type');
+
+    function updateDeliveryDistanceCalc() {
+      const delType = delTypeSelect ? delTypeSelect.value : 'delivery-maracaibo';
+      const gpsBox = document.getElementById('cart-gps-box');
+      if (gpsBox) {
+        gpsBox.style.display = (delType === 'delivery-maracaibo') ? 'block' : 'none';
+      }
+
+      if (delType !== 'delivery-maracaibo') {
+        state.deliveryDistanceKm = null;
+        updateCartUI();
+        return;
+      }
+
+      const val = inputCoords ? inputCoords.value.trim() : '';
+      const coords = parseCoordinatesString(val);
+      const subtotalUSD = state.cart.reduce((s, i) => s + (i.precioUSD * i.quantity), 0);
+
+      if (coords) {
+        state.deliveryCoords = `${coords.lat}, ${coords.lng}`;
+        const km = calculateDistanceKm(STORE_LOCATION.lat, STORE_LOCATION.lng, coords.lat, coords.lng);
+        state.deliveryDistanceKm = km;
+        const fee = getDeliveryFeeByKm(km, subtotalUSD);
+        const isFree = subtotalUSD >= Number(state.config.deliveryFreeMinUSD || 15.00);
+
+        if (badgeGpsText) {
+          badgeGpsText.innerHTML = `🛵 <strong>${km} km</strong> desde Tiendas Yolo — Delivery: <strong>${isFree ? '¡GRATIS!' : `$${fee.toFixed(2)}`}</strong>`;
+        }
+      } else {
+        state.deliveryDistanceKm = null;
+        if (badgeGpsText) {
+          badgeGpsText.innerHTML = `📍 Ingresa coordenadas o presiona "Usar mi ubicación actual"`;
+        }
+      }
+      updateCartUI();
+    }
+
+    if (delTypeSelect) {
+      delTypeSelect.addEventListener('change', updateDeliveryDistanceCalc);
+    }
+
+    if (inputCoords) {
+      inputCoords.addEventListener('input', updateDeliveryDistanceCalc);
+    }
+
+    if (btnDetectGps) {
+      btnDetectGps.addEventListener('click', () => {
+        if (!navigator.geolocation) {
+          alert("Tu navegador no soporta geolocalización. Puedes pegar tus coordenadas o link de Maps.");
+          return;
+        }
+        if (badgeGpsText) badgeGpsText.innerHTML = "📡 Conectando con satélite GPS...";
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+            if (inputCoords) inputCoords.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+            updateDeliveryDistanceCalc();
+            showToast(`📍 Ubicación GPS detectada (${state.deliveryDistanceKm} km)`, "success");
+          },
+          (err) => {
+            console.warn("GPS error:", err);
+            if (badgeGpsText) badgeGpsText.innerHTML = "⚠️ No pudimos obtener GPS satelital. Pega tu link de Google Maps.";
+            showToast("Pega tu enlace de Google Maps o coordenadas.", "info");
+          },
+          { enableHighAccuracy: true, timeout: 8000 }
+        );
+      });
+    }
+
+    // 9. Enviar pedido regular a WhatsApp
     const sendWaBtn = document.getElementById('btn-cart-send-whatsapp');
     if (sendWaBtn) {
       sendWaBtn.addEventListener('click', () => {
@@ -1588,27 +1917,33 @@
         const address = document.getElementById('cart-delivery-address').value.trim() || 'Maracaibo';
         const method = document.getElementById('cart-payment-method').value;
         const notes = document.getElementById('cart-notes').value.trim();
+        const coords = document.getElementById('cart-delivery-coords') ? document.getElementById('cart-delivery-coords').value.trim() : '';
 
         const subtotal = state.cart.reduce((s, i) => s + (i.precioUSD * i.quantity), 0);
-        const rate = Number(state.config.rateBCV || 395.50);
-        const isFree = subtotal >= Number(state.config.deliveryFreeMinUSD || 15.00);
-        const deliveryFee = isFree ? 0 : Number(state.config.deliveryFlatFeeUSD || 2.00);
+        const rate = Number(state.config.rateBCV || 883.40);
+        const isFree = subtotal >= Number(state.config.deliveryFreeMinUSD || 15.00) || delType === 'retiro-personal';
+        
+        let deliveryFee = 0;
+        if (!isFree && delType === 'delivery-maracaibo') {
+          deliveryFee = getDeliveryFeeByKm(state.deliveryDistanceKm, subtotal);
+        }
+
         const grandTotal = subtotal + deliveryFee;
         const grandTotalBs = grandTotal * rate;
 
-        const text = 
-`💅 *TIENDAS YOLO® — NUEVO PEDIDO DE INSUMOS* 💅
+        const text =
+          `💅 *TIENDAS YOLO® — NUEVO PEDIDO DE INSUMOS* 💅
 ━━━━━━━━━━━━━━━━━━━━
 👤 *Manicurista:* ${name}
 📞 *Teléfono:* ${phone}
 ${salon ? `💅 *Salón:* ${salon}\n` : ''}📍 *Entrega:* ${address} (${delType})
-💳 *Método de Pago:* ${method}
+${state.deliveryDistanceKm ? `🛵 *Distancia GPS:* ${state.deliveryDistanceKm} km desde Tiendas Yolo\n` : ''}${coords ? `🗺️ *Ubicación Maps:* https://maps.google.com/?q=${coords.replace(/\s+/g, '')}\n` : ''}💳 *Método de Pago:* ${method}
 ━━━━━━━━━━━━━━━━━━━━
 📦 *INSUMOS SOLICITADOS:*
 ${state.cart.map(i => `• ${i.quantity}x ${i.nombre} ($${(i.precioUSD * i.quantity).toFixed(2)})`).join('\n')}
 ━━━━━━━━━━━━━━━━━━━━
 💵 *Subtotal:* $${subtotal.toFixed(2)}
-🚚 *Delivery Maracaibo:* ${isFree ? '¡GRATIS!' : `$${deliveryFee.toFixed(2)}`}
+🚚 *Delivery:* ${delType === 'retiro-personal' ? 'Retiro en Tienda (Gratis)' : (isFree ? '¡GRATIS!' : `$${deliveryFee.toFixed(2)}`)}
 💎 *TOTAL A PAGAR:* $${grandTotal.toFixed(2)} (Bs. ${grandTotalBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})
 ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━━━━━━━━━━
 ✨ _“Yo lo compro, Yo lo merezco”_`;
@@ -1617,7 +1952,7 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
       });
     }
 
-    // 9. Impresión & Envío de Cotización Formal
+    // 10. Impresión & Envío de Cotización Formal
     const printQuoteBtn = document.getElementById('btn-print-quote');
     if (printQuoteBtn) printQuoteBtn.addEventListener('click', () => window.print());
 
@@ -1633,9 +1968,15 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
       });
     }
 
-    // 10. Impresión de Mini Nota de Entrega
+    // 11. Impresión de Mini Nota de Entrega (Aislada en 1 sola página térmica)
     const printTicketBtn = document.getElementById('btn-print-delivery-note');
-    if (printTicketBtn) printTicketBtn.addEventListener('click', () => window.print());
+    if (printTicketBtn) {
+      printTicketBtn.addEventListener('click', () => {
+        document.body.classList.add('printing-delivery-note');
+        window.print();
+        setTimeout(() => document.body.classList.remove('printing-delivery-note'), 600);
+      });
+    }
 
     // 11. Formulario Perfil Clienta Frecuente
     const formAccount = document.getElementById('form-account-profile');
@@ -1792,7 +2133,7 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
         window._TY_triggerAdminApp();
       }
     },
-    viewPastTicket: function(orderId) {
+    viewPastTicket: function (orderId) {
       const order = state.orders.find(o => o.id === orderId);
       if (order) {
         document.getElementById('modal-client-account').style.display = 'none';
