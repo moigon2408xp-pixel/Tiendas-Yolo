@@ -206,9 +206,12 @@
     }
   ];
 
+  const DEFAULT_SHEETS_URL = "https://script.google.com/macros/s/AKfycby7q4Lyy_RF3qFjW2jdzKVqKQHODW2tMTBEBbG4EcFXosdrzE_iOCxeodVWYis0_-1QCQ/exec";
+
   const DEFAULT_CONFIG = {
-    sheetsApiUrl: "",
-    rateBCV: 395.50,
+    sheetsApiUrl: DEFAULT_SHEETS_URL,
+    rateBCV: 883.40,
+    rateLastUpdated: new Date().toISOString(),
     whatsappNumber: "584265604070",
     deliveryFreeMinUSD: 15.00,
     deliveryFlatFeeUSD: 2.00,
@@ -244,6 +247,10 @@
         state.orders = parsed.orders || [];
         state.quotes = parsed.quotes || [];
         state.config = Object.assign({}, DEFAULT_CONFIG, parsed.config || {});
+        // Garantizar que la URL de sheets esté siempre presente
+        if (!state.config.sheetsApiUrl || !state.config.sheetsApiUrl.includes('script.google.com')) {
+          state.config.sheetsApiUrl = DEFAULT_SHEETS_URL;
+        }
         state.cart = parsed.cart || [];
       } else {
         state.products = SEED_PRODUCTS;
@@ -267,6 +274,7 @@
     updateRateDisplay();
     updateClientStatusBadge();
     loadEditsFromStorage();
+    fetchLiveBcvRate();
   }
 
   function saveData() {
@@ -284,12 +292,78 @@
     }
   }
 
-  function updateRateDisplay() {
-    const rate = Number(state.config.rateBCV || 395.50);
+  // Consulta en tiempo real de la tasa oficial del BCV
+  async function fetchLiveBcvRate() {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const res = await fetch("https://ve.dolarapi.com/v1/dolares/oficial", { signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (res.ok) {
+        const data = await res.json();
+        const liveRate = Number(data.promedio);
+        if (liveRate > 0) {
+          state.config.rateBCV = liveRate;
+          state.config.rateLastUpdated = new Date().toISOString();
+          saveData();
+          updateRateDisplay(true);
+          renderProducts();
+          updateCartUI();
+          console.log("💵 Tasa BCV Oficial actualizada en vivo:", liveRate);
+        }
+      }
+    } catch (err) {
+      console.warn("Tasa BCV obtenida de caché local:", err.message);
+      updateRateDisplay(false);
+    }
+  }
+
+  function updateRateDisplay(isLive = false) {
+    const rate = Number(state.config.rateBCV || 883.40);
     const rateEl = document.getElementById('top-rate-display');
     if (rateEl) {
-      rateEl.textContent = `Bs. ${rate.toFixed(2)} / $`;
+      rateEl.innerHTML = `${isLive ? '🟢' : '💵'} Bs. ${rate.toFixed(2)} / $ ${isLive ? '<span style="font-size:0.7em; opacity:0.85;">(En Vivo BCV)</span>' : ''}`;
     }
+  }
+
+  // Generador de códigos de producto (SKU) automáticos, únicos e irrepetibles
+  function generateUniqueProductSKU(category, currentProducts = state.products) {
+    const prefixes = {
+      'Esmaltes': 'ESM',
+      'Geles y Acrílicos': 'GEL',
+      'Pinceles y Herramientas': 'PIN',
+      'Lámparas y Equipos': 'LAM',
+      'Kits': 'KIT',
+      'Líquidos y Preparación': 'LIQ',
+      'Pestañas y Belleza': 'PES',
+      'Decoración': 'DEC'
+    };
+    const prefix = prefixes[category] || 'YOLO';
+    
+    const existingNums = (currentProducts || [])
+      .map(p => {
+        const s = (p.sku || p.id || '').toUpperCase();
+        if (s.startsWith(prefix + '-')) {
+          const n = parseInt(s.replace(prefix + '-', ''), 10);
+          return isNaN(n) ? null : n;
+        }
+        return null;
+      })
+      .filter(n => n !== null);
+
+    const maxNum = existingNums.length > 0 ? Math.max(...existingNums) : 0;
+    let nextNum = maxNum + 1;
+    let generatedSKU = `${prefix}-${String(nextNum).padStart(3, '0')}`;
+
+    while ((currentProducts || []).some(p => 
+      (p.sku && p.sku.toUpperCase() === generatedSKU) || 
+      (p.id && p.id.toUpperCase() === generatedSKU)
+    )) {
+      nextNum++;
+      generatedSKU = `${prefix}-${String(nextNum).padStart(3, '0')}`;
+    }
+
+    return generatedSKU;
   }
 
   function updateClientStatusBadge() {
@@ -784,86 +858,92 @@
     saveData();
     updateCartUI();
 
+    // Sincronizar en segundo plano con Google Sheets permanente
+    syncOrderToSheets(completedOrder);
+
     // Cerrar modal de pago y abrir Mini Nota de Entrega
     document.getElementById('modal-payment-auth').style.display = 'none';
     renderDeliveryNote(completedOrder);
     showToast("✅ ¡Pago autenticado y registrado con éxito!", "success");
   }
 
-  // ============================================================================
-  // MINI NOTA DE ENTREGA DIGITAL (TICKET BOUTIQUE)
-  // ============================================================================
-  function renderDeliveryNote(order) {
-    document.getElementById('ticket-id').textContent = `#${order.id}`;
-    document.getElementById('ticket-date').textContent = order.date;
-    document.getElementById('ticket-auth-code').textContent = order.authCode;
-    document.getElementById('ticket-delivery-type').textContent = order.deliveryType;
-    document.getElementById('ticket-client-name').textContent = order.clientName;
-    document.getElementById('ticket-client-phone').textContent = order.clientPhone;
-    document.getElementById('ticket-client-salon').textContent = order.clientSalon || '-';
-    document.getElementById('ticket-client-address').textContent = order.clientAddress || 'Maracaibo';
+  // Sincronizador de pedidos con Google Sheets
+  function syncOrderToSheets(order) {
+    const url = state.config.sheetsApiUrl || DEFAULT_SHEETS_URL;
+    if (!url) return;
+    const payload = {
+      action: "save_order",
+      data: {
+        id: order.id,
+        fecha: order.date,
+        cliente: order.clientName,
+        telefono: order.clientPhone,
+        instagram: (state.clientProfile && state.clientProfile.instagram) || "",
+        direccion: order.clientAddress,
+        tipoEntrega: order.deliveryType,
+        metodoPago: `${order.paymentMethod} (${order.paymentBank || ''})`,
+        referenciaPago: order.paymentRef || order.authCode,
+        items: (order.items || []).map(i => `${i.quantity}x ${i.nombre} ($${i.precioUSD})`).join('; '),
+        subtotalUSD: order.subtotalUSD,
+        tasaBs: state.config.rateBCV,
+        totalUSD: order.totalUSD,
+        totalBs: order.totalBs,
+        estado: "Confirmado",
+        notas: `Autenticado: ${order.authCode}`
+      }
+    };
+    try {
+      fetch(url, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify(payload)
+      }).catch(err => console.warn("Sync Sheets error:", err));
+    } catch (e) {}
+  }
 
-    const tbody = document.getElementById('ticket-items-tbody');
-    tbody.innerHTML = order.items.map(it => `
-      <tr>
-        <td>${it.quantity}x</td>
-        <td>${it.nombre}</td>
-        <td>$${Number(it.precioUSD).toFixed(2)}</td>
-        <td><strong>$${(Number(it.precioUSD) * it.quantity).toFixed(2)}</strong></td>
-      </tr>
-    `).join('');
-
-    document.getElementById('ticket-subtotal-usd').textContent = `$${order.subtotalUSD.toFixed(2)}`;
-    document.getElementById('ticket-delivery-usd').textContent = order.deliveryUSD === 0 ? "¡GRATIS!" : `$${order.deliveryUSD.toFixed(2)}`;
-    document.getElementById('ticket-total-usd').textContent = `$${order.totalUSD.toFixed(2)}`;
-    document.getElementById('ticket-total-bs').textContent = `(Bs. ${order.totalBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})`;
-
-    document.getElementById('ticket-pay-method').textContent = order.paymentMethod;
-    document.getElementById('ticket-pay-bank').textContent = order.paymentBank;
-    document.getElementById('ticket-pay-ref').textContent = order.paymentRef;
-    document.getElementById('ticket-pay-holder').textContent = order.paymentHolder;
-
-    const modal = document.getElementById('modal-delivery-note');
-    if (modal) modal.style.display = 'flex';
-
-    // Configurar botón para enviar a WhatsApp de despacho
-    const btnWa = document.getElementById('btn-wa-delivery-note');
-    if (btnWa) {
-      btnWa.onclick = () => {
-        const msg = 
-`🧾 *TIENDAS YOLO® — MINI NOTA DE ENTREGA DIGITAL*
-━━━━━━━━━━━━━━━━━━━━
-📄 *Nota N°:* ${order.id}
-🔒 *Autenticación:* ${order.authCode}
-📅 *Fecha:* ${order.date}
-━━━━━━━━━━━━━━━━━━━━
-👤 *Manicurista:* ${order.clientName}
-📞 *Teléfono:* ${order.clientPhone}
-💅 *Salón:* ${order.clientSalon}
-📍 *Entrega:* ${order.clientAddress} (${order.deliveryType})
-━━━━━━━━━━━━━━━━━━━━
-📦 *INSUMOS COMPRADOS:*
-${order.items.map(i => `• ${i.quantity}x ${i.nombre} ($${(i.precioUSD * i.quantity).toFixed(2)})`).join('\n')}
-━━━━━━━━━━━━━━━━━━━━
-💵 *Subtotal:* $${order.subtotalUSD.toFixed(2)}
-🚚 *Delivery:* ${order.deliveryUSD === 0 ? 'GRATIS' : `$${order.deliveryUSD.toFixed(2)}`}
-💎 *TOTAL PAGADO:* $${order.totalUSD.toFixed(2)} (Bs. ${order.totalBs.toFixed(2)})
-💳 *Método:* ${order.paymentMethod} • Ref: ${order.paymentRef} (${order.paymentBank})
-━━━━━━━━━━━━━━━━━━━━
-✨ _“Yo lo compro, Yo lo merezco”_ — Solicitud enviada a despacho.`;
-
-        window.open(`https://wa.me/584265604070?text=${encodeURIComponent(msg)}`, '_blank');
-      };
-    }
+  // Sincronizador de cotizaciones con Google Sheets
+  function syncQuoteToSheets(quote) {
+    const url = state.config.sheetsApiUrl || DEFAULT_SHEETS_URL;
+    if (!url) return;
+    const payload = {
+      action: "save_quote",
+      data: {
+        id: quote.id,
+        fecha: quote.date,
+        validezDias: 7,
+        cliente: quote.clientName,
+        telefono: quote.clientPhone,
+        salonAcademia: quote.clientSalon,
+        items: (quote.items || []).map(i => `${i.quantity}x ${i.nombre} ($${i.precioUSD})`).join('; '),
+        subtotalUSD: quote.subtotalUSD,
+        totalUSD: quote.subtotalUSD,
+        totalBs: quote.totalBs,
+        estado: "Emitida",
+        notas: "Cotización formal generada desde la App Tiendas Yolo"
+      }
+    };
+    try {
+      fetch(url, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify(payload)
+      }).catch(err => console.warn("Sync Quote Sheets error:", err));
+    } catch (e) {}
   }
 
   // ============================================================================
   // GENERADOR DE COTIZACIÓN FORMAL (PRESUPUESTO PARA SALONES/ACADEMIAS)
   // ============================================================================
   function generateFormalQuote() {
+    // Cerrar el drawer del carrito si estuviera abierto
+    const cartModal = document.getElementById('cart-drawer-modal');
+    if (cartModal) cartModal.style.display = 'none';
+
     let items = state.cart;
-    if (items.length === 0) {
-      // Si el carrito está vacío, cotizar kits o insumos principales
+    if (!items || items.length === 0) {
+      // Si el carrito está vacío, cotizar kits o insumos principales de muestra
       items = state.products.slice(0, 4).map(p => ({
         id: p.id,
         nombre: p.nombre,
@@ -871,17 +951,23 @@ ${order.items.map(i => `• ${i.quantity}x ${i.nombre} ($${(i.precioUSD * i.quan
         precioUSD: Number(p.precioUSD),
         quantity: 1
       }));
+      showToast("📄 Cotización generada con insumos principales del catálogo", "info");
     }
 
-    const subtotalUSD = items.reduce((sum, item) => sum + (item.precioUSD * item.quantity), 0);
-    const rate = Number(state.config.rateBCV || 395.50);
+    const subtotalUSD = items.reduce((sum, item) => sum + (Number(item.precioUSD) * item.quantity), 0);
+    const rate = Number(state.config.rateBCV || 883.40);
     const subtotalBs = subtotalUSD * rate;
     const isFree = subtotalUSD >= Number(state.config.deliveryFreeMinUSD || 15.00);
 
-    const clientName = (state.clientProfile && state.clientProfile.name) || document.getElementById('cart-client-name').value.trim() || 'Manicurista / Salón Solicitante';
-    const clientPhone = (state.clientProfile && state.clientProfile.phone) || document.getElementById('cart-client-phone').value.trim() || '0426-5604070';
-    const clientSalon = (state.clientProfile && state.clientProfile.salon) || document.getElementById('cart-client-salon').value.trim() || 'Estudio de Belleza';
-    const clientAddress = (state.clientProfile && state.clientProfile.address) || document.getElementById('cart-delivery-address').value.trim() || 'Maracaibo, Zulia';
+    const cNameEl = document.getElementById('cart-client-name');
+    const cPhoneEl = document.getElementById('cart-client-phone');
+    const cSalonEl = document.getElementById('cart-client-salon');
+    const cAddrEl = document.getElementById('cart-delivery-address');
+
+    const clientName = (state.clientProfile && state.clientProfile.name) || (cNameEl ? cNameEl.value.trim() : '') || 'Manicurista / Salón Solicitante';
+    const clientPhone = (state.clientProfile && state.clientProfile.phone) || (cPhoneEl ? cPhoneEl.value.trim() : '') || '0426-5604070';
+    const clientSalon = (state.clientProfile && state.clientProfile.salon) || (cSalonEl ? cSalonEl.value.trim() : '') || 'Estudio de Belleza';
+    const clientAddress = (state.clientProfile && state.clientProfile.address) || (cAddrEl ? cAddrEl.value.trim() : '') || 'Maracaibo, Zulia';
 
     const quoteId = `COT-2026-${Math.floor(1000 + Math.random() * 9000)}`;
     const today = new Date().toLocaleDateString('es-VE');
@@ -896,13 +982,13 @@ ${order.items.map(i => `• ${i.quantity}x ${i.nombre} ($${(i.precioUSD * i.quan
 
     const tbody = document.getElementById('print-quote-items-body');
     tbody.innerHTML = items.map(item => {
-      const itemTotUSD = item.precioUSD * item.quantity;
+      const itemTotUSD = Number(item.precioUSD) * item.quantity;
       const itemTotBs = itemTotUSD * rate;
       return `
         <tr>
           <td>${item.quantity}</td>
           <td><strong>${item.nombre}</strong></td>
-          <td>$${item.precioUSD.toFixed(2)}</td>
+          <td>$${Number(item.precioUSD).toFixed(2)}</td>
           <td><strong>$${itemTotUSD.toFixed(2)}</strong></td>
           <td>Bs. ${itemTotBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
         </tr>
@@ -914,6 +1000,22 @@ ${order.items.map(i => `• ${i.quantity}x ${i.nombre} ($${(i.precioUSD * i.quan
     document.getElementById('print-quote-delivery-status').textContent = isFree ? "¡DELIVERY GRATIS EN MARACAIBO!" : "$2.00 Delivery / Despacho";
     document.getElementById('print-quote-grand-usd').textContent = `$${subtotalUSD.toFixed(2)}`;
     document.getElementById('print-quote-grand-bs').textContent = `Bs. ${subtotalBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+    const quoteObj = {
+      id: quoteId,
+      date: today,
+      clientName,
+      clientPhone,
+      clientSalon,
+      clientAddress,
+      items,
+      subtotalUSD,
+      totalBs: subtotalBs,
+      createdAt: new Date().toISOString()
+    };
+    state.quotes.unshift(quoteObj);
+    saveData();
+    syncQuoteToSheets(quoteObj);
 
     // Botón para proceder al pago directo desde la cotización
     const payBtn = document.getElementById('btn-quote-proceed-to-pay');
@@ -1084,7 +1186,8 @@ ${order.items.map(i => `• ${i.quantity}x ${i.nombre} ($${(i.precioUSD * i.quan
     document.getElementById('pe-input-id').value = '';
     document.getElementById('pe-input-name').value = '';
     document.getElementById('pe-input-cat').value = 'Esmaltes';
-    document.getElementById('pe-input-sku').value = `TY-${Math.floor(100 + Math.random() * 900)}`;
+    const autoSku = generateUniqueProductSKU('Esmaltes', state.products);
+    document.getElementById('pe-input-sku').value = autoSku;
     document.getElementById('pe-input-price').value = '3.50';
     document.getElementById('pe-input-cost').value = '1.80';
     document.getElementById('pe-input-stock').value = '20';
@@ -1092,7 +1195,7 @@ ${order.items.map(i => `• ${i.quantity}x ${i.nombre} ($${(i.precioUSD * i.quan
     document.getElementById('pe-input-img').value = 'logo-yolo.png';
     document.getElementById('pe-img-preview').src = 'logo-yolo.png';
 
-    document.getElementById('prod-editor-modal-title').textContent = "➕ Añadir Nuevo Producto";
+    document.getElementById('prod-editor-modal-title').textContent = "➕ Añadir Nuevo Insumo (Código Automático)";
     document.getElementById('btn-pe-delete-prod').style.display = 'none';
     document.getElementById('modal-product-editor').style.display = 'flex';
   }
@@ -1117,7 +1220,7 @@ ${order.items.map(i => `• ${i.quantity}x ${i.nombre} ($${(i.precioUSD * i.quan
       saveData();
       renderCategories();
       renderProducts();
-      showToast("🗑️ Producto eliminado del catálogo", "info");
+      showToast("🗑️ Insumo eliminado del catálogo", "info");
     }
   }
 
@@ -1126,7 +1229,7 @@ ${order.items.map(i => `• ${i.quantity}x ${i.nombre} ($${(i.precioUSD * i.quan
     const id = document.getElementById('pe-input-id').value;
     const name = document.getElementById('pe-input-name').value.trim();
     const cat = document.getElementById('pe-input-cat').value;
-    const sku = document.getElementById('pe-input-sku').value.trim();
+    const sku = document.getElementById('pe-input-sku').value.trim() || generateUniqueProductSKU(cat, state.products);
     const price = parseFloat(document.getElementById('pe-input-price').value);
     const cost = parseFloat(document.getElementById('pe-input-cost').value || '0');
     const stock = parseInt(document.getElementById('pe-input-stock').value || '0');
@@ -1147,11 +1250,11 @@ ${order.items.map(i => `• ${i.quantity}x ${i.nombre} ($${(i.precioUSD * i.quan
         prod.imagenURL = img;
       }
     } else {
-      // Crear nuevo
-      const newId = `TY-PROD-${String(Date.now()).slice(-4)}`;
+      // Crear nuevo con código único e irrepetible
+      const newId = `TY-${sku}`;
       state.products.unshift({
         id: newId,
-        sku: sku || `SKU-${Date.now()}`,
+        sku: sku,
         nombre: name,
         categoria: cat,
         descripcion: desc,
@@ -1170,11 +1273,11 @@ ${order.items.map(i => `• ${i.quantity}x ${i.nombre} ($${(i.precioUSD * i.quan
     renderCategories();
     renderProducts();
     document.getElementById('modal-product-editor').style.display = 'none';
-    showToast("💾 Producto guardado en el catálogo", "success");
+    showToast(`💾 Insumo guardado con código único: ${sku}`, "success");
   }
 
   // ============================================================================
-  // ATAJO DE SEGURIDAD & EDICIÓN PARA LA DUEÑA
+  // ATAJOS SEPARADOS: MODO EDICIÓN vs APP INTERNA (FINANZAS)
   // ============================================================================
   function initAdminSecurityAndShortcuts() {
     const ADMIN_PIN = String(state.config.adminPin || "2026");
@@ -1182,6 +1285,7 @@ ${order.items.map(i => `• ${i.quantity}x ${i.nombre} ($${(i.precioUSD * i.quan
     const footerAdminBox = document.getElementById('footer-admin-box');
     const urlParams = new URLSearchParams(window.location.search);
     const hasAdminParam = urlParams.get('admin') === ADMIN_PIN || window.location.hash === '#admin';
+    const hasEditorParam = urlParams.get('editor') === '1' || window.location.hash === '#editor';
     const hasSessionAuth = sessionStorage.getItem('TY_ADMIN_AUTH') === 'true';
 
     function unlockAdminFeatures() {
@@ -1191,38 +1295,67 @@ ${order.items.map(i => `• ${i.quantity}x ${i.nombre} ($${(i.precioUSD * i.quan
       if (footerAdminBox) footerAdminBox.style.display = 'block';
     }
 
-    if (hasAdminParam || hasSessionAuth) {
+    if (hasAdminParam || hasEditorParam || hasSessionAuth) {
       unlockAdminFeatures();
+      if (hasEditorParam) {
+        setTimeout(() => { if (!state.isEditMode) toggleLiveEditMode(); }, 300);
+      }
     }
 
-    let promptAdminSecurityGlobal = null;
-
-    function promptAdminSecurity() {
-      const pin = prompt("🔐 Ingrese el PIN de Seguridad de Tiendas Yolo (dueña):");
+    // A. Atajo directo para ACTIVAR MODO EDICIÓN EN PANTALLA:
+    function triggerLiveEditor() {
+      if (state.isEditMode) {
+        toggleLiveEditMode();
+        return;
+      }
+      if (sessionStorage.getItem('TY_ADMIN_AUTH') === 'true') {
+        unlockAdminFeatures();
+        toggleLiveEditMode();
+        return;
+      }
+      const pin = prompt("✏️ MODO EDICIÓN EN VIVO\nIngrese el PIN de seguridad (dueña):");
       if (pin === ADMIN_PIN) {
         unlockAdminFeatures();
-        const action = confirm("✅ Acceso Autorizado.\n\n• Pulsa ACEPTAR para activar el Modo Edición en pantalla.\n• Pulsa CANCELAR si deseas ir al Backoffice de Finanzas (admin.html).");
-        if (action) {
-          toggleLiveEditMode();
-        } else {
-          window.location.href = 'admin.html';
-        }
+        toggleLiveEditMode();
       } else if (pin !== null) {
         alert("❌ PIN de seguridad incorrecto.");
       }
     }
-    promptAdminSecurityGlobal = promptAdminSecurity;
-    window._TY_promptAdminSecurity = promptAdminSecurity;
 
-    // A. Atajo de teclado: Ctrl + Shift + Y o Ctrl + Shift + E o Ctrl + Shift + A
+    // B. Atajo directo para ENTRAR A LA APP INTERNA (admin.html - Finanzas):
+    function triggerAdminApp() {
+      if (sessionStorage.getItem('TY_ADMIN_AUTH') === 'true') {
+        window.location.href = 'admin.html';
+        return;
+      }
+      const pin = prompt("💼 APP INTERNA & FINANZAS\nIngrese el PIN de seguridad:");
+      if (pin === ADMIN_PIN) {
+        sessionStorage.setItem('TY_ADMIN_AUTH', 'true');
+        window.location.href = 'admin.html';
+      } else if (pin !== null) {
+        alert("❌ PIN de seguridad incorrecto.");
+      }
+    }
+
+    window._TY_triggerLiveEditor = triggerLiveEditor;
+    window._TY_triggerAdminApp = triggerAdminApp;
+
+    // 1. Atajos de teclado independientes:
     window.addEventListener('keydown', (e) => {
-      if (e.ctrlKey && e.shiftKey && (e.key.toLowerCase() === 'y' || e.key.toLowerCase() === 'e' || e.key.toLowerCase() === 'a')) {
+      // Ctrl + Shift + E -> Activa Modo Edición en Vivo
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'e') {
         e.preventDefault();
-        promptAdminSecurity();
+        triggerLiveEditor();
+      }
+      // Ctrl + Shift + A o Ctrl + Shift + I -> Va directo a la App Interna (admin.html)
+      if (e.ctrlKey && e.shiftKey && (e.key.toLowerCase() === 'a' || e.key.toLowerCase() === 'i')) {
+        e.preventDefault();
+        triggerAdminApp();
       }
     });
 
-    // B. Triple toque en el logo de Tiendas Yolo para móviles
+    // 2. Toques en móviles:
+    // Triple toque en el Logo -> Activa Modo Edición
     const logoTrigger = document.getElementById('brand-logo-trigger');
     if (logoTrigger) {
       let tapCount = 0;
@@ -1235,7 +1368,25 @@ ${order.items.map(i => `• ${i.quantity}x ${i.nombre} ($${(i.precioUSD * i.quan
           e.preventDefault();
           clearTimeout(tapTimer);
           tapCount = 0;
-          promptAdminSecurity();
+          triggerLiveEditor();
+        }
+      });
+    }
+
+    // Doble toque en el Copyright del Footer -> Va directo a la App Interna
+    const footerTrigger = document.getElementById('footer-copyright-trigger');
+    if (footerTrigger) {
+      let fTapCount = 0;
+      let fTapTimer = null;
+      footerTrigger.addEventListener('click', (e) => {
+        fTapCount++;
+        if (fTapCount === 1) {
+          fTapTimer = setTimeout(() => { fTapCount = 0; }, 500);
+        } else if (fTapCount >= 2) {
+          e.preventDefault();
+          clearTimeout(fTapTimer);
+          fTapCount = 0;
+          triggerAdminApp();
         }
       });
     }
@@ -1559,25 +1710,43 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
       });
     }
 
-    // 13. Tasa del Día interactiva
+    const peCatSelect = document.getElementById('pe-input-cat');
+    if (peCatSelect) {
+      peCatSelect.addEventListener('change', (e) => {
+        const id = document.getElementById('pe-input-id').value;
+        if (!id) {
+          document.getElementById('pe-input-sku').value = generateUniqueProductSKU(e.target.value);
+        }
+      });
+    }
+
+    const helpBtn = document.getElementById('btn-open-help');
+    if (helpBtn) helpBtn.addEventListener('click', openLearningGuideModal);
+
+    const helpBannerBtn = document.getElementById('btn-help-guide-banner');
+    if (helpBannerBtn) helpBannerBtn.addEventListener('click', openLearningGuideModal);
+
+    // Modo Oscuro / Claro
+    const themeBtn = document.getElementById('btn-toggle-theme');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        document.body.classList.toggle('theme-dark');
+        const isDark = document.body.classList.contains('theme-dark');
+        localStorage.setItem('TY_THEME', isDark ? 'dark' : 'light');
+        showToast(isDark ? "🌙 Modo Oscuro Activado" : "☀️ Modo Claro Activado", "info");
+      });
+    }
+
+    if (localStorage.getItem('TY_THEME') === 'dark') {
+      document.body.classList.add('theme-dark');
+    }
+
+    // 13. Tasa del Día interactiva (BCV en vivo)
     const rateTicker = document.getElementById('rate-ticker-box');
     if (rateTicker) {
       rateTicker.addEventListener('click', () => {
-        const currentRate = Number(state.config.rateBCV || 395.50);
-        const input = prompt(`💵 Actualizar Tasa del Día (BCV / Paralelo):\nValor actual: Bs. ${currentRate.toFixed(2)} por $`, currentRate);
-        if (input !== null && input.trim() !== '') {
-          const val = parseFloat(input.replace(',', '.'));
-          if (!isNaN(val) && val > 0) {
-            state.config.rateBCV = val;
-            saveData();
-            updateRateDisplay();
-            renderProducts();
-            updateCartUI();
-            showToast(`✅ Tasa actualizada a Bs. ${val.toFixed(2)} / $`, "success");
-          } else {
-            alert("❌ Por favor ingresa un número válido mayor a 0.");
-          }
-        }
+        fetchLiveBcvRate();
+        showToast("🔄 Consultando tasa oficial del BCV en tiempo real...", "info");
       });
     }
 
@@ -1591,6 +1760,11 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
 
     // 15. Iniciar Atajos y Seguridad
     initAdminSecurityAndShortcuts();
+  }
+
+  function openLearningGuideModal() {
+    const modal = document.getElementById('modal-learning-guide');
+    if (modal) modal.style.display = 'flex';
   }
 
   // ============================================================================
@@ -1607,9 +1781,15 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
     toggleLiveEditMode,
     openNewProduct,
     saveEditsToStorage,
-    promptAdminSecurity: () => {
-      if (typeof window._TY_promptAdminSecurity === 'function') {
-        window._TY_promptAdminSecurity();
+    openLearningGuideModal,
+    triggerLiveEditor: () => {
+      if (typeof window._TY_triggerLiveEditor === 'function') {
+        window._TY_triggerLiveEditor();
+      }
+    },
+    triggerAdminApp: () => {
+      if (typeof window._TY_triggerAdminApp === 'function') {
+        window._TY_triggerAdminApp();
       }
     },
     viewPastTicket: function(orderId) {
