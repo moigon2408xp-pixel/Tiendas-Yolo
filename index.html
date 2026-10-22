@@ -66,8 +66,13 @@
         <span style="font-size:0.75rem; opacity:0.85; margin-left:3px;">✏️</span>
       </div>
       <div class="info-item hide-on-mobile">
-        <a href="https://instagram.com/tiendasyolo" target="_blank" rel="noopener noreferrer" class="social-top-link">
-          📸 @tiendasyolo
+        <a href="https://instagram.com/tiendas.yolo" target="_blank" rel="noopener noreferrer" class="social-top-link" title="Instagram Oficial Tiendas Yolo">
+          📸 @tiendas.yolo
+        </a>
+      </div>
+      <div class="info-item hide-on-mobile">
+        <a href="https://tiktok.com/@tiendas.yolo" target="_blank" rel="noopener noreferrer" class="social-top-link" title="TikTok Oficial Tiendas Yolo">
+          🎵 @tiendas.yolo
         </a>
       </div>
     </div>
@@ -201,6 +206,12 @@
             <a href="https://wa.me/584265604070?text=Hola%20Tiendas%20Yolo%2C%20deseo%20m%C3%A1s%20informaci%C3%B3n%20sobre%20sus%20insumos" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-outline">
               💬 WhatsApp
             </a>
+            <a href="https://instagram.com/tiendas.yolo" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="padding:10px 14px; text-decoration:none;" title="Instagram">
+              📸 @tiendas.yolo
+            </a>
+            <a href="https://tiktok.com/@tiendas.yolo" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="padding:10px 14px; text-decoration:none;" title="TikTok">
+              🎵 @tiendas.yolo
+            </a>
           </div>
         </div>
 
@@ -297,7 +308,8 @@
       <div class="footer-links">
         <span class="footer-col-title">Contacto & Envíos</span>
         <a href="https://wa.me/584265604070" target="_blank" rel="noopener noreferrer">📲 WhatsApp: 0426-5604070</a>
-        <a href="https://instagram.com/tiendasyolo" target="_blank" rel="noopener noreferrer">📸 Instagram: @tiendasyolo</a>
+        <a href="https://instagram.com/tiendas.yolo" target="_blank" rel="noopener noreferrer">📸 Instagram: @tiendas.yolo</a>
+        <a href="https://tiktok.com/@tiendas.yolo" target="_blank" rel="noopener noreferrer">🎵 TikTok: @tiendas.yolo</a>
         <span>📍 Maracaibo, Zulia — Venezuela</span>
       </div>
 
@@ -380,10 +392,25 @@
           <div class="form-group">
             <label for="cart-delivery-type" class="form-label">Modalidad de Entrega:</label>
             <select id="cart-delivery-type" class="select-styled">
-              <option value="delivery-maracaibo">🚚 Delivery en Maracaibo (¡Gratis desde $15!)</option>
+              <option value="delivery-maracaibo">🛵 Delivery a Domicilio con GPS (Maracaibo)</option>
+              <option value="retiro-personal">🛍️ Retiro en Tienda Física (Gratis)</option>
               <option value="envio-nacional">📦 Envío Nacional (MRW / Tealca / Zoom)</option>
-              <option value="retiro-personal">📍 Retiro Personalmente en Maracaibo</option>
             </select>
+          </div>
+
+          <!-- WIDGET DELIVERY POR COORDENADAS / GPS (ESTILO YUMMY) -->
+          <div class="delivery-gps-box" id="cart-gps-box">
+            <div class="delivery-gps-header">
+              <span class="delivery-gps-title">📍 Cálculo de Delivery GPS (Estilo Yummy)</span>
+              <span class="delivery-tier-tag" id="delivery-gps-tag">Tiendas Yolo Maracaibo</span>
+            </div>
+            <button type="button" class="btn-gps-detect" id="btn-detect-gps">
+              🛵 Usar mi ubicación actual (GPS en 1 clic)
+            </button>
+            <input type="text" id="cart-delivery-coords" class="form-input" placeholder="O pega enlace de Google Maps / Coordenadas (Lat, Lng)" style="font-size:0.8rem; padding:7px 10px; margin-bottom:4px;">
+            <div class="delivery-calc-badge" id="delivery-calc-badge">
+              <span id="delivery-calc-text">📍 Esperando ubicación...</span>
+            </div>
           </div>
 
           <div class="form-group">
@@ -394,10 +421,9 @@
           <div class="form-group">
             <label for="cart-payment-method" class="form-label">Método de Pago:</label>
             <select id="cart-payment-method" class="select-styled">
-              <option value="Pago Móvil">📲 Pago Móvil (Banesco - Bs al cambio)</option>
-              <option value="Efectivo $">💵 Dólares en Efectivo ($ en entrega)</option>
-              <option value="Zelle">🇺🇸 Zelle ($)</option>
-              <option value="Zinli / Binance">💳 Zinli / Binance Pay ($)</option>
+              <option value="Pago Móvil">📲 Pago Móvil (Bs. Tasa Oficial BCV)</option>
+              <option value="Efectivo $">💵 Dólares en Efectivo ($ USD)</option>
+              <option value="Binance">🟡 Binance Pay / USDT ($)</option>
             </select>
           </div>
 
@@ -510,15 +536,15 @@
             </div>
           </div>
 
-          <div class="bank-pill-card" data-bank-card="zelle">
+          <div class="bank-pill-card" data-bank-card="binance">
             <div class="bank-pill-header">
-              <strong>🇺🇸 ZELLE / ZINLI / BINANCE</strong>
-              <button type="button" class="btn-copy-data" id="btn-copy-zelle">📋 Copiar Correo</button>
+              <strong><span class="binance-badge-brand">BINANCE PAY</span> DÓLARES USDT</strong>
+              <button type="button" class="btn-copy-data" id="btn-copy-binance">📋 Copiar Pay ID</button>
             </div>
             <div class="bank-pill-details">
-              <p>• <strong>Zelle:</strong> <span id="copy-zelle-email">tiendasyolo.pagos@gmail.com</span> (Tiendas Yolo)</p>
-              <p>• <strong>Zinli:</strong> tiendasyolo.pagos@gmail.com</p>
-              <p>• <strong>Binance Pay ID:</strong> 82937102</p>
+              <p>• <strong>Binance Pay ID:</strong> <span id="copy-binance-id">829140291</span></p>
+              <p>• <strong>Usuario / Correo:</strong> tiendasyolo@binance</p>
+              <p>• <em>Transferencias instantáneas sin comisión directo a la cuenta oficial.</em></p>
             </div>
           </div>
         </div>
@@ -531,11 +557,9 @@
             <div class="form-group">
               <label for="pay-input-method" class="form-label">Método Realizado: *</label>
               <select id="pay-input-method" class="select-styled" required>
-                <option value="Pago Móvil">📲 Pago Móvil</option>
-                <option value="Efectivo $">💵 Dólares en Efectivo</option>
-                <option value="Zelle">🇺🇸 Zelle</option>
-                <option value="Zinli">💳 Zinli</option>
-                <option value="Binance">🟡 Binance Pay</option>
+                <option value="Pago Móvil">📲 Pago Móvil (Bs. Tasa BCV)</option>
+                <option value="Efectivo $">💵 Dólares en Efectivo ($ USD)</option>
+                <option value="Binance">🟡 Binance Pay ($ USDT)</option>
               </select>
             </div>
 
@@ -1011,8 +1035,8 @@
           <div class="learning-step-card">
             <div class="learning-step-badge">Paso 3</div>
             <div class="learning-step-icon">💳</div>
-            <h4>Pago Móvil & Zelle con Validación</h4>
-            <p>La app te muestra los datos oficiales de Banesco y Zelle con botones para copiar en 1 clic. Paga el monto exacto en Bs. a la tasa oficial y escribe la referencia: la app autenticará tu pago con el código <strong>AUTH-YOLO-XXXXXX</strong>.</p>
+            <h4>Pago Móvil & Binance Pay</h4>
+            <p>Aceptamos Efectivo $, Pago Móvil Banesco (a la tasa oficial BCV) y Binance Pay / USDT. La app te muestra los datos oficiales con botones de 1 clic para copiar. Al confirmar tu pago, el sistema emitirá tu código de autenticación único <strong>AUTH-YOLO-XXXXXX</strong>.</p>
           </div>
 
           <div class="learning-step-card">
@@ -1027,14 +1051,6 @@
             <div class="learning-step-icon">🌟</div>
             <h4>Club Manicurista VIP</h4>
             <p>Regístrate en <strong>"Mi Cuenta"</strong> una sola vez. Tus datos de entrega se guardarán automáticamente para que no tengas que escribirlos de nuevo y acumularás tu historial de notas de entrega.</p>
-          </div>
-
-          <div class="learning-step-card">
-            <div class="learning-step-badge">Dueña</div>
-            <div class="learning-step-icon">✏️</div>
-            <h4>Atajos Exclusivos de la Dueña</h4>
-            <p>• <strong>Ctrl + Shift + E</strong> (o triple toque en el logo): Activa el Modo Edición en vivo para modificar fotos, textos y precios.<br>
-            • <strong>Ctrl + Shift + A</strong> (o doble toque en el copyright): Ingresa al Backoffice de Finanzas y Control de Caja.</p>
           </div>
         </div>
 
