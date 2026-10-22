@@ -4,13 +4,20 @@
    ============================================================================ */
 
 :root {
-  /* Paleta Corporativa Tiendas Yolo */
-  --ty-primary: #701a49;         /* Magenta / Borgoña profundo */
-  --ty-primary-dark: #450c2c;    /* Vino profundo */
-  --ty-primary-light: #9b2a68;   /* Fucsia frambuesa */
+  /* Paleta Corporativa Tiendas Yolo (Basada en el Logo Oficial) */
+  --ty-primary: #7b1953;         /* Magenta corporativo profundo (Logo Yolo) */
+  --ty-primary-dark: #4a0b31;    /* Color oscuro de la página (Vino magenta profundo de la T/Y) */
+  --ty-primary-light: #9c277f;   /* Magenta medio elegante */
+  --ty-magenta-fuchsia: #ea6fbf; /* Fucsia / Magenta brillante que resalta (Letra T del logo) */
   --ty-rose-gold: #d47a94;       /* Oro rosa metálico */
   --ty-rose-gold-light: #f5d6df; /* Rosa perlado suave */
   --ty-gold-accent: #d4af37;     /* Acento dorado sutil */
+
+  /* Acento Amarillo Mantequilla (Butter Yellow) */
+  --ty-butter-yellow: #fff1a8;        /* Amarillo mantequilla base */
+  --ty-butter-yellow-light: #fff9d6;  /* Fondo mantequilla suave */
+  --ty-butter-yellow-dark: #e5be4e;   /* Acento mantequilla dorado */
+  --ty-butter-yellow-text: #4a0b31;   /* Texto oscuro sobre mantequilla */
 
   /* Neutros & Fondos (Light Mode) */
   --bg-app: #fff7fa;             /* Fondo rosa perlado ultra limpio */
@@ -26,19 +33,19 @@
   --text-white: #ffffff;
 
   /* Bordes & Sombras */
-  --border-light: rgba(112, 26, 73, 0.12);
+  --border-light: rgba(123, 25, 83, 0.12);
   --border-rose: rgba(212, 122, 148, 0.35);
-  --border-gold: rgba(212, 175, 55, 0.4);
-  --shadow-sm: 0 2px 8px rgba(74, 14, 46, 0.05);
-  --shadow-md: 0 8px 24px rgba(74, 14, 46, 0.09);
-  --shadow-lg: 0 16px 40px rgba(74, 14, 46, 0.14);
-  --shadow-glow: 0 0 25px rgba(212, 122, 148, 0.25);
+  --border-gold: rgba(229, 190, 78, 0.5);
+  --shadow-sm: 0 2px 8px rgba(74, 11, 49, 0.05);
+  --shadow-md: 0 8px 24px rgba(74, 11, 49, 0.09);
+  --shadow-lg: 0 16px 40px rgba(74, 11, 49, 0.14);
+  --shadow-glow: 0 0 25px rgba(234, 111, 191, 0.35);
 
   /* Estados */
   --color-success: #10b981;
   --color-success-bg: #ecfdf5;
-  --color-warning: #f59e0b;
-  --color-warning-bg: #fffbeb;
+  --color-warning: #e5be4e;      /* Amarillo mantequilla */
+  --color-warning-bg: #fff9d6;
   --color-danger: #ef4444;
   --color-danger-bg: #fef2f2;
   --color-info: #0284c7;
@@ -909,13 +916,14 @@ body.theme-dark .product-image-container {
 }
 
 .badge-featured {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: #fff;
+  background: linear-gradient(135deg, var(--ty-butter-yellow-light), var(--ty-butter-yellow));
+  color: var(--ty-butter-yellow-text);
+  border: 1px solid var(--ty-butter-yellow-dark);
   font-size: 0.68rem;
   font-weight: 800;
   padding: 3px 8px;
   border-radius: var(--radius-pill);
-  box-shadow: 0 2px 6px rgba(217, 119, 6, 0.3);
+  box-shadow: 0 2px 6px rgba(229, 190, 78, 0.35);
   text-transform: uppercase;
 }
 
@@ -2219,11 +2227,75 @@ body.theme-dark .card-heading {
   .catalog-header-row,
   .products-grid,
   .admin-subnav-bar,
+  .admin-luxury-header,
+  .admin-main-wrap,
   .modal-header.no-print,
+  .modal-footer.no-print,
   .cart-drawer-sheet,
   .toast-container,
   .no-print {
     display: none !important;
+  }
+
+  /* Impresión limpia exclusiva del Reporte Z (Cierre de Caja Diario) */
+  body.printing-report-z-only * {
+    visibility: hidden !important;
+  }
+  body.printing-report-z-only #modal-daily-close-report,
+  body.printing-report-z-only #modal-daily-close-report .receipt-ticket-z,
+  body.printing-report-z-only #modal-daily-close-report .receipt-ticket-z * {
+    visibility: visible !important;
+  }
+  body.printing-report-z-only #modal-daily-close-report {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    display: block !important;
+  }
+  body.printing-report-z-only .receipt-ticket-z {
+    position: relative !important;
+    margin: 0 auto !important;
+    max-width: 360px !important;
+    box-shadow: none !important;
+    border: 1px dashed #444 !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+  }
+  body.printing-report-z-only .modal-header,
+  body.printing-report-z-only .modal-footer {
+    display: none !important;
+  }
+
+  /* Impresión limpia de Nota de Entrega para clientes */
+  body.printing-delivery-note * {
+    visibility: hidden !important;
+  }
+  body.printing-delivery-note #modal-delivery-note,
+  body.printing-delivery-note #modal-delivery-note #printable-delivery-ticket,
+  body.printing-delivery-note #modal-delivery-note #printable-delivery-ticket * {
+    visibility: visible !important;
+  }
+  body.printing-delivery-note #modal-delivery-note {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    display: block !important;
+  }
+  body.printing-delivery-note #printable-delivery-ticket {
+    margin: 0 auto !important;
+    max-width: 360px !important;
+    box-shadow: none !important;
+    border: 1px dashed #444 !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
   }
 
   .modal-overlay {
@@ -2241,6 +2313,97 @@ body.theme-dark .card-heading {
   .printable-quote-document {
     padding: 0 !important;
   }
+}
+
+/* ============================================================================
+   WIDGET DELIVERY GPS CON COORDENADAS (ESTILO YUMMY) & BINANCE
+   ============================================================================ */
+.delivery-gps-box {
+  background: linear-gradient(135deg, rgba(255, 241, 168, 0.28), rgba(255, 249, 214, 0.45));
+  border: 1px solid rgba(229, 190, 78, 0.5);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  margin: 10px 0;
+}
+.delivery-gps-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.delivery-gps-title {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--ty-primary-dark);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-gps-detect {
+  width: 100%;
+  padding: 9px 14px;
+  background: linear-gradient(135deg, var(--ty-primary), var(--ty-magenta-fuchsia));
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: var(--trans-fast);
+  box-shadow: 0 2px 8px rgba(123, 25, 83, 0.25);
+  margin-bottom: 8px;
+}
+.btn-gps-detect:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(234, 111, 191, 0.4);
+}
+.btn-gps-detect:active {
+  transform: translateY(0);
+}
+.delivery-calc-badge {
+  font-size: 0.78rem;
+  background: #ffffff;
+  border: 1px solid var(--ty-rose-gold);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  margin-top: 8px;
+  color: var(--text-main);
+  line-height: 1.45;
+  display: none;
+}
+.delivery-calc-badge.active {
+  display: block;
+}
+.delivery-tier-tag {
+  background: var(--ty-butter-yellow-light);
+  color: var(--ty-butter-yellow-text);
+  border: 1px solid var(--ty-butter-yellow-dark);
+  font-weight: 700;
+  font-size: 0.72rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-top: 4px;
+}
+
+/* Tarjeta Binance Pay */
+.bank-pill-card[data-bank-card="binance"] {
+  border-color: rgba(243, 186, 47, 0.55);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(254, 249, 231, 0.95));
+}
+.binance-badge-brand {
+  background: #f3ba2f;
+  color: #1e2026;
+  font-weight: 800;
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  letter-spacing: 0.02em;
 }
 
 /* ============================================================================
@@ -2896,52 +3059,79 @@ body.theme-dark .footer-col-title {
 }
 
 /* MARCADOR DE ELEMENTOS EDITABLES */
-body.editor-mode-active [data-editable="true"] {
-  outline: 2px dashed #c77383 !important;
+body.editor-mode-active [data-editable="true"],
+body.editor-mode-active [contenteditable="true"] {
+  outline: 2px dashed var(--ty-magenta-fuchsia) !important;
   outline-offset: 3px;
   cursor: text;
-  background: rgba(199, 115, 131, 0.08) !important;
+  background: rgba(234, 111, 191, 0.08) !important;
   border-radius: 4px;
+  transition: var(--trans-fast);
+}
+
+body.editor-mode-active [data-editable="true"]:hover,
+body.editor-mode-active [contenteditable="true"]:hover {
+  background: rgba(255, 241, 168, 0.25) !important;
+  outline-color: var(--ty-butter-yellow-dark) !important;
+}
+
+body.editor-mode-active .product-card {
+  outline: 2px dashed var(--ty-magenta-fuchsia) !important;
+  position: relative !important;
 }
 
 .card-edit-overlay {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 10px;
+  right: 10px;
   display: none;
-  gap: 4px;
-  z-index: 10;
+  gap: 6px;
+  z-index: 50;
+  background: rgba(74, 11, 49, 0.88);
+  backdrop-filter: blur(6px);
+  padding: 4px 8px;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--ty-magenta-fuchsia);
 }
 
 body.editor-mode-active .card-edit-overlay {
-  display: flex;
+  display: flex !important;
 }
 
 .btn-edit-card-action {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  border: none;
-  background: rgba(0, 0, 0, 0.75);
-  color: #fff;
-  font-size: 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: #ffffff;
+  color: var(--ty-primary-dark);
+  font-size: 0.95rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: var(--trans-fast);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
 .btn-edit-card-action:hover {
-  transform: scale(1.15);
-  background: var(--ty-primary);
+  transform: scale(1.18);
+  background: var(--ty-magenta-fuchsia);
+  color: #fff;
+  border-color: #fff;
+}
+
+.btn-edit-card-action.btn-del-action:hover {
+  background: #ef4444;
+  color: #fff;
 }
 
 /* BOTÓN DE PAGO Y AUTENTICACIÓN */
 .btn-primary-payment {
   width: 100%;
   padding: 12px 18px;
-  background: linear-gradient(135deg, #701a49, #9c276a);
+  background: linear-gradient(135deg, var(--ty-primary-dark), var(--ty-primary));
   color: #fff;
   border: none;
   border-radius: var(--radius-pill);
@@ -3319,13 +3509,15 @@ body.theme-dark .payment-box-heading {
 
 .vip-badge {
   display: inline-block;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: #fff;
+  background: linear-gradient(135deg, var(--ty-butter-yellow-light), var(--ty-butter-yellow));
+  color: var(--ty-butter-yellow-text);
+  border: 1px solid var(--ty-butter-yellow-dark);
   font-size: 0.7rem;
   font-weight: 800;
   padding: 2px 8px;
   border-radius: var(--radius-pill);
   margin: 4px 0 6px;
+  box-shadow: 0 2px 6px rgba(229, 190, 78, 0.3);
 }
 
 .profile-info p {
@@ -3577,7 +3769,7 @@ body.theme-dark .btn-secondary:hover {
   background-color: rgba(212, 122, 148, 0.2) !important;
 }
 
-/* Modos oscuros específicos del panel SICS & Finanzas */
+/* Modos oscuros específicos del panel Backoffice & Finanzas */
 body.theme-dark .panel-title,
 body.theme-dark .kpi-value,
 body.theme-dark .currency-val-main,
