@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * TIENDAS YOLO® — BACKOFFICE & APLICACIÓN INTERNA SICS (admin.js)
+ * TIENDAS YOLO® — BACKOFFICE & GESTIÓN ADMINISTRATIVA (admin.js)
  * Panel de Gestión, Finanzas Completas, Pedidos, Inventario con SKU Único,
  * CRM de Manicuristas, Mostrador Rápido y Cierre de Caja Diario (Reporte Z)
  * ============================================================================
@@ -125,7 +125,7 @@
     if (enteredPin === correctPin) {
       sessionStorage.setItem(PIN_SESSION_KEY, 'true');
       document.getElementById('pin-lock-modal').style.display = 'none';
-      showToast("¡Bienvenido al Panel SICS de Tiendas Yolo!", "success");
+      showToast("¡Bienvenido al Panel de Gestión de Tiendas Yolo!", "success");
       renderAllAdminModules();
     } else {
       showToast("PIN de seguridad incorrecto.", "error");
@@ -378,9 +378,8 @@
     const rate = Number(state.config.rateBCV || 883.40);
     const accounts = [
       { name: '💵 Efectivo $', key: 'Efectivo $' },
-      { name: '📲 Pago Móvil', key: 'Pago Móvil' },
-      { name: '🟣 Zelle', key: 'Zelle' },
-      { name: '🔵 Zinli', key: 'Zinli' }
+      { name: '📲 Pago Móvil (Bs)', key: 'Pago Móvil' },
+      { name: '🟡 Binance Pay ($)', key: 'Binance' }
     ];
 
     container.innerHTML = accounts.map(acc => {
@@ -707,11 +706,8 @@
     const cashEntries = state.finances.filter(f => f.cuentaMetodo === 'Efectivo $');
     const cashUSD = cashEntries.reduce((s, f) => f.tipo === 'Ingreso' ? s + Number(f.montoUSD || 0) : s - Number(f.montoUSD || 0), 0);
 
-    const zelleEntries = state.finances.filter(f => f.cuentaMetodo === 'Zelle');
-    const zelleUSD = zelleEntries.reduce((s, f) => f.tipo === 'Ingreso' ? s + Number(f.montoUSD || 0) : s - Number(f.montoUSD || 0), 0);
-
-    const zinliEntries = state.finances.filter(f => f.cuentaMetodo === 'Zinli');
-    const zinliUSD = zinliEntries.reduce((s, f) => f.tipo === 'Ingreso' ? s + Number(f.montoUSD || 0) : s - Number(f.montoUSD || 0), 0);
+    const binanceEntries = state.finances.filter(f => f.cuentaMetodo === 'Binance');
+    const binanceUSD = binanceEntries.reduce((s, f) => f.tipo === 'Ingreso' ? s + Number(f.montoUSD || 0) : s - Number(f.montoUSD || 0), 0);
 
     const curPmUsdEl = document.getElementById('cur-pm-usd');
     if (curPmUsdEl) curPmUsdEl.textContent = `$${pmUSD.toFixed(2)}`;
@@ -720,10 +716,8 @@
 
     const curCashUsdEl = document.getElementById('cur-cash-usd');
     if (curCashUsdEl) curCashUsdEl.textContent = `$${cashUSD.toFixed(2)}`;
-    const curZelleUsdEl = document.getElementById('cur-zelle-usd');
-    if (curZelleUsdEl) curZelleUsdEl.textContent = `$${zelleUSD.toFixed(2)}`;
-    const curZinliUsdEl = document.getElementById('cur-zinli-usd');
-    if (curZinliUsdEl) curZinliUsdEl.textContent = `$${zinliUSD.toFixed(2)}`;
+    const curBinanceUsdEl = document.getElementById('cur-binance-usd');
+    if (curBinanceUsdEl) curBinanceUsdEl.textContent = `$${binanceUSD.toFixed(2)}`;
 
     // Resumen de Ganancias y Margen
     const totalIn = state.finances.filter(f => f.tipo === 'Ingreso').reduce((s, f) => s + Number(f.montoUSD || 0), 0);
@@ -892,7 +886,10 @@
           </td>
           <td><span style="font-weight:700; color:${stockColor};">● ${stockLabel}</span></td>
           <td>
-            <button class="btn-secondary" style="padding:4px 8px; font-size:0.75rem;" data-action="edit-product" data-id="${prod.id}">✏️ Editar</button>
+            <div style="display:flex; gap:6px;">
+              <button class="btn-secondary" style="padding:4px 8px; font-size:0.75rem;" data-action="edit-product" data-id="${prod.id}">✏️ Editar</button>
+              <button class="btn-secondary" style="padding:4px 8px; font-size:0.75rem; color:#ef4444; border-color:rgba(239,68,68,0.3);" data-action="delete-product" data-id="${prod.id}" title="Eliminar Insumo">🗑️</button>
+            </div>
           </td>
         </tr>
       `;
@@ -930,6 +927,19 @@
       btn.addEventListener('click', () => {
         const prod = state.products.find(p => p.id === btn.dataset.id);
         if (prod) openProductModal(prod);
+      });
+    });
+
+    tbody.querySelectorAll('[data-action="delete-product"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const prod = state.products.find(p => p.id === btn.dataset.id);
+        if (prod && confirm(`¿Estás segura de eliminar permanentemente "${prod.nombre}" del catálogo?`)) {
+          state.products = state.products.filter(p => p.id !== btn.dataset.id);
+          saveState();
+          renderInventoryTable(query);
+          renderAdminDashboard();
+          showToast(`🗑️ Insumo "${prod.nombre}" eliminado del inventario`, "info");
+        }
       });
     });
   }
@@ -1052,8 +1062,7 @@
 
     let cashUSD = 0;
     let pmUSD = 0;
-    let zelleUSD = 0;
-    let zinliUSD = 0;
+    let binanceUSD = 0;
     let totalSales = 0;
     let totalExpenses = 0;
 
@@ -1063,8 +1072,7 @@
         totalSales += amt;
         if (m.cuentaMetodo === 'Efectivo $') cashUSD += amt;
         else if (m.cuentaMetodo === 'Pago Móvil') pmUSD += amt;
-        else if (m.cuentaMetodo === 'Zelle') zelleUSD += amt;
-        else if (m.cuentaMetodo === 'Zinli') zinliUSD += amt;
+        else if (m.cuentaMetodo === 'Binance') binanceUSD += amt;
       } else if (m.tipo === 'Gasto' || m.tipo === 'Costo' || m.tipo === 'Retiro') {
         totalExpenses += amt;
       }
@@ -1080,8 +1088,8 @@
     document.getElementById('rz-cash-usd').textContent = `$${cashUSD.toFixed(2)}`;
     document.getElementById('rz-pm-bs').textContent = `Bs. ${pmBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     document.getElementById('rz-pm-usd').textContent = `$${pmUSD.toFixed(2)}`;
-    document.getElementById('rz-zelle-usd').textContent = `$${zelleUSD.toFixed(2)}`;
-    document.getElementById('rz-zinli-usd').textContent = `$${zinliUSD.toFixed(2)}`;
+    const rzBinanceEl = document.getElementById('rz-binance-usd');
+    if (rzBinanceEl) rzBinanceEl.textContent = `$${binanceUSD.toFixed(2)}`;
     document.getElementById('rz-total-sales').textContent = `$${totalSales.toFixed(2)}`;
     document.getElementById('rz-total-expenses').textContent = `$${totalExpenses.toFixed(2)}`;
     document.getElementById('rz-net-balance').textContent = `$${netBalanceUSD.toFixed(2)}`;
@@ -1217,6 +1225,7 @@
     const skuInput = document.getElementById('prod-sku');
     if (!modal || !form) return;
 
+    const delBtn = document.getElementById('btn-delete-product-admin');
     form.reset();
     if (prod) {
       title.textContent = "✏️ Editar Insumo";
@@ -1230,11 +1239,13 @@
       document.getElementById('prod-stock').value = prod.stockActual;
       document.getElementById('prod-stock-min').value = prod.stockMinimo || 5;
       document.getElementById('prod-featured').value = prod.destacado || 'NO';
+      if (delBtn) delBtn.style.display = 'inline-block';
     } else {
       title.textContent = "✨ Registrar Nuevo Insumo";
       document.getElementById('prod-id').value = '';
       const initialCat = document.getElementById('prod-category').value || 'Esmaltes y Geles';
       skuInput.value = generateUniqueProductSKU(initialCat, state.products);
+      if (delBtn) delBtn.style.display = 'none';
     }
 
     modal.style.display = 'flex';
@@ -1339,7 +1350,7 @@
       montoUSD: amountUSD,
       montoBs: amountBs,
       idReferencia: ref,
-      notas: "Registrado manualmente en panel SICS"
+      notas: "Registrado manualmente en panel administrativo"
     };
 
     state.finances.unshift(newEntry);
@@ -1464,7 +1475,7 @@
     const btnLockSession = document.getElementById('btn-lock-session');
     if (btnLockSession) btnLockSession.addEventListener('click', handleLockSession);
 
-    // Header Controls SICS
+    // Header Controls Luxury
     const btnFastOrder = document.getElementById('btn-topbar-fast-order');
     if (btnFastOrder) btnFastOrder.addEventListener('click', openExpressOrderModal);
 
@@ -1647,9 +1658,17 @@
       });
     }
 
-    // Impresión y WhatsApp Reporte Z
+    // Impresión y WhatsApp Reporte Z (Exclusivo Ticket Limpio)
     const btnPrintZ = document.getElementById('btn-print-report-z');
-    if (btnPrintZ) btnPrintZ.addEventListener('click', () => window.print());
+    if (btnPrintZ) {
+      btnPrintZ.addEventListener('click', () => {
+        document.body.classList.add('printing-report-z-only');
+        window.print();
+        setTimeout(() => {
+          document.body.classList.remove('printing-report-z-only');
+        }, 1000);
+      });
+    }
 
     const btnSendZWa = document.getElementById('btn-send-report-z-wa');
     if (btnSendZWa) {
@@ -1658,8 +1677,7 @@
         const rzCash = document.getElementById('rz-cash-usd').textContent;
         const rzPmBs = document.getElementById('rz-pm-bs').textContent;
         const rzPmUsd = document.getElementById('rz-pm-usd').textContent;
-        const rzZelle = document.getElementById('rz-zelle-usd').textContent;
-        const rzZinli = document.getElementById('rz-zinli-usd').textContent;
+        const rzBinance = document.getElementById('rz-binance-usd') ? document.getElementById('rz-binance-usd').textContent : '$0.00';
         const rzSales = document.getElementById('rz-total-sales').textContent;
         const rzExp = document.getElementById('rz-total-expenses').textContent;
         const rzNet = document.getElementById('rz-net-balance').textContent;
@@ -1669,8 +1687,7 @@
           `📅 *Fecha:* ${rzDate}\n\n` +
           `💵 *Efectivo $:* ${rzCash}\n` +
           `📲 *Pago Móvil Bs:* ${rzPmBs} (${rzPmUsd})\n` +
-          `🟣 *Zelle:* ${rzZelle}\n` +
-          `🔵 *Zinli:* ${rzZinli}\n\n` +
+          `🟡 *Binance Pay ($):* ${rzBinance}\n\n` +
           `📈 *Total Ventas:* ${rzSales}\n` +
           `📤 *Total Gastos:* ${rzExp}\n` +
           `💰 *Saldo Neto:* ${rzNet}\n\n` +
