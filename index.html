@@ -7,7 +7,7 @@
   
   <!-- SEO & Redes Sociales -->
   <meta name="description" content="Tiendas Yolo - Insumos profesionales para uñas en Maracaibo. Kits para principiantes, esmaltes semipermanentes, geles, pinceles y todo para la manicurista. Delivery gratis y envíos nacionales.">
-  <meta name="theme-color" content="#4a0b31">
+  <meta name="theme-color" content="#ea6fbf">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -151,19 +151,27 @@
           </div>
         </a>
 
-        <a href="https://instagram.com/tiendasyolo" target="_blank" rel="noopener noreferrer" class="social-hub-btn ig-pill">
+        <a href="https://instagram.com/tiendas.yolo" target="_blank" rel="noopener noreferrer" class="social-hub-btn ig-pill">
           <span class="hub-icon">📸</span>
           <div class="hub-texts">
             <span class="hub-title">Instagram</span>
-            <span class="hub-sub">@tiendasyolo</span>
+            <span class="hub-sub">@tiendas.yolo</span>
           </div>
         </a>
 
-        <div class="social-hub-btn deliv-pill">
-          <span class="hub-icon">🚚</span>
+        <a href="https://tiktok.com/@tiendas.yolo" target="_blank" rel="noopener noreferrer" class="social-hub-btn tiktok-pill">
+          <span class="hub-icon">🎵</span>
           <div class="hub-texts">
-            <span class="hub-title">Delivery Maracaibo</span>
-            <span class="hub-sub">Gratis desde $15</span>
+            <span class="hub-title">TikTok</span>
+            <span class="hub-sub">@tiendas.yolo</span>
+          </div>
+        </a>
+
+        <div class="social-hub-btn deliv-pill" id="btn-open-gps-delivery-hub" style="cursor:pointer;" title="Clic para calcular tu delivery por GPS">
+          <span class="hub-icon">📍</span>
+          <div class="hub-texts">
+            <span class="hub-title">Delivery GPS</span>
+            <span class="hub-sub">Maracaibo · Calcular Tarifa</span>
           </div>
         </div>
 
@@ -199,17 +207,14 @@
             <button class="btn-primary" id="btn-hero-explore-kits">
               📦 Ver Kits Manicuristas
             </button>
+            <button class="btn-secondary" id="btn-hero-calc-gps">
+              📍 Calcular Delivery GPS
+            </button>
             <button class="btn-secondary" id="btn-hero-quote-generator">
-              📄 Generar Presupuesto / Cotización
+              📄 Generar Presupuesto
             </button>
             <a href="https://wa.me/584265604070?text=Hola%20Tiendas%20Yolo%2C%20deseo%20m%C3%A1s%20informaci%C3%B3n%20sobre%20sus%20insumos" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-outline">
               💬 WhatsApp
-            </a>
-            <a href="https://instagram.com/tiendas.yolo" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="padding:10px 14px; text-decoration:none;" title="Instagram">
-              📸 @tiendas.yolo
-            </a>
-            <a href="https://tiktok.com/@tiendas.yolo" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="padding:10px 14px; text-decoration:none;" title="TikTok">
-              🎵 @tiendas.yolo
             </a>
           </div>
         </div>
@@ -1057,6 +1062,88 @@
           ✨ ¡Entendido! Empezar a Usar la App
         </button>
 
+      </div>
+    </div>
+  </div>
+
+  <!-- =================================================================== -->
+  <!-- MODAL: CALCULADORA DE DELIVERY GPS MARACAIBO                        -->
+  <!-- =================================================================== -->
+  <div class="modal-overlay" id="modal-gps-calculator" style="display:none;">
+    <div class="modal-window" style="max-width:540px;">
+      <div class="modal-header">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:1.4rem;">📍</span>
+          <div>
+            <h3 class="modal-title" style="margin-bottom:0;">Calculadora de Delivery GPS</h3>
+            <span style="font-size:0.75rem; color:var(--text-muted);">Sede Tiendas Yolo · Maracaibo, Zulia</span>
+          </div>
+        </div>
+        <button class="close-modal-btn" data-close-modal="modal-gps-calculator">✕</button>
+      </div>
+
+      <div class="modal-body" style="padding:20px;">
+        <p style="font-size:0.86rem; color:var(--text-secondary); margin-bottom:14px; line-height:1.4;">
+          Calcula tu tarifa exacta de entrega por distancia en Maracaibo. <strong>¡Recuerda que si tu compra supera los $15, tu delivery es 100% GRATIS!</strong>
+        </p>
+
+        <!-- Botón GPS Automático -->
+        <button type="button" class="btn-primary" id="btn-trigger-gps-detect" style="width:100%; justify-content:center; padding:12px; font-weight:700; margin-bottom:14px; background:linear-gradient(135deg, #7c144e, #ea6fbf);">
+          🛰️ Detectar mi Ubicación GPS Actual
+        </button>
+
+        <div style="text-align:center; font-size:0.75rem; color:var(--text-muted); margin-bottom:14px;">
+          — O SELECCIONA TU ZONA EN MARACAIBO —
+        </div>
+
+        <!-- Selector de Zonas -->
+        <div class="form-group" style="margin-bottom:14px;">
+          <label class="form-label" for="select-maracaibo-zone">Zona o Parroquia:</label>
+          <select id="select-maracaibo-zone" class="select-styled" style="width:100%;">
+            <option value="">Selecciona tu zona...</option>
+            <option value="10.6650,-71.6080" data-name="Bella Vista / Cecilio Acosta" data-km="2.4">Bella Vista / Cecilio Acosta (~2.4 km)</option>
+            <option value="10.6550,-71.6220" data-name="5 de Julio / Indio Mara" data-km="2.8">5 de Julio / Indio Mara (~2.8 km)</option>
+            <option value="10.6850,-71.6150" data-name="Zona Norte / Fuerzas Armadas" data-km="4.8">Zona Norte / Fuerzas Armadas (~4.8 km)</option>
+            <option value="10.6600,-71.6450" data-name="La Limpia / Curva de Molina" data-km="6.5">La Limpia / Curva de Molina (~6.5 km)</option>
+            <option value="10.6480,-71.6250" data-name="Delicias / Paraíso" data-km="3.2">Delicias / Paraíso (~3.2 km)</option>
+            <option value="10.6380,-71.6050" data-name="El Milagro / Santa Lucía" data-km="2.1">El Milagro / Santa Lucía (~2.1 km)</option>
+            <option value="10.5850,-71.6350" data-name="San Francisco / Sierra Maestra" data-km="9.2">San Francisco / Sierra Maestra (~9.2 km)</option>
+            <option value="10.6800,-71.6500" data-name="Los Olivos / La Victoria" data-km="7.0">Los Olivos / La Victoria (~7.0 km)</option>
+            <option value="10.6150,-71.6300" data-name="Sabaneta / Metrosol" data-km="5.8">Sabaneta / Metrosol (~5.8 km)</option>
+          </select>
+        </div>
+
+        <!-- Coordenadas directas opcionales -->
+        <div class="form-group" style="margin-bottom:16px;">
+          <label class="form-label" for="input-custom-gps-link">O pega coordenadas o enlace de Google Maps:</label>
+          <input type="text" id="input-custom-gps-link" class="form-input" placeholder="Ej: 10.6427, -71.6125 o enlace de maps">
+        </div>
+
+        <!-- TARJETA DE RESULTADOS DEL CÁLCULO -->
+        <div id="gps-calc-results-box" style="background:var(--bg-subtle); border:1.5px solid var(--ty-magenta-fuchsia); border-radius:var(--radius-md); padding:16px; margin-bottom:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-weight:700; font-size:0.85rem; color:var(--ty-primary-dark);" id="gps-zone-label">Ubicación: Selecciona una zona</span>
+            <span style="font-size:0.78rem; font-weight:700; color:#10b981;" id="gps-free-badge">✓ Gratuito > $15</span>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:center;">
+            <div style="background:#fff; padding:10px; border-radius:8px; border:1px solid var(--border-light);">
+              <span style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Distancia</span>
+              <div style="font-size:1.3rem; font-weight:800; color:var(--text-main);" id="gps-dist-km">0.0 km</div>
+            </div>
+            <div style="background:#fff; padding:10px; border-radius:8px; border:1px solid var(--border-light);">
+              <span style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Tarifa Delivery</span>
+              <div style="font-size:1.3rem; font-weight:800; color:var(--ty-primary-dark);" id="gps-cost-usd">$0.00</div>
+              <span style="font-size:0.75rem; font-weight:600; color:var(--text-secondary);" id="gps-cost-bs">Bs. 0.00</span>
+            </div>
+          </div>
+          <div style="font-size:0.76rem; color:var(--text-muted); text-align:center; margin-top:10px;" id="gps-time-estimate">
+            ⏱️ Tiempo estimado de entrega: 25 - 40 min
+          </div>
+        </div>
+
+        <button type="button" class="btn-primary" id="btn-apply-gps-to-cart" style="width:100%; justify-content:center; padding:12px; font-weight:800;">
+          ✅ Aplicar esta Ubicación a mi Pedido
+        </button>
       </div>
     </div>
   </div>
