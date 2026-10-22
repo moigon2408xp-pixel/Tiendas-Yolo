@@ -4,7 +4,7 @@
  * ============================================================================
  */
 
-const CACHE_NAME = 'tiendas-yolo-cache-v2';
+const CACHE_NAME = 'tiendas-yolo-cache-v3';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -18,10 +18,8 @@ const STATIC_ASSETS = [
   './favicon.png',
   './icon-192.png',
   './icon-512.png',
-  './assets/logo-yolo.png',
-  './assets/favicon.png',
-  './assets/icon-192.png',
-  './assets/icon-512.png'
+  './screenshot-desktop.png',
+  './screenshot-mobile.png'
 ];
 
 self.addEventListener('install', event => {
