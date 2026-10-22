@@ -1,1071 +1,3848 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Tiendas Yolo® | Catálogo Oficial & Insumos para Uñas</title>
+/* ============================================================================
+   TIENDAS YOLO® — ESTILOS ULTRA-PREMIUM (GLAMOUR & LUXURY DESIGN SYSTEM)
+   Insumos para uñas y todo para la manicurista | Maracaibo, Venezuela
+   ============================================================================ */
+
+:root {
+  /* Paleta Corporativa Tiendas Yolo (Basada en el Logo Oficial) */
+  --ty-primary: #7b1953;         /* Magenta corporativo profundo (Logo Yolo) */
+  --ty-primary-dark: #4a0b31;    /* Color oscuro de la página (Vino magenta profundo de la T/Y) */
+  --ty-primary-light: #9c277f;   /* Magenta medio elegante */
+  --ty-magenta-fuchsia: #ea6fbf; /* Fucsia / Magenta brillante que resalta (Letra T del logo) */
+  --ty-rose-gold: #d47a94;       /* Oro rosa metálico */
+  --ty-rose-gold-light: #f5d6df; /* Rosa perlado suave */
+  --ty-gold-accent: #d4af37;     /* Acento dorado sutil */
+
+  /* Acento Amarillo Mantequilla (Butter Yellow) */
+  --ty-butter-yellow: #fff1a8;        /* Amarillo mantequilla base */
+  --ty-butter-yellow-light: #fff9d6;  /* Fondo mantequilla suave */
+  --ty-butter-yellow-dark: #e5be4e;   /* Acento mantequilla dorado */
+  --ty-butter-yellow-text: #4a0b31;   /* Texto oscuro sobre mantequilla */
+
+  /* Neutros & Fondos (Light Mode) */
+  --bg-app: #fff7fa;             /* Fondo rosa perlado ultra limpio */
+  --bg-surface: #ffffff;         /* Superficie blanca pura */
+  --bg-surface-glass: rgba(255, 255, 255, 0.88);
+  --bg-card: #ffffff;
+  --bg-subtle: #faedf2;
   
-  <!-- SEO & Redes Sociales -->
-  <meta name="description" content="Tiendas Yolo - Insumos profesionales para uñas en Maracaibo. Kits para principiantes, esmaltes semipermanentes, geles, pinceles y todo para la manicurista. Delivery gratis y envíos nacionales.">
-  <meta name="theme-color" content="#701a49">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Tiendas Yolo">
-  
-  <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="manifest" href="manifest.json">
-
-  <!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body class="theme-light">
-
-  <!-- =================================================================== -->
-  <!-- BARRA FLOTANTE DE MODO EDICIÓN EN VIVO (WYSIWYG PARA LA DUEÑA)     -->
-  <!-- =================================================================== -->
-  <div class="editor-control-bar" id="editor-control-bar" style="display:none;">
-    <div class="editor-bar-badge">
-      <span class="pulse-dot-red"></span>
-      <span class="editor-bar-title">Modo Edición Dueña</span>
-    </div>
-    <button type="button" class="editor-action-btn" id="btn-toggle-editor" title="Activar/Desactivar edición de textos en pantalla">
-      ✏️ <span id="editor-btn-text">Edición: OFF</span>
-    </button>
-    <button type="button" class="editor-action-btn" id="btn-editor-add-product" title="Añadir un nuevo producto al catálogo">
-      ➕ Nuevo Producto
-    </button>
-    <button type="button" class="editor-action-btn btn-save-highlight" id="btn-editor-save-all" title="Guardar todos los textos y cambios">
-      💾 Guardar Cambios
-    </button>
-    <a href="admin.html" class="editor-action-btn editor-btn-admin" title="Abrir Backoffice de Finanzas">
-      💼 App Interna
-    </a>
-    <button type="button" class="editor-btn-close" id="btn-editor-exit" title="Salir del Modo Editor">
-      ✕
-    </button>
-  </div>
-
-  <!-- TOP BANNER DE INFORMACIÓN Y TASA EN VIVO -->
-  <aside class="top-info-bar">
-    <div class="top-info-content">
-      <div class="info-item">
-        <span class="pulse-dot"></span>
-        <span class="info-label">💅 Maracaibo:</span>
-        <span class="info-highlight" id="top-delivery-badge">Delivery Gratis desde $15</span>
-      </div>
-      <div class="info-item rate-ticker" id="rate-ticker-box" title="Haz clic para actualizar la tasa del día" style="cursor:pointer;">
-        <span class="info-label">💵 Tasa Hoy:</span>
-        <span class="rate-val" id="top-rate-display">Bs. 395.50 / $</span>
-        <span style="font-size:0.75rem; opacity:0.85; margin-left:3px;">✏️</span>
-      </div>
-      <div class="info-item hide-on-mobile">
-        <a href="https://instagram.com/tiendas.yolo" target="_blank" rel="noopener noreferrer" class="social-top-link" title="Instagram Oficial Tiendas Yolo">
-          📸 @tiendas.yolo
-        </a>
-      </div>
-      <div class="info-item hide-on-mobile">
-        <a href="https://tiktok.com/@tiendas.yolo" target="_blank" rel="noopener noreferrer" class="social-top-link" title="TikTok Oficial Tiendas Yolo">
-          🎵 @tiendas.yolo
-        </a>
-      </div>
-    </div>
-  </aside>
-
-  <!-- NAVBAR INSTITUCIONAL DE TIENDAS YOLO -->
-  <header class="main-header">
-    <div class="header-container">
-      
-      <!-- LOGO DE MARCA (CON DETECCIÓN DE TRIPLE TAP PARA ADMIN) -->
-      <a href="./" class="brand-group" id="brand-logo-trigger" title="Tiendas Yolo®">
-        <div class="logo-wrapper">
-          <img src="logo-yolo.png" alt="Logo Tiendas Yolo" class="brand-logo" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
-        </div>
-        <div class="brand-titles">
-          <h1 class="brand-title" data-editable="true" id="txt-brand-name">Tiendas Yolo<span class="brand-reg">®</span></h1>
-          <p class="brand-subtitle" data-editable="true" id="txt-brand-slogan">Insumos para uñas y todo para la manicurista</p>
-        </div>
-      </a>
-
-      <!-- BUSCADOR RÁPIDO DE INSUMOS -->
-      <div class="search-box-header" id="header-search-wrapper">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="global-search-input" placeholder="Buscar esmaltes, geles, kits, pinceles..." autocomplete="off">
-        <button class="clear-search-btn" id="btn-clear-search" style="display:none;">✕</button>
-      </div>
-
-      <!-- ACCIONES DE CABECERA -->
-      <div class="nav-actions">
-        <!-- BOTÓN INSTALAR APP PWA -->
-        <button class="btn-install-header" id="btn-install-pwa" title="Instalar Tiendas Yolo en tu teléfono">
-          <span class="install-icon">📲</span>
-          <span class="install-text">Instalar App</span>
-        </button>
-
-        <!-- BOTÓN MI CUENTA / CLUB MANICURISTA -->
-        <button class="account-btn" id="btn-open-account" title="Club Manicurista & Mis Datos">
-          <span class="account-icon">👤</span>
-          <span class="account-badge-text" id="header-user-status">Mi Cuenta</span>
-        </button>
-
-        <!-- BOTÓN GUÍA DE LA APP / APRENDER A USAR -->
-        <button class="help-btn" id="btn-open-help" title="Manual y Enseñanza de Uso de la App">
-          <span class="help-icon">🎓</span>
-          <span class="help-badge-text">Guía</span>
-        </button>
-
-        <!-- BOTÓN DE CARRITO -->
-        <button class="cart-btn" id="btn-open-cart" title="Ver pedido actual">
-          <span class="cart-icon">🛒</span>
-          <span class="cart-count-badge" id="cart-counter">0</span>
-          <span class="cart-total-badge" id="cart-total-header">$0.00</span>
-        </button>
-
-        <!-- TEMA CLARO / OSCURO -->
-        <button class="theme-toggle-btn" id="btn-toggle-theme" title="Modo Claro/Oscuro">
-          🌓
-        </button>
-      </div>
-
-    </div>
-  </header>
-
-  <!-- CONTENIDO PRINCIPAL -->
-  <main class="main-content">
-
-    <!-- =================================================================== -->
-    <!-- SOCIAL HUB / LINK-IN-BIO BAR (CONECTA CON TIENDAS YOLO) -->
-    <!-- =================================================================== -->
-    <section class="social-hub-section">
-      <div class="social-hub-container">
-        <a href="https://wa.me/584265604070" target="_blank" rel="noopener noreferrer" class="social-hub-btn wa-pill">
-          <span class="hub-icon">📲</span>
-          <div class="hub-texts">
-            <span class="hub-title">WhatsApp Oficial</span>
-            <span class="hub-sub">0426-5604070</span>
-          </div>
-        </a>
-
-        <a href="https://instagram.com/tiendasyolo" target="_blank" rel="noopener noreferrer" class="social-hub-btn ig-pill">
-          <span class="hub-icon">📸</span>
-          <div class="hub-texts">
-            <span class="hub-title">Instagram</span>
-            <span class="hub-sub">@tiendasyolo</span>
-          </div>
-        </a>
-
-        <div class="social-hub-btn deliv-pill">
-          <span class="hub-icon">🚚</span>
-          <div class="hub-texts">
-            <span class="hub-title">Delivery Maracaibo</span>
-            <span class="hub-sub">Gratis desde $15</span>
-          </div>
-        </div>
-
-        <div class="social-hub-btn envios-pill">
-          <span class="hub-icon">📦</span>
-          <div class="hub-texts">
-            <span class="hub-title">Envíos Nacionales</span>
-            <span class="hub-sub">MRW • Tealca • Zoom</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- =================================================================== -->
-    <!-- HERO BANNER GLAMOUR COMPACTO & ELEGANTE -->
-    <!-- =================================================================== -->
-    <section class="hero-glam-card">
-      <div class="hero-inner">
-        <div class="hero-text-side">
-          <div class="hero-badge">
-            <span>✨ COLECCIÓN EXCLUSIVA 2026</span>
-          </div>
-          <h2 class="hero-headline" data-editable="true" id="txt-hero-title">Insumos Profesionales para Manicuristas de Alto Nivel</h2>
-          <p class="hero-description" data-editable="true" id="txt-hero-desc">
-            Todo para tu mesa de trabajo: <strong>Esmaltes M&Y, Base Rubber, Geles Constructores, Spider Gel, Pinceles Liner y Kits para Principiantes</strong> con entrega inmediata en Maracaibo y envíos a toda Venezuela.
-          </p>
-          <div class="hero-quote-box">
-            <span class="quote-mark">“</span>
-            <span class="quote-text" data-editable="true" id="txt-hero-quote">Yo lo compro, Yo lo merezco.</span>
-            <span class="quote-author">— Filosofía Tiendas Yolo</span>
-          </div>
-          <div class="hero-cta-group">
-            <button class="btn-primary" id="btn-hero-explore-kits">
-              📦 Ver Kits Manicuristas
-            </button>
-            <button class="btn-secondary" id="btn-hero-quote-generator">
-              📄 Generar Presupuesto / Cotización
-            </button>
-            <a href="https://wa.me/584265604070?text=Hola%20Tiendas%20Yolo%2C%20deseo%20m%C3%A1s%20informaci%C3%B3n%20sobre%20sus%20insumos" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-outline">
-              💬 WhatsApp
-            </a>
-            <a href="https://instagram.com/tiendas.yolo" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="padding:10px 14px; text-decoration:none;" title="Instagram">
-              📸 @tiendas.yolo
-            </a>
-            <a href="https://tiktok.com/@tiendas.yolo" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="padding:10px 14px; text-decoration:none;" title="TikTok">
-              🎵 @tiendas.yolo
-            </a>
-          </div>
-        </div>
-
-        <div class="hero-visual-side">
-          <div class="hero-card-floating">
-            <img src="logo-yolo.png" alt="Tiendas Yolo" class="hero-floating-logo" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
-            <div class="hero-promo-badge">
-              <span class="promo-title">🚚 Delivery Gratis</span>
-              <span class="promo-sub">En todo Maracaibo desde $15</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- =================================================================== -->
-    <!-- SELECTOR DE CATEGORÍAS -->
-    <!-- =================================================================== -->
-    <section class="store-filter-bar">
-      <div class="categories-scroll-wrapper" id="categories-container">
-        <!-- Render dinámico de categorías -->
-      </div>
-    </section>
-
-    <!-- =================================================================== -->
-    <!-- CABECERA Y GRID DE INSUMOS -->
-    <!-- =================================================================== -->
-    <section class="catalog-header-row">
-      <div class="catalog-title-group">
-        <h3 class="catalog-section-title" id="catalog-section-title">Todos los Insumos</h3>
-        <span class="catalog-count-pill" id="catalog-products-count">Cargando catálogo...</span>
-      </div>
-      <div class="catalog-controls">
-        <label for="catalog-sort-select" class="sort-label">Ordenar:</label>
-        <select id="catalog-sort-select" class="select-styled">
-          <option value="featured">✨ Más Populares</option>
-          <option value="price-asc">💵 Precio: Menor a Mayor</option>
-          <option value="price-desc">💎 Precio: Mayor a Menor</option>
-          <option value="name-asc">🔤 Nombre: A - Z</option>
-          <option value="stock-desc">📦 Mayor Stock Disponible</option>
-        </select>
-      </div>
-    </section>
-
-    <section class="products-grid" id="products-grid-container">
-      <!-- Tarjetas de productos inyectadas dinámicamente -->
-    </section>
-
-  </main>
-
-  <!-- =================================================================== -->
-  <!-- BARRA DE NAVEGACIÓN INFERIOR PARA MÓVILES (EXPERIENCIA APP NATIVA)  -->
-  <!-- =================================================================== -->
-  <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
-    <button type="button" class="m-nav-item active" id="btn-m-home">
-      <span class="m-nav-icon">🏠</span>
-      <span class="m-nav-label">Inicio</span>
-    </button>
-    <button type="button" class="m-nav-item" id="btn-m-catalog">
-      <span class="m-nav-icon">💅</span>
-      <span class="m-nav-label">Insumos</span>
-    </button>
-    <button type="button" class="m-nav-item m-nav-cart" id="btn-m-cart">
-      <span class="m-nav-icon-wrap">
-        <span class="m-nav-icon">🛒</span>
-        <span class="m-cart-badge" id="m-cart-badge">0</span>
-      </span>
-      <span class="m-nav-label">Carrito</span>
-    </button>
-    <button type="button" class="m-nav-item" id="btn-m-quote">
-      <span class="m-nav-icon">📄</span>
-      <span class="m-nav-label">Cotizar</span>
-    </button>
-    <button type="button" class="m-nav-item" id="btn-m-account">
-      <span class="m-nav-icon">👤</span>
-      <span class="m-nav-label">Mi Cuenta</span>
-    </button>
-  </nav>
-
-  <!-- =================================================================== -->
-  <!-- FOOTER INSTITUCIONAL (CON BOTÓN DE ADMIN OCULTO POR DEFECTO) -->
-  <!-- =================================================================== -->
-  <footer class="store-footer">
-    <div class="footer-container">
-      <div class="footer-brand">
-        <img src="logo-yolo.png" alt="Tiendas Yolo" class="footer-logo" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
-        <div>
-          <h4 class="footer-title">Tiendas Yolo®</h4>
-          <p class="footer-desc">Insumos para uñas y todo para la manicurista en Maracaibo, Zulia.</p>
-          <p class="footer-desc"><em>“Yo lo compro, Yo lo merezco”</em></p>
-        </div>
-      </div>
-
-      <div class="footer-links">
-        <span class="footer-col-title">Contacto & Envíos</span>
-        <a href="https://wa.me/584265604070" target="_blank" rel="noopener noreferrer">📲 WhatsApp: 0426-5604070</a>
-        <a href="https://instagram.com/tiendas.yolo" target="_blank" rel="noopener noreferrer">📸 Instagram: @tiendas.yolo</a>
-        <a href="https://tiktok.com/@tiendas.yolo" target="_blank" rel="noopener noreferrer">🎵 TikTok: @tiendas.yolo</a>
-        <span>📍 Maracaibo, Zulia — Venezuela</span>
-      </div>
-
-      <!-- BOTÓN OCULTO PARA CLIENTES: Solo visible tras activar atajo secreto -->
-      <div class="footer-admin-link" id="footer-admin-box" style="display:none;">
-        <span class="footer-col-title">Acceso de Administración</span>
-        <button type="button" class="btn-footer-admin" onclick="window.YoloApp.triggerLiveEditor()">
-          ✏️ Activar Modo Edición en Vivo (Fotos y Textos)
-        </button>
-        <button type="button" class="btn-footer-admin" onclick="window.YoloApp.triggerAdminApp()">
-          💼 Ir al Backoffice & Finanzas (admin.html)
-        </button>
-        <span class="admin-hint">Atajos de teclado: Ctrl+Shift+E (Edición) • Ctrl+Shift+A (Finanzas)</span>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p id="footer-copyright-trigger" style="cursor:pointer;" title="Doble toque para acceder a la App Interna">© 2026 Tiendas Yolo®. Todos los derechos reservados.</p>
-    </div>
-  </footer>
-
-  <!-- =================================================================== -->
-  <!-- MODAL / DRAWER: CARRITO DE COMPRAS & CHECKOUT                       -->
-  <!-- =================================================================== -->
-  <div class="modal-overlay" id="cart-drawer-modal" style="display:none;">
-    <div class="cart-drawer-sheet">
-      <div class="cart-drawer-header">
-        <div class="cart-drawer-title-wrap">
-          <span class="cart-drawer-icon">🛍️</span>
-          <div>
-            <h3 class="cart-drawer-title">Tu Pedido de Insumos</h3>
-            <span class="cart-drawer-sub">Tiendas Yolo — Maracaibo</span>
-          </div>
-        </div>
-        <button class="close-modal-btn" id="btn-close-cart" title="Cerrar">✕</button>
-      </div>
-
-      <div class="cart-drawer-body">
-        
-        <!-- BARRA DE DELIVERY GRATIS MARACAIBO -->
-        <div class="delivery-progress-wrap" id="delivery-progress-box">
-          <div class="delivery-progress-header">
-            <span id="delivery-progress-text">🚚 Agrega $15.00 para Delivery GRATIS en Maracaibo</span>
-            <strong id="delivery-progress-status">$0.00 / $15.00</strong>
-          </div>
-          <div class="delivery-progress-bar">
-            <div class="delivery-progress-fill" id="delivery-progress-fill" style="width: 0%;"></div>
-          </div>
-        </div>
-
-        <!-- LISTA DE PRODUCTOS EN EL CARRITO -->
-        <div class="cart-items-list" id="cart-items-list">
-          <!-- Renderizado dinámico -->
-        </div>
-
-        <!-- FORMULARIO DE DESPACHO Y CLIENTE -->
-        <div class="cart-delivery-section">
-          <div class="section-title-with-pill">
-            <h4 class="section-micro-heading">📋 Datos de Entrega y Facturación</h4>
-            <button type="button" class="btn-autofill-account" id="btn-cart-autofill" style="display:none;">
-              ✨ Usar mis datos guardados
-            </button>
-          </div>
-          
-          <div class="form-group">
-            <label for="cart-client-name" class="form-label">Nombre de la Manicurista / Cliente: *</label>
-            <input type="text" id="cart-client-name" class="form-input" placeholder="Ej: Valentina Morales">
-          </div>
-
-          <div class="form-grid-2">
-            <div class="form-group">
-              <label for="cart-client-phone" class="form-label">Teléfono WhatsApp: *</label>
-              <input type="tel" id="cart-client-phone" class="form-input" placeholder="0426-1234567">
-            </div>
-            <div class="form-group">
-              <label for="cart-client-salon" class="form-label">Nombre del Salón / Estudio:</label>
-              <input type="text" id="cart-client-salon" class="form-input" placeholder="Ej: Nails Studio Glam">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="cart-delivery-type" class="form-label">Modalidad de Entrega:</label>
-            <select id="cart-delivery-type" class="select-styled">
-              <option value="delivery-maracaibo">🛵 Delivery a Domicilio con GPS (Maracaibo)</option>
-              <option value="retiro-personal">🛍️ Retiro en Tienda Física (Gratis)</option>
-              <option value="envio-nacional">📦 Envío Nacional (MRW / Tealca / Zoom)</option>
-            </select>
-          </div>
-
-          <!-- WIDGET DELIVERY POR COORDENADAS / GPS (ESTILO YUMMY) -->
-          <div class="delivery-gps-box" id="cart-gps-box">
-            <div class="delivery-gps-header">
-              <span class="delivery-gps-title">📍 Cálculo de Delivery GPS (Estilo Yummy)</span>
-              <span class="delivery-tier-tag" id="delivery-gps-tag">Tiendas Yolo Maracaibo</span>
-            </div>
-            <button type="button" class="btn-gps-detect" id="btn-detect-gps">
-              🛵 Usar mi ubicación actual (GPS en 1 clic)
-            </button>
-            <input type="text" id="cart-delivery-coords" class="form-input" placeholder="O pega enlace de Google Maps / Coordenadas (Lat, Lng)" style="font-size:0.8rem; padding:7px 10px; margin-bottom:4px;">
-            <div class="delivery-calc-badge" id="delivery-calc-badge">
-              <span id="delivery-calc-text">📍 Esperando ubicación...</span>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="cart-delivery-address" class="form-label">Dirección / Sector / Punto de Referencia: *</label>
-            <input type="text" id="cart-delivery-address" class="form-input" placeholder="Ej: Cecilio Acosta con Av. 10, Edif. Los Samanes">
-          </div>
-
-          <div class="form-group">
-            <label for="cart-payment-method" class="form-label">Método de Pago:</label>
-            <select id="cart-payment-method" class="select-styled">
-              <option value="Pago Móvil">📲 Pago Móvil (Bs. Tasa Oficial BCV)</option>
-              <option value="Efectivo $">💵 Dólares en Efectivo ($ USD)</option>
-              <option value="Binance">🟡 Binance Pay / USDT ($)</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="cart-notes" class="form-label">Tonos o detalles específicos (opcional):</label>
-            <input type="text" id="cart-notes" class="form-input" placeholder="Ej: Esmalte M&Y tono #03, spider gel blanco">
-          </div>
-
-        </div>
-
-      </div>
-
-      <!-- FOOTER DEL CARRITO: TOTALES Y ACCIONES -->
-      <div class="cart-drawer-footer">
-        <div class="cart-totals-breakdown">
-          <div class="total-line">
-            <span>Subtotal Insumos:</span>
-            <span id="cart-summary-subtotal">$0.00</span>
-          </div>
-          <div class="total-line" id="cart-delivery-fee-row">
-            <span>Delivery Maracaibo:</span>
-            <span id="cart-summary-delivery" class="free-delivery">¡GRATIS!</span>
-          </div>
-          <div class="total-line grand-total">
-            <span>Total a Pagar:</span>
-            <div class="grand-total-numbers">
-              <span class="total-usd" id="cart-summary-total-usd">$0.00</span>
-              <span class="total-bs" id="cart-summary-total-bs">Bs. 0.00</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="cart-action-buttons">
-          <button class="btn-primary-payment" id="btn-cart-proceed-payment">
-            <span class="pay-icon">💳</span>
-            <span class="pay-txt">Pagar & Autenticar Pago en App</span>
-          </button>
-          
-          <button class="btn-whatsapp-full" id="btn-cart-send-whatsapp">
-            <span class="wa-icon">💬</span>
-            <span class="wa-txt">Enviar Pedido Directo a WhatsApp</span>
-          </button>
-
-          <div class="secondary-cart-actions">
-            <button class="btn-secondary" id="btn-cart-download-quote">📄 Cotización Formal</button>
-            <button class="btn-ghost" id="btn-cart-clear">Vaciar Carrito</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- =================================================================== -->
-  <!-- MODAL: MÓDULO DE PAGO & AUTENTICACIÓN BANCARIA EN LA APP           -->
-  <!-- =================================================================== -->
-  <div class="modal-overlay" id="modal-payment-auth" style="display:none;">
-    <div class="modal-window payment-auth-modal">
-      <div class="modal-header">
-        <div class="modal-title-wrap">
-          <span class="modal-icon">🛡️</span>
-          <div>
-            <h3 class="modal-title">Pagar & Autenticar Transacción</h3>
-            <span class="modal-subtitle">Datos oficiales de Tiendas Yolo® • Verificación Segura</span>
-          </div>
-        </div>
-        <button class="close-modal-btn" data-close-modal="modal-payment-auth">✕</button>
-      </div>
-
-      <div class="modal-body">
-        
-        <!-- RESUMEN DE TOTAL -->
-        <div class="payment-order-summary-card">
-          <div class="summary-col">
-            <span class="summary-label">Monto en Dólares ($):</span>
-            <strong class="summary-amount-usd" id="pay-modal-usd">$0.00</strong>
-          </div>
-          <div class="summary-divider"></div>
-          <div class="summary-col">
-            <span class="summary-label">Monto en Bolívares (Bs):</span>
-            <strong class="summary-amount-bs" id="pay-modal-bs">Bs. 0.00</strong>
-            <span class="summary-rate" id="pay-modal-rate-note">Tasa: Bs. 395.50 / $</span>
-          </div>
-        </div>
-
-        <!-- DATOS BANCARIOS OFICIALES -->
-        <div class="payment-accounts-box">
-          <h4 class="payment-box-heading">🏦 Cuentas Oficiales para Transferir / Pagar:</h4>
-          
-          <div class="bank-pill-card active" data-bank-card="pago-movil">
-            <div class="bank-pill-header">
-              <strong>📲 PAGO MÓVIL BANESCO (0134)</strong>
-              <button type="button" class="btn-copy-data" id="btn-copy-pm">📋 Copiar Datos</button>
-            </div>
-            <div class="bank-pill-details">
-              <p>• <strong>Banco:</strong> Banesco (0134)</p>
-              <p>• <strong>Teléfono:</strong> <span id="copy-pm-phone">04265604070</span></p>
-              <p>• <strong>Cédula / RIF:</strong> <span id="copy-pm-id">V-28123456</span></p>
-              <p>• <strong>Monto exacto:</strong> <span id="copy-pm-bs">Bs. 0.00</span></p>
-            </div>
-          </div>
-
-          <div class="bank-pill-card" data-bank-card="efectivo">
-            <div class="bank-pill-header">
-              <strong>💵 DÓLARES EN EFECTIVO (MARACAIBO)</strong>
-            </div>
-            <div class="bank-pill-details">
-              <p>• Pago contra entrega en mano al motorizado.</p>
-              <p>• Por favor entregar billetes en buen estado (sin roturas ni rayones).</p>
-            </div>
-          </div>
-
-          <div class="bank-pill-card" data-bank-card="binance">
-            <div class="bank-pill-header">
-              <strong><span class="binance-badge-brand">BINANCE PAY</span> DÓLARES USDT</strong>
-              <button type="button" class="btn-copy-data" id="btn-copy-binance">📋 Copiar Pay ID</button>
-            </div>
-            <div class="bank-pill-details">
-              <p>• <strong>Binance Pay ID:</strong> <span id="copy-binance-id">829140291</span></p>
-              <p>• <strong>Usuario / Correo:</strong> tiendasyolo@binance</p>
-              <p>• <em>Transferencias instantáneas sin comisión directo a la cuenta oficial.</em></p>
-            </div>
-          </div>
-        </div>
-
-        <!-- FORMULARIO DE AUTENTICACIÓN DEL PAGO -->
-        <form id="form-auth-payment" class="payment-validation-form">
-          <h4 class="payment-box-heading">📝 Registrar Datos del Pago para Autenticación:</h4>
-
-          <div class="form-grid-2">
-            <div class="form-group">
-              <label for="pay-input-method" class="form-label">Método Realizado: *</label>
-              <select id="pay-input-method" class="select-styled" required>
-                <option value="Pago Móvil">📲 Pago Móvil (Bs. Tasa BCV)</option>
-                <option value="Efectivo $">💵 Dólares en Efectivo ($ USD)</option>
-                <option value="Binance">🟡 Binance Pay ($ USDT)</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="pay-input-bank" class="form-label">Banco Emisor del Cliente: *</label>
-              <input type="text" id="pay-input-bank" class="form-input" placeholder="Ej: Banesco, Mercantil, BDV" required>
-            </div>
-          </div>
-
-          <div class="form-grid-2">
-            <div class="form-group">
-              <label for="pay-input-ref" class="form-label">Número de Referencia (Últimos dígitos): *</label>
-              <input type="text" id="pay-input-ref" class="form-input" placeholder="Ej: 849201" maxlength="12" required>
-            </div>
-
-            <div class="form-group">
-              <label for="pay-input-amount" class="form-label">Monto Transferido: *</label>
-              <input type="text" id="pay-input-amount" class="form-input" placeholder="Ej: Bs. 3950.00 o $10.00" required>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="pay-input-holder" class="form-label">Nombre del Titular / Teléfono Emisor: *</label>
-            <input type="text" id="pay-input-holder" class="form-input" placeholder="Ej: Andrea Gómez (0414-9876543)" required>
-          </div>
-
-          <div class="auth-security-notice">
-            <span class="notice-icon">🔒</span>
-            <p>La app autenticará la estructura de la referencia y vinculará tu pago de inmediato para generar tu <strong>Nota de Entrega Digital</strong> y notificar a despacho.</p>
-          </div>
-
-          <button type="submit" class="btn-verify-payment" id="btn-submit-verify-payment">
-            🛡️ Autenticar Pago & Generar Nota de Entrega
-          </button>
-        </form>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- =================================================================== -->
-  <!-- MODAL: MINI NOTA DE ENTREGA DIGITAL (TICKET GLAMOUR)               -->
-  <!-- =================================================================== -->
-  <div class="modal-overlay" id="modal-delivery-note" style="display:none;">
-    <div class="modal-window delivery-note-window">
-      <div class="modal-header no-print">
-        <h3 class="modal-title">🧾 Mini Nota de Entrega Digital</h3>
-        <div class="modal-header-actions">
-          <button class="btn-primary" id="btn-print-delivery-note">🖨️ Imprimir Ticket</button>
-          <button class="btn-whatsapp-outline" id="btn-wa-delivery-note">📲 Enviar a WhatsApp</button>
-          <button class="close-modal-btn" data-close-modal="modal-delivery-note">✕</button>
-        </div>
-      </div>
-
-      <div class="delivery-ticket-container" id="printable-delivery-ticket">
-        <div class="ticket-header">
-          <img src="logo-yolo.png" alt="Tiendas Yolo" class="ticket-logo" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
-          <h2 class="ticket-store-name">TIENDAS YOLO®</h2>
-          <p class="ticket-slogan">Insumos para Uñas & Todo para la Manicurista</p>
-          <p class="ticket-location">Maracaibo, Zulia — Venezuela • WhatsApp: 0426-5604070</p>
-          <div class="ticket-badge-pill" id="ticket-badge-auth">
-            ✅ PAGO AUTENTICADO & REGISTRADO
-          </div>
-        </div>
-
-        <div class="ticket-meta-grid">
-          <div><strong>Nota de Entrega:</strong> <span id="ticket-id">#NE-2026-0001</span></div>
-          <div><strong>Fecha / Hora:</strong> <span id="ticket-date">-</span></div>
-          <div><strong>Código Verif.:</strong> <span id="ticket-auth-code">AUTH-YOLO-0000</span></div>
-          <div><strong>Modalidad:</strong> <span id="ticket-delivery-type">Delivery Maracaibo</span></div>
-        </div>
-
-        <div class="ticket-client-box">
-          <h5 class="ticket-subheading">CLIENTA / SALÓN:</h5>
-          <p><strong>Manicurista:</strong> <span id="ticket-client-name">-</span></p>
-          <p><strong>Teléfono:</strong> <span id="ticket-client-phone">-</span></p>
-          <p><strong>Salón / Estudio:</strong> <span id="ticket-client-salon">-</span></p>
-          <p><strong>Dirección:</strong> <span id="ticket-client-address">-</span></p>
-        </div>
-
-        <div class="ticket-items-table-wrap">
-          <table class="ticket-table">
-            <thead>
-              <tr>
-                <th>Cant.</th>
-                <th>Insumo</th>
-                <th>P. Unit ($)</th>
-                <th>Total ($)</th>
-              </tr>
-            </thead>
-            <tbody id="ticket-items-tbody"></tbody>
-          </table>
-        </div>
-
-        <div class="ticket-totals-section">
-          <div class="ticket-total-row">
-            <span>Subtotal:</span>
-            <span id="ticket-subtotal-usd">$0.00</span>
-          </div>
-          <div class="ticket-total-row">
-            <span>Delivery:</span>
-            <span id="ticket-delivery-usd" class="text-success">¡GRATIS!</span>
-          </div>
-          <div class="ticket-total-row total-highlight">
-            <strong>TOTAL A PAGAR:</strong>
-            <div class="ticket-grand-numbers">
-              <strong id="ticket-total-usd">$0.00</strong>
-              <span id="ticket-total-bs">(Bs. 0.00)</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="ticket-payment-auth-box">
-          <h5 class="ticket-subheading">AUTENTICACIÓN DEL PAGO:</h5>
-          <p>• <strong>Método:</strong> <span id="ticket-pay-method">-</span></p>
-          <p>• <strong>Banco Emisor:</strong> <span id="ticket-pay-bank">-</span></p>
-          <p>• <strong>Referencia:</strong> <span id="ticket-pay-ref" class="text-highlight">-</span></p>
-          <p>• <strong>Titular:</strong> <span id="ticket-pay-holder">-</span></p>
-        </div>
-
-        <div class="ticket-footer-strip">
-          <p class="ticket-barcode">||||| ||||||| |||| |||||| |||||||</p>
-          <p class="ticket-footer-msg"><em>“Yo lo compro, Yo lo merezco”</em></p>
-          <p class="ticket-footer-thanks">¡Gracias por preferir a Tiendas Yolo®!</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- =================================================================== -->
-  <!-- MODAL: COTIZACIÓN FORMAL (IMPRIMIBLE / PDF PARA SALONES Y ACADEMIAS)-->
-  <!-- =================================================================== -->
-  <div class="modal-overlay" id="modal-quote-viewer" style="display:none;">
-    <div class="modal-window quote-modal-window">
-      <div class="modal-header no-print">
-        <h3 class="modal-title">📄 Cotización Formal — Tiendas Yolo</h3>
-        <div class="modal-header-actions">
-          <button class="btn-primary" id="btn-print-quote">🖨️ Imprimir / Guardar en PDF</button>
-          <button class="btn-whatsapp-outline" id="btn-quote-send-wa">📲 Enviar por WhatsApp</button>
-          <button class="close-modal-btn" data-close-modal="modal-quote-viewer">✕</button>
-        </div>
-      </div>
-      
-      <!-- DOCUMENTO MEMBRETADO PARA IMPRIMIR -->
-      <div class="printable-quote-document" id="printable-quote-area">
-        <div class="quote-header">
-          <div class="quote-brand">
-            <img src="logo-yolo.png" alt="Tiendas Yolo" class="quote-logo" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
-            <div class="quote-company-info">
-              <h2 class="quote-company-name">TIENDAS YOLO®</h2>
-              <p class="quote-company-tagline">Insumos para uñas y todo para la manicurista</p>
-              <p class="quote-company-sub">Maracaibo, Zulia — Venezuela | WhatsApp: 0426-5604070</p>
-              <p class="quote-company-sub">Instagram: @tiendasyolo</p>
-            </div>
-          </div>
-          <div class="quote-meta-box">
-            <div class="quote-pill-id" id="print-quote-id">COT-2026-0001</div>
-            <p><strong>Fecha:</strong> <span id="print-quote-date">21/10/2026</span></p>
-            <p><strong>Validez:</strong> <span id="print-quote-validity">7 días continuos</span></p>
-            <p><strong>Tasa referencial:</strong> <span id="print-quote-rate">Bs. 395.50 / $</span></p>
-          </div>
-        </div>
-
-        <div class="quote-client-info-box">
-          <h4 class="quote-box-title">DATOS DE LA CLIENTA / SALÓN:</h4>
-          <div class="quote-client-grid">
-            <p><strong>Manicurista / Contacto:</strong> <span id="print-client-name">-</span></p>
-            <p><strong>Teléfono WhatsApp:</strong> <span id="print-client-phone">-</span></p>
-            <p><strong>Estudio / Salón:</strong> <span id="print-client-salon">-</span></p>
-            <p><strong>Ubicación / Entrega:</strong> <span id="print-client-address">Maracaibo</span></p>
-          </div>
-        </div>
-
-        <table class="quote-items-table">
-          <thead>
-            <tr>
-              <th>Cant.</th>
-              <th>Descripción del Insumo</th>
-              <th>Precio Unit. ($)</th>
-              <th>Total ($)</th>
-              <th>Total (Bs)</th>
-            </tr>
-          </thead>
-          <tbody id="print-quote-items-body"></tbody>
-          <tfoot>
-            <tr>
-              <td colspan="3" class="text-right font-bold">Subtotal Insumos:</td>
-              <td class="font-bold" id="print-quote-subtotal-usd">$0.00</td>
-              <td class="font-bold" id="print-quote-subtotal-bs">Bs. 0.00</td>
-            </tr>
-            <tr>
-              <td colspan="3" class="text-right font-bold">Delivery / Despacho:</td>
-              <td colspan="2" class="font-bold text-success" id="print-quote-delivery-status">¡DELIVERY GRATIS EN MARACAIBO!</td>
-            </tr>
-            <tr class="grand-total-quote-row">
-              <td colspan="3" class="text-right font-bold">TOTAL GENERAL:</td>
-              <td class="font-bold highlight-val" id="print-quote-grand-usd">$0.00</td>
-              <td class="font-bold highlight-val" id="print-quote-grand-bs">Bs. 0.00</td>
-            </tr>
-          </tfoot>
-        </table>
-
-        <div class="quote-terms-box">
-          <p><strong>Condiciones Comerciales:</strong> Precios calculados a la tasa del día. El apartado de mercancía se confirma al verificar el comprobante de pago móvil o divisa. Delivery gratis en compras desde $15 en Maracaibo.</p>
-          <p class="quote-signature-note"><em>“Yo lo compro, Yo lo merezco” — Gracias por preferir a Tiendas Yolo®.</em></p>
-        </div>
-
-        <div class="quote-bottom-actions no-print">
-          <button type="button" class="btn-primary-payment" id="btn-quote-proceed-to-pay">
-            💳 Proceder al Pago de esta Cotización
-          </button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- =================================================================== -->
-  <!-- MODAL: CLUB MANICURISTA YOLO (CLIENTE FRECUENTE & CUENTA)           -->
-  <!-- =================================================================== -->
-  <div class="modal-overlay" id="modal-client-account" style="display:none;">
-    <div class="modal-window account-modal-window">
-      <div class="modal-header">
-        <div class="modal-title-wrap">
-          <span class="modal-icon">🌟</span>
-          <div>
-            <h3 class="modal-title" id="account-modal-header-title">Club Manicurista Yolo®</h3>
-            <span class="modal-subtitle">Tu cuenta de cliente frecuente y compras guardadas</span>
-          </div>
-        </div>
-        <button class="close-modal-btn" data-close-modal="modal-client-account">✕</button>
-      </div>
-
-      <div class="modal-body">
-        
-        <!-- VISTA: REGISTRO / EDICIÓN DE PERFIL -->
-        <div id="account-view-form">
-          <div class="club-intro-card">
-            <h4>💎 ¡Crea tu perfil y ahorra tiempo en cada pedido!</h4>
-            <p>Al guardar tus datos, tus notas de entrega y pedidos se llenarán solos sin tener que volver a escribirlos. Además acumularás tus compras en el club.</p>
-          </div>
-
-          <div class="learning-guide-banner" id="btn-help-guide-banner" style="background:linear-gradient(135deg, rgba(112, 26, 73, 0.08), rgba(212, 143, 160, 0.16)); border:1px solid var(--ty-rose-gold); border-radius:var(--radius-md); padding:10px 14px; margin-bottom:14px; cursor:pointer; display:flex; align-items:center; justify-content:space-between;">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span style="font-size:1.4rem;">🎓</span>
-              <div>
-                <strong style="font-size:0.85rem; color:var(--ty-primary);">¿Cómo usar la App y el Club?</strong>
-                <p style="font-size:0.75rem; color:var(--text-secondary); margin:0;">Toca aquí para ver la guía interactiva paso a paso.</p>
-              </div>
-            </div>
-            <span style="font-weight:700; color:var(--ty-rose-gold); font-size:0.85rem;">Ver Guía →</span>
-          </div>
-
-          <form id="form-account-profile">
-            <div class="form-group">
-              <label for="acc-input-name" class="form-label">Nombre y Apellido: *</label>
-              <input type="text" id="acc-input-name" class="form-input" placeholder="Ej: Andrea González" required>
-            </div>
-
-            <div class="form-grid-2">
-              <div class="form-group">
-                <label for="acc-input-phone" class="form-label">Teléfono WhatsApp: *</label>
-                <input type="tel" id="acc-input-phone" class="form-input" placeholder="0426-5604070" required>
-              </div>
-              <div class="form-group">
-                <label for="acc-input-doc" class="form-label">Cédula / RIF:</label>
-                <input type="text" id="acc-input-doc" class="form-input" placeholder="V-28123456">
-              </div>
-            </div>
-
-            <div class="form-grid-2">
-              <div class="form-group">
-                <label for="acc-input-salon" class="form-label">Salón o Estudio de Uñas:</label>
-                <input type="text" id="acc-input-salon" class="form-input" placeholder="Ej: Glow Nails Studio">
-              </div>
-              <div class="form-group">
-                <label for="acc-input-instagram" class="form-label">Instagram (@usuario):</label>
-                <input type="text" id="acc-input-instagram" class="form-input" placeholder="@glownails">
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="acc-input-address" class="form-label">Dirección Habitual de Entrega / Despacho: *</label>
-              <input type="text" id="acc-input-address" class="form-input" placeholder="Ej: Sector La Lago, Av. 3C con Calle 72, Edif. Paraíso" required>
-            </div>
-
-            <button type="submit" class="btn-primary-payment" id="btn-save-account-profile">
-              💾 Guardar Mi Perfil en la App
-            </button>
-          </form>
-        </div>
-
-        <!-- VISTA: PERFIL ACTIVO (SI YA TIENE CUENTA) -->
-        <div id="account-view-profile" style="display:none;">
-          <div class="profile-card-active">
-            <div class="profile-avatar">💅</div>
-            <div class="profile-info">
-              <h4 id="prof-display-name">Andrea González</h4>
-              <span class="vip-badge" id="prof-display-level">🌟 Manicurista VIP Yolo</span>
-              <p id="prof-display-salon">Salón: Glow Nails Studio • @glownails</p>
-              <p id="prof-display-phone">WhatsApp: 0426-5604070</p>
-              <p id="prof-display-address">Dirección: Maracaibo</p>
-            </div>
-          </div>
-
-          <div class="account-actions-row">
-            <button type="button" class="btn-secondary" id="btn-edit-profile">✏️ Editar Mis Datos</button>
-            <button type="button" class="btn-ghost" id="btn-logout-account">🚪 Cerrar Sesión</button>
-          </div>
-
-          <div class="history-orders-box">
-            <h5 class="history-heading">🧾 Mis Notas de Entrega & Pedidos:</h5>
-            <div id="account-orders-history-list" class="orders-history-list">
-              <!-- Renderizado dinámico -->
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- =================================================================== -->
-  <!-- MODAL: GESTOR DE PRODUCTOS & FOTOS (MODO EDITOR EN VIVO)            -->
-  <!-- =================================================================== -->
-  <div class="modal-overlay" id="modal-product-editor" style="display:none;">
-    <div class="modal-window">
-      <div class="modal-header">
-        <h3 class="modal-title" id="prod-editor-modal-title">✏️ Editar Producto del Catálogo</h3>
-        <button class="close-modal-btn" data-close-modal="modal-product-editor">✕</button>
-      </div>
-      <div class="modal-body">
-        <form id="form-product-editor">
-          <input type="hidden" id="pe-input-id">
-
-          <div class="form-group">
-            <label for="pe-input-name" class="form-label">Nombre del Insumo / Producto: *</label>
-            <input type="text" id="pe-input-name" class="form-input" required>
-          </div>
-
-          <div class="form-grid-2">
-            <div class="form-group">
-              <label for="pe-input-cat" class="form-label">Categoría: *</label>
-              <select id="pe-input-cat" class="select-styled" required>
-                <option value="Esmaltes">Esmaltes</option>
-                <option value="Geles y Acrílicos">Geles y Acrílicos</option>
-                <option value="Pinceles y Herramientas">Pinceles y Herramientas</option>
-                <option value="Lámparas y Equipos">Lámparas y Equipos</option>
-                <option value="Kits">Kits</option>
-                <option value="Líquidos y Preparación">Líquidos y Preparación</option>
-                <option value="Pestañas y Belleza">Pestañas y Belleza</option>
-                <option value="Decoración">Decoración</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="pe-input-sku" class="form-label">Código Único (SKU): <span style="font-size:0.75rem; color:var(--ty-rose-gold); font-weight:700;">🔒 Automático Único</span></label>
-              <input type="text" id="pe-input-sku" class="form-input" readonly style="background:var(--bg-subtle); font-weight:700; letter-spacing:0.04em;">
-            </div>
-          </div>
-
-          <div class="form-grid-3">
-            <div class="form-group">
-              <label for="pe-input-price" class="form-label">Precio Venta ($): *</label>
-              <input type="number" step="0.01" id="pe-input-price" class="form-input" required>
-            </div>
-            <div class="form-group">
-              <label for="pe-input-cost" class="form-label">Costo ($):</label>
-              <input type="number" step="0.01" id="pe-input-cost" class="form-input">
-            </div>
-            <div class="form-group">
-              <label for="pe-input-stock" class="form-label">Stock Actual:</label>
-              <input type="number" id="pe-input-stock" class="form-input" required>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="pe-input-desc" class="form-label">Descripción:</label>
-            <textarea id="pe-input-desc" class="form-textarea" rows="2"></textarea>
-          </div>
-
-          <div class="form-group">
-            <label for="pe-input-img" class="form-label">URL de la Imagen o Nombre de archivo: *</label>
-            <div class="image-input-preview-group">
-              <input type="text" id="pe-input-img" class="form-input" placeholder="logo-yolo.png o enlace https://...">
-              <img id="pe-img-preview" src="logo-yolo.png" alt="Preview" class="pe-preview-thumb" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
-            </div>
-          </div>
-
-          <div class="modal-footer-buttons">
-            <button type="button" class="btn-danger-outline" id="btn-pe-delete-prod" style="display:none;">🗑️ Eliminar</button>
-            <div style="flex:1;"></div>
-            <button type="submit" class="btn-primary" id="btn-pe-save">💾 Guardar en Catálogo</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- =================================================================== -->
-  <!-- MODAL: GUÍA DE INSTALACIÓN PWA (IPHONE / ANDROID)                   -->
-  <!-- =================================================================== -->
-  <div class="modal-overlay" id="modal-pwa-install-guide" style="display:none;">
-    <div class="modal-window pwa-guide-window">
-      <div class="modal-header">
-        <h3 class="modal-title">📲 Instalar Tiendas Yolo® en tu Teléfono</h3>
-        <button class="close-modal-btn" data-close-modal="modal-pwa-install-guide">✕</button>
-      </div>
-      <div class="modal-body">
-        <div class="pwa-guide-card">
-          <img src="logo-yolo.png" alt="Tiendas Yolo" class="pwa-guide-icon" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
-          <h4>Tiendas Yolo® como App Nativa</h4>
-          <p>Disfruta de la tienda a pantalla completa, rápida, sin barras del navegador y con acceso directo desde tu menú de aplicaciones.</p>
-        </div>
-
-        <div class="pwa-steps-box" id="pwa-ios-instructions">
-          <h5>🍎 Para iPhone / iPad (Safari):</h5>
-          <ol class="pwa-steps-list">
-            <li>Toca el botón <strong>Compartir (⎋)</strong> en la barra inferior de Safari.</li>
-            <li>Baja un poco y selecciona <strong>"Agregar a pantalla de inicio" (➕)</strong>.</li>
-            <li>Presiona <strong>"Agregar"</strong> arriba a la derecha. ¡Listo!</li>
-          </ol>
-        </div>
-
-        <div class="pwa-steps-box" id="pwa-android-instructions">
-          <h5>🤖 Para Android (Google Chrome):</h5>
-          <ol class="pwa-steps-list">
-            <li>Toca los <strong>tres puntos (⋮)</strong> en la esquina superior derecha.</li>
-            <li>Selecciona <strong>"Instalar aplicación"</strong> o <strong>"Agregar a la pantalla principal"</strong>.</li>
-            <li>Confirma la instalación. ¡Listo!</li>
-          </ol>
-        </div>
-
-        <button type="button" class="btn-primary-payment" data-close-modal="modal-pwa-install-guide">
-          ✨ Entendido
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- =================================================================== -->
-  <!-- MODAL: GUÍA & ENSEÑANZA DE USO DE LA APP (ESCUELA TIENDAS YOLO)     -->
-  <!-- =================================================================== -->
-  <div class="modal-overlay" id="modal-learning-guide" style="display:none; z-index:1200;">
-    <div class="modal-window learning-modal-window">
-      <div class="modal-header">
-        <div class="modal-title-wrap">
-          <span class="modal-icon">🎓</span>
-          <div>
-            <h3 class="modal-title">Guía de Uso — Tiendas Yolo®</h3>
-            <span class="modal-subtitle">Aprende a usar la app, cotizar, pagar y gestionar tus pedidos</span>
-          </div>
-        </div>
-        <button class="close-modal-btn" data-close-modal="modal-learning-guide">✕</button>
-      </div>
-      <div class="modal-body" style="max-height:75vh; overflow-y:auto; padding:20px;">
-        
-        <div class="learning-cards-grid">
-          <div class="learning-step-card">
-            <div class="learning-step-badge">Paso 1</div>
-            <div class="learning-step-icon">🛍️</div>
-            <h4>Explora y Arma tu Carrito</h4>
-            <p>Filtra por categorías (Esmaltes, Geles, Lámparas, Kits). Usa los botones <strong>+</strong> y <strong>-</strong> para seleccionar cantidades. En compras desde <strong>$15</strong>, ¡el delivery en Maracaibo es 100% GRATIS!</p>
-          </div>
-
-          <div class="learning-step-card">
-            <div class="learning-step-badge">Paso 2</div>
-            <div class="learning-step-icon">📄</div>
-            <h4>Cotizaciones Formales</h4>
-            <p>Si tienes un salón, academia o necesitas presupuesto para tus alumnas, presiona <strong>"Cotizar"</strong>. Genera al instante un documento formal con precios en $ y Bs., validez de 7 días, exportable a PDF o WhatsApp.</p>
-          </div>
-
-          <div class="learning-step-card">
-            <div class="learning-step-badge">Paso 3</div>
-            <div class="learning-step-icon">💳</div>
-            <h4>Pago Móvil & Binance Pay</h4>
-            <p>Aceptamos Efectivo $, Pago Móvil Banesco (a la tasa oficial BCV) y Binance Pay / USDT. La app te muestra los datos oficiales con botones de 1 clic para copiar. Al confirmar tu pago, el sistema emitirá tu código de autenticación único <strong>AUTH-YOLO-XXXXXX</strong>.</p>
-          </div>
-
-          <div class="learning-step-card">
-            <div class="learning-step-badge">Paso 4</div>
-            <div class="learning-step-icon">🧾</div>
-            <h4>Mini Nota de Entrega Digital</h4>
-            <p>Al confirmar el pago recibes tu ticket boutique digital membretado con código QR de seguridad. Puedes descargarlo, imprimirlo o enviarlo directamente al WhatsApp de despacho para alistar tu paquete.</p>
-          </div>
-
-          <div class="learning-step-card">
-            <div class="learning-step-badge">Paso 5</div>
-            <div class="learning-step-icon">🌟</div>
-            <h4>Club Manicurista VIP</h4>
-            <p>Regístrate en <strong>"Mi Cuenta"</strong> una sola vez. Tus datos de entrega se guardarán automáticamente para que no tengas que escribirlos de nuevo y acumularás tu historial de notas de entrega.</p>
-          </div>
-        </div>
-
-        <button type="button" class="btn-primary-payment" style="margin-top:16px;" data-close-modal="modal-learning-guide">
-          ✨ ¡Entendido! Empezar a Usar la App
-        </button>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- TOAST DE NOTIFICACIONES -->
-  <div id="toast-notification-container" class="toast-container"></div>
-
-  <!-- SCRIPT DE TIENDA PÚBLICA -->
-  <script src="app.js"></script>
-</body>
-</html>
+  /* Textos */
+  --text-main: #2b0b1d;          /* Tinta ciruela muy oscura, ultra legible */
+  --text-secondary: #6e4a5d;     /* Púrpura apagado para descripciones */
+  --text-muted: #9c7b8d;         /* Gris rosáceo */
+  --text-white: #ffffff;
+
+  /* Bordes & Sombras */
+  --border-light: rgba(123, 25, 83, 0.12);
+  --border-rose: rgba(212, 122, 148, 0.35);
+  --border-gold: rgba(229, 190, 78, 0.5);
+  --shadow-sm: 0 2px 8px rgba(74, 11, 49, 0.05);
+  --shadow-md: 0 8px 24px rgba(74, 11, 49, 0.09);
+  --shadow-lg: 0 16px 40px rgba(74, 11, 49, 0.14);
+  --shadow-glow: 0 0 25px rgba(234, 111, 191, 0.35);
+
+  /* Estados */
+  --color-success: #10b981;
+  --color-success-bg: #ecfdf5;
+  --color-warning: #e5be4e;      /* Amarillo mantequilla */
+  --color-warning-bg: #fff9d6;
+  --color-danger: #ef4444;
+  --color-danger-bg: #fef2f2;
+  --color-info: #0284c7;
+
+  /* Tipografías */
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+
+  /* Radios */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-pill: 9999px;
+
+  /* Transiciones */
+  --trans-fast: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  --trans-smooth: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* TEMA OSCURO LUXURY */
+body.theme-dark {
+  --bg-app: #14050d;
+  --bg-surface: #200916;
+  --bg-surface-glass: rgba(32, 9, 22, 0.9);
+  --bg-card: #270d1c;
+  --bg-subtle: #331124;
+
+  --text-main: #fdf2f6;
+  --text-secondary: #d1b1c3;
+  --text-muted: #9e7f92;
+
+  --border-light: rgba(212, 122, 148, 0.2);
+  --border-rose: rgba(212, 122, 148, 0.45);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 30px rgba(212, 122, 148, 0.35);
+}
+
+/* ============================================================================
+   RESET & BASES
+   ============================================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: background-color var(--trans-smooth), color var(--trans-smooth);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  border: none;
+  outline: none;
+  background: none;
+}
+
+button {
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+/* ============================================================================
+   BARRA SUPERIOR INFORMATIVA & TASA
+   ============================================================================ */
+.top-info-bar {
+  background: linear-gradient(90deg, #4a0e2e, #701a49, #8e285f);
+  color: var(--text-white);
+  padding: 6px 16px;
+  font-size: 0.82rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  z-index: 100;
+}
+
+.top-info-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.info-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #34d399;
+  box-shadow: 0 0 10px #34d399;
+  animation: pulseAnim 1.8s infinite;
+}
+
+@keyframes pulseAnim {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+.info-highlight {
+  font-weight: 700;
+  color: #fed7aa;
+}
+
+.rate-ticker {
+  background: rgba(255, 255, 255, 0.12);
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+}
+
+.rate-val {
+  font-weight: 800;
+  color: #fff;
+}
+
+.btn-micro {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-radius: var(--radius-pill);
+  padding: 2px 6px;
+  font-size: 0.72rem;
+  transition: var(--trans-fast);
+}
+
+.btn-micro:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.cloud-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.cloud-badge.offline {
+  background: rgba(245, 158, 11, 0.25);
+  color: #fef3c7;
+}
+
+.cloud-badge.online {
+  background: rgba(16, 185, 129, 0.25);
+  color: #d1fae5;
+}
+
+.cloud-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ============================================================================
+   NAVBAR INSTITUCIONAL
+   ============================================================================ */
+.main-header {
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  background-color: var(--bg-surface-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  transition: background-color var(--trans-smooth);
+}
+
+.header-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.brand-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.logo-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  padding: 2px;
+  background: linear-gradient(135deg, #e7b1a2, #c77383, #701a49);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-logo {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #fff;
+}
+
+.brand-titles {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title {
+  font-family: var(--font-serif);
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--ty-primary);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+body.theme-dark .brand-title {
+  color: var(--ty-rose-gold-light);
+}
+
+.brand-reg {
+  font-size: 0.8rem;
+  vertical-align: super;
+  color: var(--ty-rose-gold);
+}
+
+.brand-subtitle {
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* BUSCADOR DEL HEADER */
+.search-box-header {
+  flex: 1;
+  max-width: 420px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-box-header input {
+  width: 100%;
+  padding: 10px 38px 10px 38px;
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-pill);
+  font-size: 0.9rem;
+  color: var(--text-main);
+  transition: var(--trans-fast);
+}
+
+.search-box-header input:focus {
+  border-color: var(--ty-primary);
+  background-color: var(--bg-surface);
+  box-shadow: 0 0 0 3px rgba(112, 26, 73, 0.12);
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  pointer-events: none;
+  font-size: 0.9rem;
+  opacity: 0.6;
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 12px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  padding: 4px;
+}
+
+/* ACCIONES DE NAVEGACIÓN */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mode-switcher-nav {
+  display: flex;
+  background-color: var(--bg-subtle);
+  padding: 3px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-light);
+}
+
+.mode-btn {
+  padding: 7px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--trans-fast);
+}
+
+.mode-btn.active {
+  background: linear-gradient(135deg, var(--ty-primary), var(--ty-primary-light));
+  color: var(--text-white);
+  box-shadow: 0 2px 8px rgba(112, 26, 73, 0.3);
+}
+
+/* BOTONES DE CABECERA: INSTALAR PWA, MI CUENTA & GUÍA */
+.btn-install-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, rgba(112, 26, 73, 0.08), rgba(212, 143, 160, 0.16));
+  border: 1px solid var(--ty-rose-gold);
+  border-radius: var(--radius-pill);
+  color: var(--ty-primary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  transition: var(--trans-fast);
+  cursor: pointer;
+}
+
+body.theme-dark .btn-install-header {
+  background: rgba(212, 122, 148, 0.15);
+  border-color: var(--ty-rose-gold-light);
+  color: var(--ty-rose-gold-light);
+}
+
+.btn-install-header:hover {
+  transform: translateY(-2px);
+  background: var(--ty-primary);
+  color: #fff;
+}
+
+.account-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, #fdf2f8, #fce7f3);
+  border: 1px solid #f472b6;
+  border-radius: var(--radius-pill);
+  color: var(--ty-primary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  transition: var(--trans-fast);
+  cursor: pointer;
+}
+
+body.theme-dark .account-btn {
+  background: #381226;
+  border-color: #c77383;
+  color: #fce7f3;
+}
+
+.account-btn:hover {
+  transform: translateY(-2px);
+  background: #fbcfe8;
+}
+
+.help-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-pill);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  transition: var(--trans-fast);
+  cursor: pointer;
+}
+
+body.theme-dark .help-btn {
+  background: #270d1c;
+  border-color: rgba(212, 122, 148, 0.3);
+  color: #e2e8f0;
+}
+
+.help-btn:hover {
+  transform: translateY(-2px);
+  background: var(--border-light);
+  color: var(--text-main);
+}
+
+/* BOTÓN DE CARRITO */
+.cart-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #701a49, #8e285f);
+  color: var(--text-white);
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  font-size: 0.88rem;
+  box-shadow: 0 4px 14px rgba(112, 26, 73, 0.28);
+  transition: var(--trans-fast);
+}
+
+.cart-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(112, 26, 73, 0.38);
+}
+
+.cart-count-badge {
+  background-color: #fbbf24;
+  color: #451a03;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+}
+
+.theme-toggle-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: var(--trans-fast);
+}
+
+.theme-toggle-btn:hover {
+  background: var(--border-light);
+  transform: rotate(15deg);
+}
+
+/* ============================================================================
+   VIEWPORT PRINCIPAL
+   ============================================================================ */
+.main-content {
+  flex: 1;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.app-section {
+  display: none;
+}
+
+.app-section.active {
+  display: block;
+  animation: fadeInSection 0.28s ease-out;
+}
+
+@keyframes fadeInSection {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================================
+   HERO BANNER GLAMOUR
+   ============================================================================ */
+.hero-glam-card {
+  background: linear-gradient(135deg, #531035 0%, #701a49 45%, #8e285f 100%);
+  color: var(--text-white);
+  border-radius: var(--radius-lg);
+  padding: 36px 40px;
+  margin-bottom: 28px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-md), var(--shadow-glow);
+  border: 1px solid rgba(231, 177, 162, 0.35);
+}
+
+.hero-glam-card::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(231, 177, 162, 0.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-text-side {
+  flex: 1;
+  max-width: 720px;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #fde047;
+  margin-bottom: 14px;
+}
+
+.hero-headline {
+  font-family: var(--font-serif);
+  font-size: 2.3rem;
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 14px;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.hero-description {
+  font-size: 1.02rem;
+  color: #faedf2;
+  margin-bottom: 18px;
+  line-height: 1.55;
+}
+
+.hero-quote-box {
+  background: rgba(0, 0, 0, 0.18);
+  border-left: 3px solid var(--ty-rose-gold);
+  padding: 8px 16px;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin-bottom: 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quote-mark {
+  font-family: var(--font-serif);
+  font-size: 1.8rem;
+  color: var(--ty-rose-gold);
+  line-height: 1;
+}
+
+.quote-text {
+  font-style: italic;
+  font-weight: 600;
+  color: #fef08a;
+  font-size: 0.95rem;
+}
+
+.quote-author {
+  font-size: 0.78rem;
+  color: #fed7aa;
+}
+
+.hero-cta-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #d47a94, #c77383);
+  color: #fff;
+  font-weight: 700;
+  padding: 11px 22px;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 4px 16px rgba(212, 122, 148, 0.4);
+  transition: var(--trans-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(212, 122, 148, 0.55);
+}
+
+.btn-whatsapp-outline {
+  background: rgba(37, 211, 102, 0.15);
+  border: 1px solid #25d366;
+  color: #86efac;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--trans-fast);
+}
+
+.btn-whatsapp-outline:hover {
+  background: #25d366;
+  color: #052e16;
+}
+
+.hero-visual-side {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-card-floating {
+  width: 220px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+}
+
+.hero-floating-logo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin: 0 auto 14px;
+  border: 3px solid #fff;
+  box-shadow: var(--shadow-md);
+}
+
+.hero-promo-badge {
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-md);
+  padding: 8px;
+}
+
+.promo-title {
+  display: block;
+  font-weight: 800;
+  color: #34d399;
+  font-size: 0.92rem;
+}
+
+.promo-sub {
+  font-size: 0.74rem;
+  color: #fed7aa;
+}
+
+/* ============================================================================
+   CATEGORÍAS Y FILTROS
+   ============================================================================ */
+.store-filter-bar {
+  margin-bottom: 24px;
+}
+
+.categories-scroll-wrapper {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: thin;
+}
+
+.category-chip {
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  transition: var(--trans-fast);
+}
+
+.category-chip:hover {
+  border-color: var(--ty-rose-gold);
+  transform: translateY(-1px);
+}
+
+.category-chip.active {
+  background: linear-gradient(135deg, var(--ty-primary), var(--ty-primary-light));
+  color: var(--text-white);
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(112, 26, 73, 0.25);
+}
+
+.chip-count {
+  font-size: 0.74rem;
+  background: rgba(0, 0, 0, 0.08);
+  padding: 2px 6px;
+  border-radius: var(--radius-pill);
+}
+
+.category-chip.active .chip-count {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+/* CABECERA DEL CATÁLOGO */
+.catalog-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.catalog-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.catalog-section-title {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  color: var(--ty-primary);
+  font-weight: 700;
+}
+
+body.theme-dark .catalog-section-title {
+  color: var(--ty-rose-gold-light);
+}
+
+.catalog-count-pill {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background-color: var(--bg-subtle);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+}
+
+.catalog-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sort-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.select-styled {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 7px 12px;
+  color: var(--text-main);
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: var(--trans-fast);
+}
+
+.select-styled:focus {
+  border-color: var(--ty-primary);
+}
+
+/* ============================================================================
+   GRID DE PRODUCTOS DE INSUMOS
+   ============================================================================ */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.product-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--trans-fast), box-shadow var(--trans-fast), border-color var(--trans-fast);
+  position: relative;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--ty-rose-gold);
+}
+
+.product-image-container {
+  height: 200px;
+  background: linear-gradient(135deg, #fdf2f6, #fce7f0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+body.theme-dark .product-image-container {
+  background: linear-gradient(135deg, #2b0b1d, #3d1028);
+}
+
+.product-img {
+  max-height: 80%;
+  max-width: 80%;
+  object-fit: contain;
+  transition: transform var(--trans-smooth);
+}
+
+.product-card:hover .product-img {
+  transform: scale(1.06);
+}
+
+.product-badges-top {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 2;
+}
+
+.badge-featured {
+  background: linear-gradient(135deg, var(--ty-butter-yellow-light), var(--ty-butter-yellow));
+  color: var(--ty-butter-yellow-text);
+  border: 1px solid var(--ty-butter-yellow-dark);
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 2px 6px rgba(229, 190, 78, 0.35);
+  text-transform: uppercase;
+}
+
+.badge-category {
+  background: rgba(112, 26, 73, 0.85);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+}
+
+.product-card-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.product-title {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.25;
+  margin-bottom: 6px;
+}
+
+.product-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin-bottom: 14px;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.product-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 0.78rem;
+}
+
+.stock-indicator {
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stock-indicator.in-stock { color: var(--color-success); }
+.stock-indicator.low-stock { color: var(--color-warning); }
+.stock-indicator.out-of-stock { color: var(--color-danger); }
+
+.product-pricing-box {
+  background: var(--bg-subtle);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.price-usd {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--ty-primary);
+}
+
+body.theme-dark .price-usd {
+  color: var(--ty-rose-gold-light);
+}
+
+.price-bs {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.product-card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-add-cart {
+  flex: 1;
+  background: linear-gradient(135deg, var(--ty-primary), var(--ty-primary-light));
+  color: var(--text-white);
+  padding: 9px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 3px 10px rgba(112, 26, 73, 0.25);
+  transition: var(--trans-fast);
+}
+
+.btn-add-cart:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px rgba(112, 26, 73, 0.38);
+}
+
+.btn-quick-wa {
+  background: rgba(37, 211, 102, 0.14);
+  border: 1px solid rgba(37, 211, 102, 0.4);
+  color: #16a34a;
+  padding: 9px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: var(--trans-fast);
+}
+
+.btn-quick-wa:hover {
+  background: #25d366;
+  color: #fff;
+}
+
+/* ============================================================================
+   PANEL ADMINISTRATIVO (BACKOFFICE)
+   ============================================================================ */
+.admin-subnav-bar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.admin-tab-btn {
+  padding: 10px 18px;
+  border-radius: var(--radius-pill);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  transition: var(--trans-fast);
+}
+
+.admin-tab-btn:hover {
+  border-color: var(--ty-primary);
+  color: var(--ty-primary);
+}
+
+.admin-tab-btn.active {
+  background: linear-gradient(135deg, var(--ty-primary), #8e285f);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(112, 26, 73, 0.28);
+}
+
+.admin-subtab-content {
+  display: none;
+}
+
+.admin-subtab-content.active {
+  display: block;
+  animation: fadeInSection 0.24s ease-out;
+}
+
+/* KPI GRID */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.kpi-icon-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  background: var(--bg-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.kpi-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.kpi-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.kpi-value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.kpi-value.highlight-profit {
+  color: var(--color-success);
+}
+
+.kpi-sub {
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* DASHBOARD TWO COLS */
+.dashboard-two-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+  .dashboard-two-cols {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel-box {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 10px;
+}
+
+.panel-title {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  color: var(--ty-primary);
+  font-weight: 700;
+}
+
+body.theme-dark .panel-title {
+  color: var(--ty-rose-gold-light);
+}
+
+.panel-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+}
+
+.full-width-panel {
+  width: 100%;
+}
+
+/* CUENTAS Y BALANCES */
+.accounts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.account-card-mini {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  text-align: center;
+}
+
+.account-name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.account-bal-usd {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--ty-primary);
+}
+
+body.theme-dark .account-bal-usd {
+  color: var(--ty-rose-gold-light);
+}
+
+.account-bal-bs {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+/* PEDIDOS RECIENTES */
+.recent-orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.recent-order-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-md);
+  font-size: 0.84rem;
+}
+
+.recent-order-client {
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.recent-order-meta {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+/* BARRA DE FINANZAS */
+.finance-bars-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.fin-bar-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fin-bar-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.progress-track {
+  height: 10px;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  transition: width 0.6s ease;
+}
+
+.fill-in { background: linear-gradient(90deg, #10b981, #34d399); }
+.fill-cost { background: linear-gradient(90deg, #ef4444, #f87171); }
+.fill-exp { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+
+/* ============================================================================
+   TABLAS & MÓDULOS DE PEDIDOS Y FINANZAS
+   ============================================================================ */
+.module-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.filters-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.filter-pill {
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: var(--trans-fast);
+}
+
+.filter-pill.active {
+  background: var(--ty-primary);
+  color: #fff;
+  border-color: transparent;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-secondary {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  color: var(--text-main);
+  font-weight: 700;
+  padding: 9px 18px;
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  transition: var(--trans-fast);
+}
+
+.btn-secondary:hover {
+  border-color: var(--ty-primary);
+  color: var(--ty-primary);
+}
+
+.orders-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.order-admin-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: var(--trans-fast);
+}
+
+.order-admin-card:hover {
+  border-color: var(--ty-rose-gold);
+  box-shadow: var(--shadow-md);
+}
+
+.order-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.order-id-badge {
+  font-family: monospace;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--ty-primary);
+  background: var(--bg-subtle);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.status-badge {
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  text-transform: uppercase;
+}
+
+.status-Pendiente { background: #fef3c7; color: #b45309; }
+.status-Confirmado { background: #e0e7ff; color: #3730a3; }
+.status-En-Preparación { background: #fce7f3; color: #9d174d; }
+.status-En-Delivery { background: #e0f2fe; color: #0369a1; }
+.status-Entregado { background: #dcfce7; color: #15803d; }
+.status-Cancelado { background: #fee2e2; color: #b91c1c; }
+
+.order-client-line {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.order-items-snippet {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  background: var(--bg-subtle);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+}
+
+.order-bottom-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-top: 1px solid var(--border-light);
+  padding-top: 10px;
+}
+
+.order-totals-inline {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.order-usd {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--ty-primary);
+}
+
+.order-bs {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* TABLAS ESTILIZADAS */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+  text-align: left;
+}
+
+.styled-table th {
+  background-color: var(--bg-subtle);
+  color: var(--ty-primary);
+  font-weight: 700;
+  padding: 12px 14px;
+  border-bottom: 2px solid var(--border-light);
+  white-space: nowrap;
+}
+
+body.theme-dark .styled-table th {
+  color: var(--ty-rose-gold-light);
+}
+
+.styled-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-main);
+  vertical-align: middle;
+}
+
+.styled-table tr:hover {
+  background-color: var(--bg-subtle);
+}
+
+/* ============================================================================
+   DRAWER DEL CARRITO & MODALES
+   ============================================================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(20, 5, 13, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeInModal 0.22s ease-out;
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.cart-drawer-sheet {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 480px;
+  background-color: var(--bg-surface);
+  box-shadow: -10px 0 35px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  z-index: 1001;
+  animation: slideDrawer 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideDrawer {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.cart-drawer-header {
+  padding: 18px 20px;
+  background: linear-gradient(135deg, #531035, #701a49);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cart-drawer-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cart-drawer-icon {
+  font-size: 1.6rem;
+}
+
+.cart-drawer-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.cart-drawer-sub {
+  font-size: 0.74rem;
+  color: #fed7aa;
+}
+
+.close-modal-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  transition: var(--trans-fast);
+}
+
+.close-modal-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.cart-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.cart-item-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background-color: var(--bg-subtle);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+}
+
+.cart-item-img {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  background: #fff;
+}
+
+.cart-item-info {
+  flex: 1;
+}
+
+.cart-item-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.cart-item-price {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ty-primary);
+}
+
+.cart-qty-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-qty {
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  color: var(--text-main);
+}
+
+.cart-qty-num {
+  font-size: 0.88rem;
+  font-weight: 800;
+  min-width: 20px;
+  text-align: center;
+}
+
+.cart-delivery-section {
+  background: var(--bg-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  border: 1px solid var(--border-light);
+}
+
+.section-micro-heading {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--ty-primary);
+  margin-bottom: 12px;
+}
+
+.cart-drawer-footer {
+  padding: 18px 20px;
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border-light);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.cart-totals-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.total-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+}
+
+.total-line.grand-total {
+  border-top: 1px dashed var(--border-light);
+  padding-top: 8px;
+  margin-top: 4px;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.grand-total-numbers {
+  text-align: right;
+}
+
+.total-usd {
+  display: block;
+  font-size: 1.45rem;
+  color: var(--ty-primary);
+  line-height: 1.1;
+}
+
+.total-bs {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.free-delivery {
+  color: var(--color-success);
+  font-weight: 700;
+}
+
+.btn-whatsapp-full {
+  width: 100%;
+  background: linear-gradient(135deg, #25d366, #128c7e);
+  color: #fff;
+  padding: 14px;
+  border-radius: var(--radius-pill);
+  font-size: 0.98rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.35);
+  transition: var(--trans-fast);
+}
+
+.btn-whatsapp-full:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+}
+
+.secondary-cart-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  padding: 8px 12px;
+  border-radius: var(--radius-pill);
+}
+
+.btn-ghost:hover {
+  color: var(--color-danger);
+}
+
+/* ============================================================================
+   MODALES DE FORMULARIO
+   ============================================================================ */
+.modal-window {
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  box-shadow: var(--shadow-lg);
+  animation: scaleModal 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes scaleModal {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modal-header {
+  padding: 16px 20px;
+  background: linear-gradient(135deg, var(--ty-primary), #8e285f);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.modal-body {
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.form-group {
+  margin-bottom: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.form-input, .form-textarea, .select-styled {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  font-size: 0.9rem;
+  transition: var(--trans-fast);
+}
+
+.form-input:focus, .form-textarea:focus, .select-styled:focus {
+  border-color: var(--ty-primary);
+  background-color: var(--bg-surface);
+  box-shadow: 0 0 0 3px rgba(112, 26, 73, 0.12);
+}
+
+.form-hint {
+  display: block;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  .form-grid-2, .form-grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* SELECTOR DE CANTIDAD EN TARJETA DE PRODUCTO */
+.product-card-actions-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.card-qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-pill);
+  padding: 2px 6px;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.btn-stepper {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  color: var(--text-main);
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  transition: var(--trans-fast);
+}
+
+.btn-stepper:hover:not(:disabled) {
+  background: var(--ty-primary);
+  color: #fff;
+}
+
+.btn-stepper:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.stepper-val {
+  font-weight: 800;
+  font-size: 0.9rem;
+  min-width: 16px;
+  text-align: center;
+  color: var(--text-main);
+}
+
+.modal-footer-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-light);
+}
+
+/* ============================================================================
+   COTIZACIÓN IMPRIMIBLE (DOCUMENTO OFICIAL TIENDAS YOLO)
+   ============================================================================ */
+.quote-modal-window {
+  max-width: 780px;
+}
+
+.modal-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.printable-quote-document {
+  background: #ffffff;
+  color: #1a1a1a;
+  padding: 30px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+}
+
+.quote-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-bottom: 2px solid #701a49;
+  padding-bottom: 18px;
+  margin-bottom: 20px;
+}
+
+.quote-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.quote-logo {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 2px solid #701a49;
+}
+
+.quote-company-name {
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #701a49;
+  line-height: 1.1;
+}
+
+.quote-company-tagline {
+  font-size: 0.85rem;
+  color: #8e285f;
+  font-weight: 600;
+}
+
+.quote-company-sub {
+  font-size: 0.78rem;
+  color: #555;
+}
+
+.quote-meta-box {
+  text-align: right;
+  font-size: 0.82rem;
+  color: #444;
+}
+
+.quote-pill-id {
+  font-family: monospace;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #701a49;
+  background: #fdf2f6;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  display: inline-block;
+  margin-bottom: 6px;
+}
+
+.quote-client-info-box {
+  background: #fcf6f8;
+  border: 1px solid #ebd3de;
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
+  margin-bottom: 20px;
+}
+
+.quote-box-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #701a49;
+  margin-bottom: 8px;
+  letter-spacing: 0.05em;
+}
+
+.quote-client-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 14px;
+  font-size: 0.84rem;
+}
+
+.quote-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  font-size: 0.86rem;
+}
+
+.quote-items-table th {
+  background-color: #701a49;
+  color: #fff;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.quote-items-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.quote-items-table tfoot td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.grand-total-quote-row td {
+  background: #fdf2f6;
+  font-size: 1.05rem;
+  border-top: 2px solid #701a49;
+}
+
+.highlight-val {
+  color: #701a49;
+  font-weight: 800;
+}
+
+.quote-terms-box {
+  border-top: 1px solid #eee;
+  padding-top: 14px;
+  font-size: 0.78rem;
+  color: #666;
+  line-height: 1.45;
+}
+
+.quote-signature-note {
+  display: block;
+  margin-top: 8px;
+  font-weight: 600;
+  color: #701a49;
+}
+
+/* ============================================================================
+   CONFIGURACIÓN & TARJETAS
+   ============================================================================ */
+.settings-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.settings-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.settings-card.highlight-card {
+  border: 1px solid var(--ty-rose-gold);
+  background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-subtle) 100%);
+}
+
+.card-icon-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.card-icon {
+  font-size: 1.8rem;
+}
+
+.card-heading {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--ty-primary);
+}
+
+body.theme-dark .card-heading {
+  color: var(--ty-rose-gold-light);
+}
+
+.card-subheading {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+}
+
+.buttons-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.sync-logs-box {
+  margin-top: 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-family: monospace;
+}
+
+/* TOAST NOTIFICACIONES */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast-msg {
+  background: var(--ty-primary-dark);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: var(--radius-pill);
+  font-size: 0.88rem;
+  font-weight: 600;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+  animation: slideUpToast 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUpToast {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.toast-msg.success { background: #065f46; border: 1px solid #34d399; }
+.toast-msg.error { background: #991b1b; border: 1px solid #f87171; }
+.toast-msg.info { background: #1e3a8a; border: 1px solid #60a5fa; }
+
+/* ============================================================================
+   ESTILOS DE IMPRESIÓN (PRINT MEDIA)
+   ============================================================================ */
+@media print {
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .top-info-bar,
+  .main-header,
+  .hero-glam-card,
+  .store-filter-bar,
+  .catalog-header-row,
+  .products-grid,
+  .admin-subnav-bar,
+  .admin-luxury-header,
+  .admin-main-wrap,
+  .modal-header.no-print,
+  .modal-footer.no-print,
+  .cart-drawer-sheet,
+  .toast-container,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Impresión limpia exclusiva del Reporte Z (Cierre de Caja Diario) */
+  body.printing-report-z-only * {
+    visibility: hidden !important;
+  }
+  body.printing-report-z-only #modal-daily-close-report,
+  body.printing-report-z-only #modal-daily-close-report .receipt-ticket-z,
+  body.printing-report-z-only #modal-daily-close-report .receipt-ticket-z * {
+    visibility: visible !important;
+  }
+  body.printing-report-z-only #modal-daily-close-report {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    display: block !important;
+  }
+  body.printing-report-z-only .receipt-ticket-z {
+    position: relative !important;
+    margin: 0 auto !important;
+    max-width: 360px !important;
+    box-shadow: none !important;
+    border: 1px dashed #444 !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+  }
+  body.printing-report-z-only .modal-header,
+  body.printing-report-z-only .modal-footer {
+    display: none !important;
+  }
+
+  /* Impresión limpia de Nota de Entrega para clientes */
+  body.printing-delivery-note * {
+    visibility: hidden !important;
+  }
+  body.printing-delivery-note #modal-delivery-note,
+  body.printing-delivery-note #modal-delivery-note #printable-delivery-ticket,
+  body.printing-delivery-note #modal-delivery-note #printable-delivery-ticket * {
+    visibility: visible !important;
+  }
+  body.printing-delivery-note #modal-delivery-note {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    display: block !important;
+  }
+  body.printing-delivery-note #printable-delivery-ticket {
+    margin: 0 auto !important;
+    max-width: 360px !important;
+    box-shadow: none !important;
+    border: 1px dashed #444 !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .modal-overlay {
+    position: static !important;
+    background: none !important;
+    padding: 0 !important;
+  }
+
+  .modal-window {
+    box-shadow: none !important;
+    border: none !important;
+    max-width: 100% !important;
+  }
+
+  .printable-quote-document {
+    padding: 0 !important;
+  }
+}
+
+/* ============================================================================
+   WIDGET DELIVERY GPS CON COORDENADAS (ESTILO YUMMY) & BINANCE
+   ============================================================================ */
+.delivery-gps-box {
+  background: linear-gradient(135deg, rgba(255, 241, 168, 0.28), rgba(255, 249, 214, 0.45));
+  border: 1px solid rgba(229, 190, 78, 0.5);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  margin: 10px 0;
+}
+.delivery-gps-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.delivery-gps-title {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--ty-primary-dark);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-gps-detect {
+  width: 100%;
+  padding: 9px 14px;
+  background: linear-gradient(135deg, var(--ty-primary), var(--ty-magenta-fuchsia));
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: var(--trans-fast);
+  box-shadow: 0 2px 8px rgba(123, 25, 83, 0.25);
+  margin-bottom: 8px;
+}
+.btn-gps-detect:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(234, 111, 191, 0.4);
+}
+.btn-gps-detect:active {
+  transform: translateY(0);
+}
+.delivery-calc-badge {
+  font-size: 0.78rem;
+  background: #ffffff;
+  border: 1px solid var(--ty-rose-gold);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  margin-top: 8px;
+  color: var(--text-main);
+  line-height: 1.45;
+  display: none;
+}
+.delivery-calc-badge.active {
+  display: block;
+}
+.delivery-tier-tag {
+  background: var(--ty-butter-yellow-light);
+  color: var(--ty-butter-yellow-text);
+  border: 1px solid var(--ty-butter-yellow-dark);
+  font-weight: 700;
+  font-size: 0.72rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-top: 4px;
+}
+
+/* Tarjeta Binance Pay */
+.bank-pill-card[data-bank-card="binance"] {
+  border-color: rgba(243, 186, 47, 0.55);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(254, 249, 231, 0.95));
+}
+.binance-badge-brand {
+  background: #f3ba2f;
+  color: #1e2026;
+  font-weight: 800;
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  letter-spacing: 0.02em;
+}
+
+/* ============================================================================
+   RESPONSIVE SMARTPHONES & APP NATIVA MÓVIL
+   ============================================================================ */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 75px; /* Espacio para barra de navegación inferior */
+  }
+
+  .main-content {
+    padding: 12px 10px;
+    max-width: 100%;
+  }
+
+  .header-container {
+    padding: 6px 10px;
+    gap: 8px;
+  }
+
+  .brand-group {
+    gap: 8px;
+  }
+
+  .logo-wrapper {
+    width: 38px;
+    height: 38px;
+  }
+
+  .brand-title {
+    font-size: 1.15rem;
+  }
+
+  .brand-subtitle {
+    font-size: 0.68rem;
+  }
+
+  .search-box-header {
+    display: none; /* En móvil se busca desde filtros o cabecera compacta */
+  }
+
+  .nav-actions {
+    gap: 4px;
+    display: flex;
+    align-items: center;
+  }
+
+  .btn-install-header, .account-btn, .help-btn, .cart-btn {
+    padding: 6px 8px;
+    font-size: 0.76rem;
+    flex-shrink: 0;
+  }
+
+  .install-text, .account-badge-text, .help-badge-text, .cart-total-badge {
+    display: none; /* Solo mostrar iconos en cabecera móvil para mantener todo visible */
+  }
+
+  .hide-on-mobile {
+    display: none !important;
+  }
+
+  .hero-glam-card {
+    padding: 18px 14px;
+    border-radius: var(--radius-md);
+    margin-bottom: 16px;
+  }
+
+  .hero-inner {
+    flex-direction: column;
+    text-align: center;
+    gap: 14px;
+  }
+
+  .hero-headline {
+    font-size: 1.35rem;
+    line-height: 1.2;
+  }
+
+  .hero-description {
+    font-size: 0.82rem;
+    margin-bottom: 12px;
+  }
+
+  .hero-quote-box {
+    margin-bottom: 12px;
+    padding: 6px 12px;
+  }
+
+  .hero-cta-group {
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-primary, .btn-secondary, .btn-whatsapp-outline {
+    font-size: 0.8rem;
+    padding: 8px 14px;
+  }
+
+  .hero-visual-side {
+    display: none;
+  }
+
+  .social-hub-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .social-hub-btn {
+    padding: 8px 10px;
+    font-size: 0.78rem;
+  }
+
+  .hub-texts .hub-title {
+    font-size: 0.78rem;
+  }
+
+  .hub-texts .hub-sub {
+    font-size: 0.68rem;
+  }
+
+  /* CUADRÍCULA DE 2 COLUMNAS COMPACTA EN MÓVIL (NUNCA 1 COLUMNA) */
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .product-card {
+    border-radius: var(--radius-md);
+  }
+
+  .product-image-container {
+    height: 130px !important;
+    padding: 6px;
+  }
+
+  .product-details {
+    padding: 8px 10px;
+  }
+
+  .product-title {
+    font-size: 0.82rem !important;
+    line-height: 1.25;
+    min-height: 2.5em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .product-desc {
+    display: none !important;
+  }
+
+  .product-price-row {
+    margin: 6px 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .price-usd {
+    font-size: 1.05rem;
+    font-weight: 800;
+  }
+
+  .price-bs {
+    font-size: 0.72rem;
+  }
+
+  .product-card-actions-wrapper {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .card-qty-stepper {
+    width: 100%;
+    justify-content: space-between;
+    padding: 2px 8px;
+  }
+
+  .btn-stepper {
+    width: 24px;
+    height: 24px;
+    font-size: 0.8rem;
+  }
+
+  .btn-add-cart-primary {
+    width: 100%;
+    padding: 7px 10px;
+    font-size: 0.78rem;
+    justify-content: center;
+  }
+
+  .cart-drawer-sheet {
+    max-width: 100%;
+  }
+
+  .editor-control-bar {
+    bottom: 74px !important;
+    left: 10px !important;
+    right: 10px !important;
+    transform: none !important;
+    width: auto !important;
+    padding: 6px 10px !important;
+    justify-content: space-between;
+  }
+
+  .editor-action-btn {
+    font-size: 0.72rem !important;
+    padding: 6px 8px !important;
+  }
+}
+
+/* ============================================================================
+   SOCIAL HUB & REDES SOCIALES (LINK-IN-BIO MULTICANAL)
+   ============================================================================ */
+.social-top-link {
+  color: #fed7aa;
+  text-decoration: none;
+  font-weight: 700;
+  transition: var(--trans-fast);
+}
+
+.social-top-link:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.social-hub-section {
+  margin-bottom: 22px;
+}
+
+.social-hub-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+}
+
+.social-hub-btn {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--text-main);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--trans-fast), box-shadow var(--trans-fast), border-color var(--trans-fast);
+}
+
+.social-hub-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--ty-rose-gold);
+}
+
+.social-hub-btn .hub-icon {
+  font-size: 1.6rem;
+}
+
+.social-hub-btn .hub-texts {
+  display: flex;
+  flex-direction: column;
+}
+
+.social-hub-btn .hub-title {
+  font-size: 0.86rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.social-hub-btn .hub-sub {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+.social-hub-btn.wa-pill {
+  border-left: 4px solid #25d366;
+}
+
+.social-hub-btn.ig-pill {
+  border-left: 4px solid #e1306c;
+}
+
+.social-hub-btn.deliv-pill {
+  border-left: 4px solid var(--color-success);
+}
+
+.social-hub-btn.envios-pill {
+  border-left: 4px solid #3b82f6;
+}
+
+/* ============================================================================
+   PIE DE PÁGINA (STORE FOOTER)
+   ============================================================================ */
+.store-footer {
+  background: linear-gradient(180deg, var(--bg-surface) 0%, #200916 100%);
+  border-top: 1px solid var(--border-light);
+  padding: 40px 20px 20px;
+  margin-top: 50px;
+}
+
+body.theme-light .store-footer {
+  background: linear-gradient(180deg, #fff7fa 0%, #f7e6ec 100%);
+}
+
+.footer-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+@media (max-width: 800px) {
+  .footer-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.footer-brand {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.footer-logo {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 2px solid var(--ty-rose-gold);
+}
+
+.footer-title {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--ty-primary);
+  margin-bottom: 4px;
+}
+
+body.theme-dark .footer-title {
+  color: var(--ty-rose-gold-light);
+}
+
+.footer-desc {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.footer-col-title {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--ty-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+
+body.theme-dark .footer-col-title {
+  color: var(--ty-rose-gold-light);
+}
+
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+
+.footer-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: var(--trans-fast);
+}
+
+.footer-links a:hover {
+  color: var(--ty-primary);
+  text-decoration: underline;
+}
+
+.footer-admin-link {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn-footer-admin {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  color: var(--ty-primary);
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 10px 16px;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--shadow-sm);
+  transition: var(--trans-fast);
+}
+
+.btn-footer-admin:hover {
+  background: var(--ty-primary);
+  color: #fff;
+  border-color: transparent;
+}
+
+.admin-hint {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+.footer-bottom {
+  max-width: 1400px;
+  margin: 0 auto;
+  border-top: 1px solid var(--border-light);
+  padding-top: 16px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ============================================================================
+   NUEVOS COMPONENTES: PWA, BOTTOM NAV, EDITOR, PAGOS & NOTAS DE ENTREGA
+   ============================================================================ */
+
+/* BOTÓN INSTALAR PWA HEADER */
+.btn-install-header {
+  background: linear-gradient(135deg, #e7b1a2, #c77383);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 8px 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(199, 115, 131, 0.35);
+  transition: var(--trans-fast);
+  animation: pulseInstall 3s infinite ease-in-out;
+}
+
+@keyframes pulseInstall {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); box-shadow: 0 4px 14px rgba(199, 115, 131, 0.55); }
+}
+
+/* BOTÓN MI CUENTA / CLUB MANICURISTA */
+.account-btn {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  color: var(--text-main);
+  border-radius: var(--radius-pill);
+  padding: 8px 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: var(--trans-fast);
+}
+
+.account-btn:hover {
+  border-color: var(--ty-primary);
+  background: var(--bg-surface);
+}
+
+/* BARRA DE NAVEGACIÓN INFERIOR PARA SMARTPHONES (APP NATIVA) */
+.mobile-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 62px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border-light);
+    z-index: 1000;
+    align-items: center;
+    justify-content: space-around;
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
+  }
+
+  body.theme-dark .mobile-bottom-nav {
+    background: rgba(30, 16, 24, 0.96);
+    border-top-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .m-nav-item {
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 6px 10px;
+    transition: var(--trans-fast);
+  }
+
+  .m-nav-item.active {
+    color: var(--ty-primary);
+  }
+
+  body.theme-dark .m-nav-item.active {
+    color: var(--ty-rose-gold-light);
+  }
+
+  .m-nav-icon {
+    font-size: 1.15rem;
+  }
+
+  .m-nav-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+  }
+
+  .m-nav-icon-wrap {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .m-cart-badge {
+    position: absolute;
+    top: -6px;
+    right: -10px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 800;
+    border-radius: var(--radius-pill);
+    padding: 1px 5px;
+    min-width: 16px;
+    text-align: center;
+  }
+}
+
+/* BARRA FLOTANTE DE MODO EDICIÓN EN VIVO */
+.editor-control-bar {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(25, 12, 19, 0.95);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(231, 177, 162, 0.4);
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 10001;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  animation: slideUpBar 0.3s ease-out;
+}
+
+@keyframes slideUpBar {
+  from { opacity: 0; transform: translate(-50%, 20px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.editor-bar-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pulse-dot-red {
+  width: 8px;
+  height: 8px;
+  background: #ef4444;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #ef4444;
+  display: inline-block;
+  animation: pulseRed 1.5s infinite;
+}
+
+@keyframes pulseRed {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.3); }
+}
+
+.editor-bar-title {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #fed7aa;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.editor-action-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: var(--trans-fast);
+  text-decoration: none;
+}
+
+.editor-action-btn:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.editor-action-btn.active {
+  background: #10b981;
+  border-color: #059669;
+  color: #fff;
+}
+
+.editor-action-btn.btn-save-highlight {
+  background: linear-gradient(135deg, #d47a94, #c77383);
+  border-color: transparent;
+}
+
+.editor-btn-close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.editor-btn-close:hover {
+  color: #fff;
+}
+
+/* MARCADOR DE ELEMENTOS EDITABLES */
+body.editor-mode-active [data-editable="true"],
+body.editor-mode-active [contenteditable="true"] {
+  outline: 2px dashed var(--ty-magenta-fuchsia) !important;
+  outline-offset: 3px;
+  cursor: text;
+  background: rgba(234, 111, 191, 0.08) !important;
+  border-radius: 4px;
+  transition: var(--trans-fast);
+}
+
+body.editor-mode-active [data-editable="true"]:hover,
+body.editor-mode-active [contenteditable="true"]:hover {
+  background: rgba(255, 241, 168, 0.25) !important;
+  outline-color: var(--ty-butter-yellow-dark) !important;
+}
+
+body.editor-mode-active .product-card {
+  outline: 2px dashed var(--ty-magenta-fuchsia) !important;
+  position: relative !important;
+}
+
+.card-edit-overlay {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: none;
+  gap: 6px;
+  z-index: 50;
+  background: rgba(74, 11, 49, 0.88);
+  backdrop-filter: blur(6px);
+  padding: 4px 8px;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--ty-magenta-fuchsia);
+}
+
+body.editor-mode-active .card-edit-overlay {
+  display: flex !important;
+}
+
+.btn-edit-card-action {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: #ffffff;
+  color: var(--ty-primary-dark);
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--trans-fast);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.btn-edit-card-action:hover {
+  transform: scale(1.18);
+  background: var(--ty-magenta-fuchsia);
+  color: #fff;
+  border-color: #fff;
+}
+
+.btn-edit-card-action.btn-del-action:hover {
+  background: #ef4444;
+  color: #fff;
+}
+
+/* BOTÓN DE PAGO Y AUTENTICACIÓN */
+.btn-primary-payment {
+  width: 100%;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, var(--ty-primary-dark), var(--ty-primary));
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-weight: 800;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(112, 26, 73, 0.35);
+  transition: var(--trans-fast);
+}
+
+.btn-primary-payment:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(112, 26, 73, 0.45);
+}
+
+/* MODAL DE PAGO Y AUTENTICACIÓN BANCARIA */
+.payment-auth-modal {
+  max-width: 600px;
+}
+
+.payment-order-summary-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: linear-gradient(135deg, var(--bg-subtle), var(--bg-surface));
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.summary-col {
+  text-align: center;
+}
+
+.summary-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  display: block;
+}
+
+.summary-amount-usd {
+  font-size: 1.45rem;
+  color: var(--ty-primary);
+}
+
+body.theme-dark .summary-amount-usd {
+  color: var(--ty-rose-gold-light);
+}
+
+.summary-amount-bs {
+  font-size: 1.45rem;
+  color: #059669;
+  display: block;
+}
+
+.summary-rate {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.summary-divider {
+  width: 1px;
+  height: 40px;
+  background: var(--border-light);
+}
+
+.payment-box-heading {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--ty-primary);
+  margin-bottom: 8px;
+}
+
+body.theme-dark .payment-box-heading {
+  color: var(--ty-rose-gold-light);
+}
+
+.bank-pill-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  margin-bottom: 10px;
+  transition: var(--trans-fast);
+}
+
+.bank-pill-card.active {
+  border-color: var(--ty-primary);
+  box-shadow: 0 0 0 2px rgba(112, 26, 73, 0.15);
+}
+
+.bank-pill-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.btn-copy-data {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-pill);
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  cursor: pointer;
+  color: var(--ty-primary);
+}
+
+.btn-copy-data:hover {
+  background: var(--ty-primary);
+  color: #fff;
+}
+
+.bank-pill-details p {
+  font-size: 0.82rem;
+  margin: 2px 0;
+  color: var(--text-secondary);
+}
+
+.auth-security-notice {
+  display: flex;
+  gap: 10px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  margin: 14px 0;
+  font-size: 0.8rem;
+  color: var(--text-main);
+}
+
+.btn-verify-payment {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #059669, #10b981);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-weight: 800;
+  font-size: 0.92rem;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+  transition: var(--trans-fast);
+}
+
+.btn-verify-payment:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.5);
+}
+
+/* MINI NOTA DE ENTREGA DIGITAL (TICKET BOUTIQUE) */
+.delivery-note-window {
+  max-width: 480px;
+}
+
+.delivery-ticket-container {
+  background: #fff;
+  color: #1c1917;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  border: 1px dashed #d6d3d1;
+}
+
+.ticket-header {
+  text-align: center;
+  border-bottom: 2px dashed #e7e5e4;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+}
+
+.ticket-logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin: 0 auto 8px;
+  display: block;
+}
+
+.ticket-store-name {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #701a49;
+  margin-bottom: 2px;
+}
+
+.ticket-slogan {
+  font-size: 0.76rem;
+  color: #78716c;
+}
+
+.ticket-location {
+  font-size: 0.72rem;
+  color: #a8a29e;
+}
+
+.ticket-badge-pill {
+  display: inline-block;
+  background: #dcfce7;
+  color: #166534;
+  font-size: 0.74rem;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  margin-top: 8px;
+  border: 1px solid #bbf7d0;
+}
+
+.ticket-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  font-size: 0.78rem;
+  border-bottom: 1px dashed #e7e5e4;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.ticket-client-box {
+  font-size: 0.78rem;
+  border-bottom: 1px dashed #e7e5e4;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.ticket-client-box p {
+  margin: 2px 0;
+}
+
+.ticket-subheading {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #701a49;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.ticket-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  margin: 8px 0;
+}
+
+.ticket-table th {
+  text-align: left;
+  border-bottom: 1px solid #e7e5e4;
+  padding: 4px 0;
+  font-size: 0.72rem;
+  color: #78716c;
+}
+
+.ticket-table td {
+  padding: 6px 0;
+  border-bottom: 1px solid #f5f5f4;
+}
+
+.ticket-totals-section {
+  border-top: 1px dashed #e7e5e4;
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
+.ticket-total-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  margin: 3px 0;
+}
+
+.ticket-total-row.total-highlight {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #701a49;
+  border-top: 1px solid #e7e5e4;
+  padding-top: 6px;
+  margin-top: 6px;
+}
+
+.ticket-payment-auth-box {
+  font-size: 0.76rem;
+  background: #fdf4f7;
+  border-radius: 6px;
+  padding: 8px;
+  margin-top: 10px;
+}
+
+.ticket-payment-auth-box p {
+  margin: 2px 0;
+}
+
+.ticket-footer-strip {
+  text-align: center;
+  margin-top: 16px;
+  border-top: 1px dashed #e7e5e4;
+  padding-top: 12px;
+}
+
+.ticket-barcode {
+  font-family: monospace;
+  letter-spacing: 3px;
+  font-size: 0.85rem;
+  color: #a8a29e;
+}
+
+.ticket-footer-msg {
+  font-size: 0.78rem;
+  color: #701a49;
+  font-weight: 600;
+}
+
+.ticket-footer-thanks {
+  font-size: 0.72rem;
+  color: #a8a29e;
+}
+
+/* CLUB MANICURISTA & PERFIL */
+.account-modal-window {
+  max-width: 520px;
+}
+
+.club-intro-card {
+  background: linear-gradient(135deg, #fdf2f6, #fce7f0);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.club-intro-card h4 {
+  color: var(--ty-primary);
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.club-intro-card p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.profile-card-active {
+  display: flex;
+  gap: 14px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.profile-avatar {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #e7b1a2, #c77383);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.profile-info h4 {
+  font-size: 1.05rem;
+  color: var(--text-main);
+}
+
+.vip-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--ty-butter-yellow-light), var(--ty-butter-yellow));
+  color: var(--ty-butter-yellow-text);
+  border: 1px solid var(--ty-butter-yellow-dark);
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  margin: 4px 0 6px;
+  box-shadow: 0 2px 6px rgba(229, 190, 78, 0.3);
+}
+
+.profile-info p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin: 2px 0;
+}
+
+.account-actions-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.history-orders-box {
+  border-top: 1px solid var(--border-light);
+  padding-top: 14px;
+}
+
+.history-heading {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--ty-primary);
+  margin-bottom: 8px;
+}
+
+.order-history-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+}
+
+.history-card-info strong {
+  display: block;
+  color: var(--ty-primary);
+}
+
+.btn-history-view {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+/* PWA GUÍA */
+.pwa-guide-window {
+  max-width: 480px;
+}
+
+.pwa-guide-card {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.pwa-guide-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin: 0 auto 10px;
+  border: 3px solid var(--ty-rose-gold);
+}
+
+.pwa-steps-box {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.pwa-steps-box h5 {
+  font-size: 0.88rem;
+  color: var(--ty-primary);
+  margin-bottom: 8px;
+}
+
+.pwa-steps-list {
+  padding-left: 20px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.image-input-preview-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.pe-preview-thumb {
+  width: 46px;
+  height: 46px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid var(--border-light);
+}
+
+.btn-autofill-account {
+  background: none;
+  border: 1px solid var(--ty-rose-gold);
+  color: var(--ty-primary);
+  font-size: 0.74rem;
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+  padding: 3px 8px;
+  cursor: pointer;
+}
+
+.section-title-with-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+/* ============================================================================
+   ESTILOS: GUÍA & ENSEÑANZA DE USO (ESCUELA TIENDAS YOLO)
+   ============================================================================ */
+.learning-modal-window {
+  max-width: 680px;
+  width: 100%;
+}
+
+.learning-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.learning-step-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  position: relative;
+  transition: var(--trans-fast);
+}
+
+.learning-step-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--ty-rose-gold);
+  box-shadow: var(--shadow-sm);
+}
+
+.learning-step-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--ty-primary), #8e285f);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.learning-step-icon {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+
+.learning-step-card h4 {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  color: var(--ty-primary);
+  margin-bottom: 6px;
+}
+
+body.theme-dark .learning-step-card h4 {
+  color: #fbcfe8;
+}
+
+.learning-step-card p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+/* ============================================================================
+   CORRECCIÓN COMPLETA DE CONTRASTE: MODO OSCURO (WCAG AA)
+   ============================================================================ */
+body.theme-dark {
+  --text-main: #ffffff !important;
+  --text-secondary: #e2e8f0 !important;
+  --text-muted: #cbd5e1 !important;
+}
+
+body.theme-dark .catalog-section-title,
+body.theme-dark .category-pill,
+body.theme-dark .product-name,
+body.theme-dark .modal-title,
+body.theme-dark .cart-drawer-title,
+body.theme-dark .section-micro-heading,
+body.theme-dark .form-label,
+body.theme-dark .pwa-steps-box h5,
+body.theme-dark .club-intro-card h4,
+body.theme-dark .prof-display-name,
+body.theme-dark .footer-title,
+body.theme-dark .quote-box-title {
+  color: #ffffff !important;
+}
+
+body.theme-dark .product-category,
+body.theme-dark .product-desc,
+body.theme-dark .brand-subtitle,
+body.theme-dark .cart-drawer-sub,
+body.theme-dark .modal-subtitle,
+body.theme-dark .footer-desc,
+body.theme-dark .pwa-steps-list,
+body.theme-dark .club-intro-card p,
+body.theme-dark .quote-company-sub {
+  color: #e2e8f0 !important;
+}
+
+body.theme-dark .form-input,
+body.theme-dark .form-textarea,
+body.theme-dark .select-styled {
+  background-color: #1a0815 !important;
+  color: #ffffff !important;
+  border-color: rgba(212, 122, 148, 0.4) !important;
+}
+
+body.theme-dark .form-input::placeholder,
+body.theme-dark .form-textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+body.theme-dark .styled-table td,
+body.theme-dark .styled-table th {
+  color: #f1f5f9 !important;
+}
+
+body.theme-dark .btn-secondary,
+body.theme-dark .btn-ghost {
+  color: #fdf2f8 !important;
+  border-color: rgba(212, 122, 148, 0.45) !important;
+}
+
+body.theme-dark .btn-secondary:hover {
+  background-color: rgba(212, 122, 148, 0.2) !important;
+}
+
+/* Modos oscuros específicos del panel Backoffice & Finanzas */
+body.theme-dark .panel-title,
+body.theme-dark .kpi-value,
+body.theme-dark .currency-val-main,
+body.theme-dark .guide-card-title,
+body.theme-dark .account-bal-usd,
+body.theme-dark .order-payment-meta,
+body.theme-dark .order-items-compact,
+body.theme-dark .admin-brand-title {
+  color: #ffffff !important;
+}
+
+body.theme-dark .kpi-title,
+body.theme-dark .kpi-sub,
+body.theme-dark .currency-name,
+body.theme-dark .currency-val-sub,
+body.theme-dark .guide-card-text,
+body.theme-dark .account-name,
+body.theme-dark .account-bal-bs,
+body.theme-dark .recent-order-client,
+body.theme-dark .recent-order-meta {
+  color: #e2e8f0 !important;
+}
+
+body.theme-dark .panel-box,
+body.theme-dark .kpi-card,
+body.theme-dark .currency-card,
+body.theme-dark .admin-guide-card,
+body.theme-dark .admin-order-card,
+body.theme-dark .modal-window,
+body.theme-dark .pin-box {
+  background-color: #1e0917 !important;
+  border-color: rgba(212, 122, 148, 0.25) !important;
+  color: #ffffff !important;
+}
+
+body.theme-dark .admin-subnav-bar {
+  background-color: #150510 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.theme-dark .admin-tab-btn {
+  background-color: #2a0d22 !important;
+  border-color: rgba(212, 122, 148, 0.3) !important;
+  color: #e2e8f0 !important;
+}
+
+body.theme-dark .admin-tab-btn.active {
+  background: linear-gradient(135deg, #701a49, #9b2a68) !important;
+  color: #ffffff !important;
+  border-color: var(--ty-rose-gold) !important;
+}
+
+
+/* Documentos impresos (Cotización y Ticket) siempre claros e impecables */
+.printable-quote-document,
+.delivery-ticket-container {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+.printable-quote-document *,
+.delivery-ticket-container * {
+  color: #0f172a;
+}
+
+.quote-items-table th {
+  background: #701a49 !important;
+  color: #ffffff !important;
+}
+
+.ticket-header-band {
+  background: #701a49 !important;
+  color: #ffffff !important;
+}
+
+
