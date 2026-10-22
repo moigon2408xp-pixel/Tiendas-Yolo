@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Tiendas Yolo® | Backoffice & Finanzas SICS</title>
+  <title>Tiendas Yolo® | Backoffice & Finanzas</title>
   
   <meta name="robots" content="noindex, nofollow">
-  <meta name="theme-color" content="#701a49">
+  <meta name="theme-color" content="#4a0b31">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="apple-touch-icon" href="assets/icon-192.png">
   <link rel="manifest" href="manifest.webmanifest">
@@ -18,12 +18,12 @@
 
   <link rel="stylesheet" href="styles.css">
   <style>
-    /* Estilos SICS Luxury Backoffice Tiendas Yolo */
+    /* Estilos Luxury Backoffice Tiendas Yolo */
     :root {
       --admin-topbar-h: 70px;
     }
-    .admin-sics-header {
-      background: linear-gradient(135deg, rgba(69, 12, 44, 0.98), rgba(112, 26, 73, 0.98));
+    .admin-luxury-header {
+      background: linear-gradient(135deg, #4a0b31 0%, #7b1953 50%, #851c5f 100%);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       color: #fff;
@@ -34,8 +34,8 @@
       position: sticky;
       top: 0;
       z-index: 1000;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 20px rgba(74, 11, 49, 0.25);
+      border-bottom: 2px solid var(--ty-magenta-fuchsia);
     }
     .admin-brand-wrap {
       display: flex;
@@ -60,16 +60,17 @@
       line-height: 1.1;
       color: #ffffff;
     }
-    .admin-badge-sics {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: #1a0815;
+    .admin-badge-pro {
+      background: linear-gradient(135deg, #FFF9D2, #FFE57F);
+      color: #4a0b31;
       font-size: 0.7rem;
       font-weight: 800;
-      padding: 2px 8px;
+      padding: 2px 9px;
       border-radius: var(--radius-pill);
-      letter-spacing: 0.04em;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+      box-shadow: 0 2px 8px rgba(255, 229, 127, 0.45);
+      border: 1px solid rgba(229, 190, 78, 0.6);
       display: inline-block;
       margin-left: 6px;
     }
@@ -173,7 +174,7 @@
       color: #6ee7b7;
     }
 
-    /* Sub-nav SICS */
+    /* Sub-nav Administrativo */
     .admin-subnav-bar {
       display: flex;
       gap: 6px;
@@ -305,8 +306,7 @@
     }
     .currency-card.pm-card::before { background: #10b981; }
     .currency-card.cash-card::before { background: #059669; }
-    .currency-card.zelle-card::before { background: #7c3aed; }
-    .currency-card.zinli-card::before { background: #0284c7; }
+    .currency-card.binance-card::before { background: #f59e0b; }
 
     .currency-card-header {
       display: flex;
@@ -447,14 +447,14 @@
 <body class="theme-light">
 
   <!-- =================================================================== -->
-  <!-- PANTALLA DE SEGURIDAD / PIN DE ACCESO AL SISTEMA INTERNO SICS -->
+  <!-- PANTALLA DE SEGURIDAD / PIN DE ACCESO AL BACKOFFICE -->
   <!-- =================================================================== -->
   <div id="pin-lock-modal" class="pin-lock-overlay" style="display:none;">
     <div class="pin-box">
       <img src="logo-yolo.png" alt="Tiendas Yolo" class="pin-logo" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
       <h3 style="font-family:var(--font-serif); font-size:1.4rem; color:var(--ty-primary); margin-bottom:4px;">Tiendas Yolo®</h3>
       <p style="font-size:0.86rem; color:var(--text-secondary); margin-bottom:14px;">
-        Panel de Gestión SICS, Finanzas & Mostrador.<br>
+        Panel de Gestión, Finanzas & Mostrador.<br>
         Ingresa el PIN de seguridad para acceder:
       </p>
       
@@ -476,17 +476,17 @@
   </div>
 
   <!-- =================================================================== -->
-  <!-- HEADER FLOTANTE SICS DE TIENDAS YOLO (LUXURY CONTROLS) -->
+  <!-- HEADER LUXURY DE TIENDAS YOLO (CONTROLES ADMINISTRATIVOS) -->
   <!-- =================================================================== -->
-  <header class="admin-sics-header">
+  <header class="admin-luxury-header">
     <a href="#admin-dashboard" class="admin-brand-wrap" title="Ir al Dashboard General">
       <img src="logo-yolo.png" alt="Tiendas Yolo" class="admin-brand-logo" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
       <div>
         <div class="admin-brand-title">
           Tiendas Yolo®
-          <span class="admin-badge-sics">SICS v2.6</span>
+          <span class="admin-badge-pro">OFICIAL PRO</span>
         </div>
-        <div class="admin-brand-subtitle">Backoffice · Finanzas · Mostrador Maracaibo</div>
+        <div class="admin-brand-subtitle">Backoffice · Finanzas · Tienda Física Maracaibo</div>
       </div>
     </a>
 
@@ -505,9 +505,9 @@
         <span id="topbar-cloud-text">Sheets Online</span>
       </div>
 
-      <!-- Botón Mostrador Rápido / POS Express -->
-      <button type="button" class="admin-circle-btn btn-fast-order" id="btn-topbar-fast-order" title="⚡ Mostrador Rápido (Venta Express en Tienda Física)">
-        ⚡
+      <!-- Botón Mostrador / POS Express (Tienda Física) -->
+      <button type="button" class="admin-circle-btn btn-fast-order" id="btn-topbar-fast-order" title="🏪 Mostrador Tienda Física (Venta Express)">
+        🏪
       </button>
 
       <!-- Botón Cierre de Caja Diario (Reporte Z) -->
@@ -539,7 +539,7 @@
   </header>
 
   <!-- =================================================================== -->
-  <!-- BARRA DE SUB-MÓDULOS ADMINISTRATIVOS SICS -->
+  <!-- BARRA DE SUB-MÓDULOS ADMINISTRATIVOS -->
   <!-- =================================================================== -->
   <nav class="admin-subnav-bar">
     <button type="button" class="admin-tab-btn active" data-tab="admin-dashboard">
@@ -725,22 +725,13 @@
           <div class="currency-val-sub">Caja Fuerte Tienda</div>
         </div>
 
-        <div class="currency-card zelle-card">
+        <div class="currency-card binance-card">
           <div class="currency-card-header">
-            <span class="currency-name">🟣 Zelle ($)</span>
-            <span>⚡</span>
+            <span class="currency-name">🟡 Binance Pay ($)</span>
+            <span>USDT</span>
           </div>
-          <div class="currency-val-main" id="cur-zelle-usd">$0.00</div>
-          <div class="currency-val-sub">Transferencias USA</div>
-        </div>
-
-        <div class="currency-card zinli-card">
-          <div class="currency-card-header">
-            <span class="currency-name">🔵 Zinli ($)</span>
-            <span>💳</span>
-          </div>
-          <div class="currency-val-main" id="cur-zinli-usd">$0.00</div>
-          <div class="currency-val-sub">Monedero Digital</div>
+          <div class="currency-val-main" id="cur-binance-usd">$0.00</div>
+          <div class="currency-val-sub">Cripto & Dólares Digitales</div>
         </div>
       </div>
 
@@ -901,9 +892,9 @@
           
           <div class="admin-guide-card">
             <div class="guide-step-badge">1</div>
-            <h4 class="guide-card-title">⚡ Venta Rápida en Mostrador</h4>
+            <h4 class="guide-card-title">🏪 Venta en Mostrador (POS)</h4>
             <p class="guide-card-text">
-              Haz clic en el botón amarillo <strong>⚡</strong> en la barra superior. Selecciona los insumos que la manicurista está llevando, elige el método de pago (Efectivo $, Pago Móvil, Zelle o Zinli) y presiona "Procesar Venta". El sistema descuenta el stock automáticamente e ingresa el dinero a la caja correspondiente.
+              Haz clic en el botón <strong>🏪 Venta Mostrador</strong> en la barra superior. Selecciona los insumos que la manicurista está llevando, elige el método de pago (Efectivo $, Pago Móvil o Binance Pay) y presiona "Procesar Venta". El sistema descuenta el stock automáticamente e ingresa el dinero a la caja correspondiente.
             </p>
           </div>
 
@@ -919,7 +910,7 @@
             <div class="guide-step-badge">3</div>
             <h4 class="guide-card-title">🧾 Cierre de Caja Diario (Reporte Z)</h4>
             <p class="guide-card-text">
-              Al finalizar la jornada laboral, pulsa <strong>🧾 Cierre de Caja</strong>. La app totalizará cuánto dinero exacto debe haber en Efectivo Dólares, cuánto en Pago Móvil Bs., cuánto en Zelle y cuánto en Zinli, restando los gastos del día. Puedes imprimir el reporte o enviártelo a tu WhatsApp de gerencia.
+              Al finalizar la jornada laboral, pulsa <strong>🧾 Cierre de Caja</strong>. La app totalizará cuánto dinero exacto debe haber en Efectivo Dólares, cuánto en Pago Móvil Bs. y cuánto en Binance Pay (USDT), restando los gastos del día. Puedes imprimir el ticket térmico en 1 sola página o enviártelo a tu WhatsApp de gerencia.
             </p>
           </div>
 
@@ -1052,7 +1043,7 @@
   <div class="modal-overlay" id="modal-express-order" style="display:none;">
     <div class="modal-window" style="max-width:550px;">
       <div class="modal-header">
-        <h3 class="modal-title">⚡ Venta Rápida en Mostrador</h3>
+        <h3 class="modal-title">🏪 Venta en Mostrador (POS)</h3>
         <button class="close-modal-btn" data-close-modal="modal-express-order">✕</button>
       </div>
       <div class="modal-body">
@@ -1078,8 +1069,7 @@
               <select id="pos-payment-method" class="select-styled" required>
                 <option value="Efectivo $">💵 Efectivo Dólares ($)</option>
                 <option value="Pago Móvil">📲 Pago Móvil Banesco (Bs)</option>
-                <option value="Zelle">🟣 Zelle ($)</option>
-                <option value="Zinli">🔵 Zinli ($)</option>
+                <option value="Binance">🟡 Binance Pay ($ USDT)</option>
               </select>
             </div>
           </div>
@@ -1093,7 +1083,7 @@
 
           <div class="modal-footer-buttons">
             <button type="button" class="btn-secondary" data-close-modal="modal-express-order">Cancelar</button>
-            <button type="submit" class="btn-primary">⚡ Cobrar y Descontar Stock</button>
+            <button type="submit" class="btn-primary">🛍️ Cobrar y Descontar Stock</button>
           </div>
 
         </form>
@@ -1148,12 +1138,8 @@
           <strong id="rz-pm-usd">$0.00</strong>
         </div>
         <div class="row-item">
-          <span>🟣 Zelle ($):</span>
-          <strong id="rz-zelle-usd">$0.00</strong>
-        </div>
-        <div class="row-item">
-          <span>🔵 Zinli ($):</span>
-          <strong id="rz-zinli-usd">$0.00</strong>
+          <span>🟡 Binance Pay ($):</span>
+          <strong id="rz-binance-usd">$0.00</strong>
         </div>
 
         <div class="divider-line"></div>
@@ -1230,8 +1216,7 @@
               <select id="fin-account" class="select-styled" required>
                 <option value="Efectivo $">💵 Efectivo Dólares ($)</option>
                 <option value="Pago Móvil">📲 Banesco Pago Móvil (Bs)</option>
-                <option value="Zelle">🟣 Zelle ($)</option>
-                <option value="Zinli">🔵 Zinli ($)</option>
+                <option value="Binance">🟡 Binance Pay ($ USDT)</option>
               </select>
             </div>
             <div class="form-group">
@@ -1337,9 +1322,12 @@
             </div>
           </div>
 
-          <div class="modal-footer-buttons">
-            <button type="button" class="btn-secondary" data-close-modal="modal-product-entry">Cancelar</button>
-            <button type="submit" class="btn-primary">Guardar Insumo</button>
+          <div class="modal-footer-buttons" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+            <button type="button" class="btn-danger" id="btn-delete-product-admin" style="display:none; background:#ef4444; color:#fff; border:none; padding:8px 14px; border-radius:var(--radius-pill); font-weight:700; cursor:pointer;">🗑️ Eliminar Insumo</button>
+            <div style="display:flex; gap:10px; margin-left:auto;">
+              <button type="button" class="btn-secondary" data-close-modal="modal-product-entry">Cancelar</button>
+              <button type="submit" class="btn-primary">Guardar Insumo</button>
+            </div>
           </div>
         </form>
       </div>
@@ -1468,7 +1456,7 @@
 
   <div id="toast-notification-container" class="toast-container"></div>
 
-  <!-- SCRIPT PRIVADO DEL PANEL DE GESTIÓN SICS -->
+  <!-- SCRIPT PRIVADO DEL PANEL DE GESTIÓN -->
   <script src="admin.js"></script>
 </body>
 </html>
