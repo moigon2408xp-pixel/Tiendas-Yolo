@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Tiendas Yolo® | Aplicación Interna de Gestión & Finanzas</title>
+  <title>Tiendas Yolo® | Backoffice & Finanzas SICS</title>
   
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#701a49">
@@ -13,41 +13,222 @@
 
   <!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="styles.css">
   <style>
-    /* Estilos adicionales específicos del Panel Administrativo */
-    .admin-topbar {
-      background: linear-gradient(90deg, #450c2c, #701a49);
+    /* Estilos SICS Luxury Backoffice Tiendas Yolo */
+    :root {
+      --admin-topbar-h: 70px;
+    }
+    .admin-sics-header {
+      background: linear-gradient(135deg, rgba(69, 12, 44, 0.98), rgba(112, 26, 73, 0.98));
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       color: #fff;
-      padding: 10px 20px;
+      padding: 10px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     .admin-brand-wrap {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
     }
-    .admin-badge-role {
-      background: #fed7aa;
-      color: #451a03;
+    .admin-brand-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 2px solid var(--ty-rose-gold);
+      box-shadow: 0 0 10px rgba(212, 122, 148, 0.4);
+      object-fit: cover;
+    }
+    .admin-brand-title {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      color: #ffffff;
+    }
+    .admin-badge-sics {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #1a0815;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+      display: inline-block;
+      margin-left: 6px;
+    }
+    .admin-brand-subtitle {
+      font-size: 0.74rem;
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .admin-controls-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .admin-circle-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+    .admin-circle-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      border-color: var(--ty-rose-gold);
+    }
+    .admin-circle-btn.btn-fast-order {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      border-color: #f59e0b;
+      color: #1a0815;
+      font-weight: 800;
+      box-shadow: 0 0 14px rgba(245, 158, 11, 0.5);
+    }
+    .admin-circle-btn.btn-fast-order:hover {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      transform: scale(1.06);
+    }
+
+    .bcv-admin-pill {
+      background: rgba(16, 185, 129, 0.18);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34d399;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 0.78rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .bcv-admin-pill:hover {
+      background: rgba(16, 185, 129, 0.28);
+      border-color: #10b981;
+      transform: translateY(-1px);
+    }
+    .bcv-pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+      animation: pulse-glow 2s infinite;
+    }
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .cloud-admin-pill {
+      background: rgba(59, 130, 246, 0.16);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      color: #93c5fd;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 0.78rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .cloud-admin-pill:hover {
+      background: rgba(59, 130, 246, 0.26);
+      border-color: #3b82f6;
+    }
+    .cloud-admin-pill.online {
+      background: rgba(16, 185, 129, 0.16);
+      border-color: rgba(16, 185, 129, 0.35);
+      color: #6ee7b7;
+    }
+
+    /* Sub-nav SICS */
+    .admin-subnav-bar {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 12px 20px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-light);
+      position: sticky;
+      top: var(--admin-topbar-h);
+      z-index: 900;
+      box-shadow: var(--shadow-sm);
+    }
+    .admin-tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-light);
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+      font-weight: 600;
+      font-size: 0.86rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all var(--transition-fast);
+    }
+    .admin-tab-btn:hover {
+      background: var(--ty-pink-soft);
+      color: var(--ty-primary);
+      border-color: var(--border-rose);
+    }
+    .admin-tab-btn.active {
+      background: linear-gradient(135deg, var(--ty-primary), #521235);
+      color: #ffffff;
+      border-color: var(--ty-primary);
+      box-shadow: 0 4px 12px rgba(112, 26, 73, 0.3);
+    }
+    .tab-badge {
+      background: #ef4444;
+      color: #ffffff;
       font-size: 0.72rem;
       font-weight: 800;
-      padding: 3px 8px;
+      padding: 1px 7px;
       border-radius: var(--radius-pill);
-      text-transform: uppercase;
     }
+
+    /* PIN Lock */
     .pin-lock-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(20, 5, 13, 0.95);
-      backdrop-filter: blur(12px);
-      z-index: 9999;
+      background: rgba(15, 4, 10, 0.96);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 99999;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -57,120 +238,349 @@
       background: var(--bg-surface);
       border: 1px solid var(--border-rose);
       border-radius: var(--radius-lg);
-      padding: 32px 28px;
-      max-width: 360px;
+      padding: 36px 30px;
+      max-width: 380px;
       width: 100%;
       text-align: center;
-      box-shadow: var(--shadow-lg);
+      box-shadow: var(--shadow-lg), 0 0 30px rgba(112, 26, 73, 0.25);
     }
     .pin-logo {
-      width: 64px;
-      height: 64px;
+      width: 72px;
+      height: 72px;
       border-radius: 50%;
-      margin: 0 auto 12px;
-      border: 2px solid var(--ty-rose-gold);
+      margin: 0 auto 14px;
+      border: 3px solid var(--ty-rose-gold);
+      box-shadow: 0 4px 16px rgba(212, 122, 148, 0.4);
     }
     .pin-input {
-      font-size: 1.8rem;
-      letter-spacing: 0.3em;
+      font-size: 2rem;
+      letter-spacing: 0.35em;
       text-align: center;
       width: 100%;
-      padding: 10px;
-      margin: 16px 0;
+      padding: 12px;
+      margin: 18px 0;
       background: var(--bg-subtle);
-      border: 2px solid var(--border-light);
+      border: 2px solid var(--border-rose);
       border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-weight: 800;
+    }
+    .pin-input:focus {
+      outline: none;
+      border-color: var(--ty-primary);
+      box-shadow: 0 0 0 4px rgba(112, 26, 73, 0.2);
+    }
+
+    /* Finanzas Multi-Divisa Cards */
+    .finance-currencies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .currency-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+      overflow: hidden;
+      transition: all var(--transition-fast);
+    }
+    .currency-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    .currency-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 4px;
+    }
+    .currency-card.pm-card::before { background: #10b981; }
+    .currency-card.cash-card::before { background: #059669; }
+    .currency-card.zelle-card::before { background: #7c3aed; }
+    .currency-card.zinli-card::before { background: #0284c7; }
+
+    .currency-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .currency-name {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+    .currency-val-main {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1.1;
+    }
+    .currency-val-sub {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    /* Desglose de Gastos Cards */
+    .expense-cat-progress-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 12px;
+    }
+    .expense-cat-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .expense-progress-bar-bg {
+      background: var(--bg-subtle);
+      border-radius: var(--radius-pill);
+      height: 8px;
+      overflow: hidden;
+      width: 100%;
+    }
+    .expense-progress-bar-fill {
+      height: 100%;
+      border-radius: var(--radius-pill);
+      background: linear-gradient(90deg, #f59e0b, #ef4444);
+      transition: width 0.5s ease;
+    }
+
+    /* Manicuristas CRM Cards */
+    .crm-banner-info {
+      background: linear-gradient(135deg, rgba(112, 26, 73, 0.08), rgba(212, 122, 148, 0.12));
+      border: 1px solid var(--border-rose);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* Reporte Z Cierre de Caja Modal */
+    .report-z-sheet {
+      background: #ffffff;
+      color: #111827;
+      padding: 24px;
+      border-radius: var(--radius-md);
+      font-family: 'Courier New', Courier, monospace;
+      border: 1px dashed #9ca3af;
+      margin: 16px 0;
+      line-height: 1.4;
+    }
+    .report-z-sheet h3 {
+      text-align: center;
+      font-size: 1.2rem;
+      margin-bottom: 4px;
+    }
+    .report-z-sheet .center-text { text-align: center; font-size: 0.85rem; }
+    .report-z-sheet .divider-line { border-top: 1px dashed #6b7280; margin: 10px 0; }
+    .report-z-sheet .row-item { display: flex; justify-content: space-between; font-size: 0.9rem; }
+    .report-z-sheet .row-item.bold-row { font-weight: bold; font-size: 1rem; }
+
+    /* Guía de Operaciones Cards */
+    .admin-guide-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 16px;
+    }
+    .admin-guide-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: all var(--transition-fast);
+      position: relative;
+    }
+    .admin-guide-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--border-rose);
+    }
+    .guide-step-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--ty-primary);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+    .guide-card-title {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      color: var(--ty-primary);
+      font-weight: 700;
+    }
+    .guide-card-text {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
     }
   </style>
 </head>
 <body class="theme-light">
 
-  <!-- PANTALLA DE SEGURIDAD / PIN DE ACCESO -->
+  <!-- =================================================================== -->
+  <!-- PANTALLA DE SEGURIDAD / PIN DE ACCESO AL SISTEMA INTERNO SICS -->
+  <!-- =================================================================== -->
   <div id="pin-lock-modal" class="pin-lock-overlay" style="display:none;">
     <div class="pin-box">
       <img src="logo-yolo.png" alt="Tiendas Yolo" class="pin-logo" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
-      <h3 style="font-family:var(--font-serif); font-size:1.3rem; color:var(--ty-primary); margin-bottom:4px;">Tiendas Yolo®</h3>
-      <p style="font-size:0.84rem; color:var(--text-secondary); margin-bottom:12px;">Ingresa el PIN de seguridad para acceder al panel de gestión.</p>
+      <h3 style="font-family:var(--font-serif); font-size:1.4rem; color:var(--ty-primary); margin-bottom:4px;">Tiendas Yolo®</h3>
+      <p style="font-size:0.86rem; color:var(--text-secondary); margin-bottom:14px;">
+        Panel de Gestión SICS, Finanzas & Mostrador.<br>
+        Ingresa el PIN de seguridad para acceder:
+      </p>
       
-      <input type="password" id="input-admin-pin" class="pin-input" maxlength="6" placeholder="••••" autofocus>
+      <input type="password" id="input-admin-pin" class="pin-input" maxlength="6" placeholder="••••" autocomplete="off" autofocus>
       
-      <button class="btn-primary" id="btn-unlock-pin" style="width:100%; justify-content:center; padding:12px;">
+      <button class="btn-primary" id="btn-unlock-pin" style="width:100%; justify-content:center; padding:14px; font-weight:800; font-size:1rem;">
         🔓 Desbloquear Sistema
       </button>
 
-      <p style="font-size:0.75rem; color:var(--text-muted); margin-top:14px;">
+      <p style="font-size:0.78rem; color:var(--text-muted); margin-top:16px;">
         PIN inicial predeterminado: <strong>2026</strong>
       </p>
-      <div style="margin-top:10px;">
-        <a href="./" style="font-size:0.8rem; color:var(--ty-rose-gold); text-decoration:none;">← Volver a la Tienda Pública</a>
+      <div style="margin-top:12px;">
+        <a href="./" style="font-size:0.85rem; color:var(--ty-rose-gold); text-decoration:none; font-weight:600;">
+          ← Volver a la Tienda Pública
+        </a>
       </div>
     </div>
   </div>
 
-  <!-- BARRA SUPERIOR ADMINISTRATIVA -->
-  <header class="admin-topbar">
-    <div class="admin-brand-wrap">
-      <img src="logo-yolo.png" alt="Tiendas Yolo" style="width:36px; height:36px; border-radius:50%; border:2px solid #fff;" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
+  <!-- =================================================================== -->
+  <!-- HEADER FLOTANTE SICS DE TIENDAS YOLO (LUXURY CONTROLS) -->
+  <!-- =================================================================== -->
+  <header class="admin-sics-header">
+    <a href="#admin-dashboard" class="admin-brand-wrap" title="Ir al Dashboard General">
+      <img src="logo-yolo.png" alt="Tiendas Yolo" class="admin-brand-logo" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
       <div>
-        <strong style="font-family:var(--font-serif); font-size:1.15rem; letter-spacing:-0.02em;">Tiendas Yolo®</strong>
-        <span class="admin-badge-role">Backoffice & Finanzas</span>
+        <div class="admin-brand-title">
+          Tiendas Yolo®
+          <span class="admin-badge-sics">SICS v2.6</span>
+        </div>
+        <div class="admin-brand-subtitle">Backoffice · Finanzas · Mostrador Maracaibo</div>
       </div>
-    </div>
+    </a>
 
-    <div style="display:flex; align-items:center; gap:12px;">
-      <span class="cloud-badge offline" id="cloud-status-indicator" title="Estado de conexión con Google Sheets">
-        <span class="cloud-dot"></span>
-        <span id="cloud-status-text">Local / Offline</span>
-      </span>
+    <!-- CONTROLES CIRCULARES & STATUS EN VIVO -->
+    <div class="admin-controls-group">
 
-      <a href="./" class="btn-secondary" style="padding:6px 14px; font-size:0.8rem; text-decoration:none;">
-        🛍️ Ver Tienda Pública
+      <!-- Tasa Oficial BCV en vivo (Click para actualizar) -->
+      <div class="bcv-admin-pill" id="topbar-bcv-pill" title="Tasa oficial BCV actualizada en tiempo real (Clic para refrescar)">
+        <span class="bcv-pulse-dot"></span>
+        <span>BCV: <strong id="topbar-bcv-rate">Bs. 883.40</strong> / $</span>
+      </div>
+
+      <!-- Estado Google Sheets en vivo -->
+      <div class="cloud-admin-pill online" id="topbar-cloud-pill" title="Respaldo y base de datos Google Sheets permanente">
+        <span>☁️</span>
+        <span id="topbar-cloud-text">Sheets Online</span>
+      </div>
+
+      <!-- Botón Mostrador Rápido / POS Express -->
+      <button type="button" class="admin-circle-btn btn-fast-order" id="btn-topbar-fast-order" title="⚡ Mostrador Rápido (Venta Express en Tienda Física)">
+        ⚡
+      </button>
+
+      <!-- Botón Cierre de Caja Diario (Reporte Z) -->
+      <button type="button" class="admin-circle-btn" id="btn-topbar-report-z" title="🧾 Cierre de Caja Diario (Reporte Z)">
+        🧾
+      </button>
+
+      <!-- Botón Manual & Guía de Gestión -->
+      <button type="button" class="admin-circle-btn" id="btn-topbar-guide" title="🎓 Manual de Gestión y Enseñanza de Uso">
+        🎓
+      </button>
+
+      <!-- Ir a la Tienda Pública -->
+      <a href="./" class="admin-circle-btn" title="🛍️ Abrir Catálogo Público de Clientes" style="text-decoration:none;">
+        🛍️
       </a>
 
-      <button class="theme-toggle-btn" id="btn-toggle-theme" title="Modo Claro/Oscuro">
+      <!-- Modo Oscuro / Claro -->
+      <button type="button" class="admin-circle-btn" id="btn-toggle-theme" title="Cambiar Tema (Claro / Oscuro)">
         🌓
       </button>
 
-      <button class="btn-micro" id="btn-lock-session" title="Bloquear sesión con PIN">
+      <!-- Bloquear Sesión PIN -->
+      <button type="button" class="admin-circle-btn" id="btn-lock-session" title="🔒 Bloquear Sesión con PIN">
         🔒
       </button>
+
     </div>
   </header>
 
-  <!-- CONTENIDO PRINCIPAL ADMINISTRATIVO -->
-  <main class="main-content" style="padding-top:16px;">
+  <!-- =================================================================== -->
+  <!-- BARRA DE SUB-MÓDULOS ADMINISTRATIVOS SICS -->
+  <!-- =================================================================== -->
+  <nav class="admin-subnav-bar">
+    <button type="button" class="admin-tab-btn active" data-tab="admin-dashboard">
+      <span>📊</span>
+      <span>Dashboard</span>
+    </button>
+    <button type="button" class="admin-tab-btn" data-tab="admin-orders">
+      <span>📦</span>
+      <span>Pedidos</span>
+      <span class="tab-badge" id="admin-orders-pending-count">0</span>
+    </button>
+    <button type="button" class="admin-tab-btn" data-tab="admin-quotes">
+      <span>📝</span>
+      <span>Cotizaciones Pro</span>
+    </button>
+    <button type="button" class="admin-tab-btn" data-tab="admin-finances">
+      <span>💰</span>
+      <span>Finanzas & Flujo de Caja</span>
+    </button>
+    <button type="button" class="admin-tab-btn" data-tab="admin-inventory">
+      <span>🗃️</span>
+      <span>Inventario (SKU Único)</span>
+    </button>
+    <button type="button" class="admin-tab-btn" data-tab="admin-clients">
+      <span>👥</span>
+      <span>Manicuristas (CRM)</span>
+    </button>
+    <button type="button" class="admin-tab-btn" data-tab="admin-guide">
+      <span>🎓</span>
+      <span>Manual de Operación</span>
+    </button>
+    <button type="button" class="admin-tab-btn" data-tab="admin-settings">
+      <span>⚙️</span>
+      <span>Config & Nube</span>
+    </button>
+  </nav>
 
-    <!-- BARRA DE SUB-MÓDULOS ADMINISTRATIVOS -->
-    <nav class="admin-subnav-bar">
-      <button class="admin-tab-btn active" data-tab="admin-dashboard">
-        <span class="tab-icon">📊</span>
-        <span class="tab-label">Dashboard General</span>
-      </button>
-      <button class="admin-tab-btn" data-tab="admin-orders">
-        <span class="tab-icon">📦</span>
-        <span class="tab-label">Pedidos (<span id="admin-orders-pending-count">0</span>)</span>
-      </button>
-      <button class="admin-tab-btn" data-tab="admin-quotes">
-        <span class="tab-icon">📝</span>
-        <span class="tab-label">Cotizaciones Pro</span>
-      </button>
-      <button class="admin-tab-btn" data-tab="admin-finances">
-        <span class="tab-icon">💰</span>
-        <span class="tab-label">Finanzas Completas</span>
-      </button>
-      <button class="admin-tab-btn" data-tab="admin-inventory">
-        <span class="tab-icon">🗃️</span>
-        <span class="tab-label">Inventario & Stock</span>
-      </button>
-      <button class="admin-tab-btn" data-tab="admin-clients">
-        <span class="tab-icon">👥</span>
-        <span class="tab-label">Manicuristas (CRM)</span>
-      </button>
-      <button class="admin-tab-btn" data-tab="admin-settings">
-        <span class="tab-icon">⚙️</span>
-        <span class="tab-label">Config & Nube</span>
-      </button>
-    </nav>
+  <!-- =================================================================== -->
+  <!-- CONTENIDO PRINCIPAL DE MÓDULOS -->
+  <!-- =================================================================== -->
+  <main class="main-content" style="padding:20px;">
 
     <!-- SUB-VISTA 1: DASHBOARD EJECUTIVO -->
     <div id="subtab-admin-dashboard" class="admin-subtab-content active">
@@ -253,54 +663,147 @@
           <button class="filter-pill" data-order-filter="Entregado">Entregados (<span id="count-filter-delivered">0</span>)</button>
         </div>
         <div class="action-buttons">
-          <button class="btn-secondary" id="btn-export-orders-csv">📥 Exportar CSV</button>
+          <button class="btn-secondary" id="btn-export-orders-csv">📥 Exportar Pedidos (CSV)</button>
         </div>
       </div>
 
-      <div class="orders-cards-container" id="admin-orders-container"></div>
+      <div class="orders-admin-list" id="admin-orders-container"></div>
     </div>
 
-    <!-- SUB-VISTA 3: COTIZACIONES PROFESIONALES -->
+    <!-- SUB-VISTA 3: COTIZACIONES PRO -->
     <div id="subtab-admin-quotes" class="admin-subtab-content" style="display:none;">
       <div class="module-action-bar">
-        <div class="action-bar-info">
-          <h4 class="module-subheading">Presupuestos y Cotizaciones para Manicuristas y Academias</h4>
-          <p class="module-help-txt">Genera proformas formales membretadas listas para imprimir en PDF o compartir por WhatsApp.</p>
-        </div>
-        <button class="btn-primary" id="btn-open-quote-builder">+ Nueva Cotización</button>
-      </div>
-
-      <div class="orders-cards-container" id="admin-quotes-container"></div>
-    </div>
-
-    <!-- SUB-VISTA 4: FINANZAS COMPLETAS -->
-    <div id="subtab-admin-finances" class="admin-subtab-content" style="display:none;">
-      <div class="module-action-bar">
-        <div class="finance-summary-pills">
-          <div class="fin-pill fin-in">
-            <span class="fin-pill-lbl">Ingresos Totales:</span>
-            <strong id="fin-pill-in-val">$0.00</strong>
-          </div>
-          <div class="fin-pill fin-out">
-            <span class="fin-pill-lbl">Costos & Gastos:</span>
-            <strong id="fin-pill-out-val">$0.00</strong>
-          </div>
-          <div class="fin-pill fin-net">
-            <span class="fin-pill-lbl">Utilidad Operativa:</span>
-            <strong id="fin-pill-net-val">$0.00</strong>
-          </div>
+        <div class="search-micro-box wide-search">
+          <input type="text" id="quotes-search-input" placeholder="Buscar cotización por cliente o nro...">
         </div>
         <div class="action-buttons">
-          <button class="btn-primary" id="btn-new-finance-entry">+ Registrar Movimiento</button>
-          <button class="btn-secondary" id="btn-export-finances-csv">📥 Exportar a Excel</button>
+          <button class="btn-primary" id="btn-open-quote-builder">+ Nueva Cotización Formal</button>
         </div>
       </div>
 
       <div class="panel-box full-width-panel">
+        <div class="table-responsive">
+          <table class="styled-table" id="quotes-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Manicurista / Salón</th>
+                <th>Teléfono</th>
+                <th>Insumos</th>
+                <th>Total USD</th>
+                <th>Total Bs</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="quotes-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB-VISTA 4: FINANZAS COMPLETAS & FLUJO MULTI-DIVISA -->
+    <div id="subtab-admin-finances" class="admin-subtab-content" style="display:none;">
+      
+      <!-- CUADRÍCULA MULTI-DIVISA -->
+      <div class="finance-currencies-grid">
+        <div class="currency-card pm-card">
+          <div class="currency-card-header">
+            <span class="currency-name">📲 Pago Móvil Banesco</span>
+            <span>🇻🇪</span>
+          </div>
+          <div class="currency-val-main" id="cur-pm-usd">$0.00</div>
+          <div class="currency-val-sub" id="cur-pm-bs">Bs. 0.00</div>
+        </div>
+
+        <div class="currency-card cash-card">
+          <div class="currency-card-header">
+            <span class="currency-name">💵 Efectivo Dólares ($)</span>
+            <span>🇺🇸</span>
+          </div>
+          <div class="currency-val-main" id="cur-cash-usd">$0.00</div>
+          <div class="currency-val-sub">Caja Fuerte Tienda</div>
+        </div>
+
+        <div class="currency-card zelle-card">
+          <div class="currency-card-header">
+            <span class="currency-name">🟣 Zelle ($)</span>
+            <span>⚡</span>
+          </div>
+          <div class="currency-val-main" id="cur-zelle-usd">$0.00</div>
+          <div class="currency-val-sub">Transferencias USA</div>
+        </div>
+
+        <div class="currency-card zinli-card">
+          <div class="currency-card-header">
+            <span class="currency-name">🔵 Zinli ($)</span>
+            <span>💳</span>
+          </div>
+          <div class="currency-val-main" id="cur-zinli-usd">$0.00</div>
+          <div class="currency-val-sub">Monedero Digital</div>
+        </div>
+      </div>
+
+      <!-- TARJETAS DE RESULTADOS FINANCIEROS -->
+      <div class="kpi-grid" style="margin-bottom:20px;">
+        <div class="kpi-card">
+          <div class="kpi-icon-wrap" style="background:#d1fae5; color:#065f46;">📥</div>
+          <div class="kpi-info">
+            <span class="kpi-title">Ingresos Totales</span>
+            <h3 class="kpi-value" id="fin-pill-in-val">$0.00</h3>
+            <span class="kpi-sub">Ventas & mostrador</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon-wrap" style="background:#fee2e2; color:#991b1b;">📦</div>
+          <div class="kpi-info">
+            <span class="kpi-title">Costo de Mercancía</span>
+            <h3 class="kpi-value" id="fin-pill-cogs-val" style="color:#ef4444;">$0.00</h3>
+            <span class="kpi-sub">Reposición de insumos</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon-wrap" style="background:#fef3c7; color:#92400e;">📤</div>
+          <div class="kpi-info">
+            <span class="kpi-title">Gastos Operativos</span>
+            <h3 class="kpi-value" id="fin-pill-out-val" style="color:#f59e0b;">$0.00</h3>
+            <span class="kpi-sub">Local, delivery, bolsas</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon-wrap" style="background:#dcfce7; color:#15803d;">💰</div>
+          <div class="kpi-info">
+            <span class="kpi-title">Utilidad Neta Real</span>
+            <h3 class="kpi-value highlight-profit" id="fin-pill-net-val">$0.00</h3>
+            <span class="kpi-sub" id="fin-pill-net-pct">Margen: 0%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DESGLOSE DE GASTOS POR CATEGORÍA -->
+      <div class="panel-box full-width-panel" style="margin-bottom:20px;">
         <div class="panel-header">
-          <h4 class="panel-title">Libro Diario de Movimientos</h4>
+          <h4 class="panel-title">🏷️ Desglose de Egresos por Categoría</h4>
+          <span class="panel-tag">Control de Costos</span>
+        </div>
+        <div id="fin-expenses-category-breakdown" style="padding:10px 0;"></div>
+      </div>
+
+      <!-- BARRA DE ACCIÓN FINANCIERA -->
+      <div class="module-action-bar">
+        <div class="action-buttons">
+          <button class="btn-primary" id="btn-new-finance-entry">+ Registrar Movimiento</button>
+          <button class="btn-whatsapp-outline" id="btn-open-report-z">🧾 Cierre de Caja Diario (Reporte Z)</button>
+          <button class="btn-secondary" id="btn-export-finances-csv">📥 Exportar Libro Contable (CSV)</button>
+        </div>
+      </div>
+
+      <!-- LIBRO DIARIO DE MOVIMIENTOS -->
+      <div class="panel-box full-width-panel">
+        <div class="panel-header">
+          <h4 class="panel-title">📖 Libro Diario de Movimientos</h4>
           <div class="search-micro-box">
-            <input type="text" id="finances-search-input" placeholder="Buscar por concepto, cuenta o pedido...">
+            <input type="text" id="finances-search-input" placeholder="Buscar concepto, cuenta o pedido...">
           </div>
         </div>
         <div class="table-responsive">
@@ -324,15 +827,15 @@
       </div>
     </div>
 
-    <!-- SUB-VISTA 5: INVENTARIO & STOCK -->
+    <!-- SUB-VISTA 5: INVENTARIO & STOCK CON SKU ÚNICO -->
     <div id="subtab-admin-inventory" class="admin-subtab-content" style="display:none;">
       <div class="module-action-bar">
         <div class="search-micro-box wide-search">
-          <input type="text" id="inv-search-input" placeholder="Filtrar insumo por nombre, categoría o SKU...">
+          <input type="text" id="inv-search-input" placeholder="Filtrar insumo por nombre, categoría o SKU único...">
         </div>
         <div class="action-buttons">
           <button class="btn-primary" id="btn-new-product">+ Nuevo Insumo</button>
-          <button class="btn-secondary" id="btn-export-inventory-csv">📥 Exportar Stock</button>
+          <button class="btn-secondary" id="btn-export-inventory-csv">📥 Exportar Stock (CSV)</button>
         </div>
       </div>
 
@@ -343,7 +846,7 @@
               <tr>
                 <th>Insumo</th>
                 <th>Categoría</th>
-                <th>SKU</th>
+                <th>SKU Único</th>
                 <th>P. Venta ($)</th>
                 <th>Costo ($)</th>
                 <th>Margen</th>
@@ -360,16 +863,95 @@
 
     <!-- SUB-VISTA 6: CLIENTES Y MANICURISTAS (CRM) -->
     <div id="subtab-admin-clients" class="admin-subtab-content" style="display:none;">
+      
+      <!-- BANNER EXPLICATIVO DEL CRM -->
+      <div class="crm-banner-info">
+        <div>
+          <h4 style="font-family:var(--font-serif); font-size:1.15rem; color:var(--ty-primary); margin-bottom:4px;">
+            💎 Club VIP de Manicuristas & Salones de Belleza
+          </h4>
+          <p style="font-size:0.86rem; color:var(--text-secondary); max-width:680px;">
+            Este CRM registra automáticamente a las clientas que abren cuenta en la tienda web y a las manicuristas de mostrador. Puedes consultar su historial de compras, asignarles niveles de descuento preferencial (5%, 10%, 15%) y contactarlas directo a su WhatsApp con un solo clic.
+          </p>
+        </div>
+        <button class="btn-primary" id="btn-new-client-crm">+ Registrar Manicurista</button>
+      </div>
+
       <div class="module-action-bar">
         <div class="search-micro-box wide-search">
-          <input type="text" id="clients-search-input" placeholder="Buscar por nombre, salón, zona o teléfono...">
+          <input type="text" id="clients-search-input" placeholder="Buscar manicurista por nombre, salón, WhatsApp o zona...">
         </div>
       </div>
 
       <div class="clients-cards-grid" id="admin-clients-container"></div>
     </div>
 
-    <!-- SUB-VISTA 7: CONFIGURACIÓN & NUBE -->
+    <!-- SUB-VISTA 7: MANUAL DE OPERACIÓN Y GUÍA DE GESTIÓN -->
+    <div id="subtab-admin-guide" class="admin-subtab-content" style="display:none;">
+      <div class="panel-box full-width-panel">
+        <div class="panel-header">
+          <h3 class="panel-title" style="font-size:1.3rem;">🎓 Manual de Operación y Procedimientos de Tiendas Yolo</h3>
+          <span class="panel-tag">Guía Oficial</span>
+        </div>
+        <p style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:20px;">
+          Aprende el flujo diario para atender clientes en mostrador, validar transferencias bancarias, realizar cierres contables y gestionar el stock sin errores.
+        </p>
+
+        <div class="admin-guide-grid">
+          
+          <div class="admin-guide-card">
+            <div class="guide-step-badge">1</div>
+            <h4 class="guide-card-title">⚡ Venta Rápida en Mostrador</h4>
+            <p class="guide-card-text">
+              Haz clic en el botón amarillo <strong>⚡</strong> en la barra superior. Selecciona los insumos que la manicurista está llevando, elige el método de pago (Efectivo $, Pago Móvil, Zelle o Zinli) y presiona "Procesar Venta". El sistema descuenta el stock automáticamente e ingresa el dinero a la caja correspondiente.
+            </p>
+          </div>
+
+          <div class="admin-guide-card">
+            <div class="guide-step-badge">2</div>
+            <h4 class="guide-card-title">📦 Validación de Pagos Web</h4>
+            <p class="guide-card-text">
+              En la pestaña <strong>Pedidos</strong> verás las órdenes entrantes. Revisa el Nro. de Referencia y el banco del cliente. Al confirmar el depósito en tu banco, cambia el estado a <em>"Confirmado"</em> y usa el botón <em>"Notificar"</em> para enviarle su comprobante por WhatsApp automáticamente.
+            </p>
+          </div>
+
+          <div class="admin-guide-card">
+            <div class="guide-step-badge">3</div>
+            <h4 class="guide-card-title">🧾 Cierre de Caja Diario (Reporte Z)</h4>
+            <p class="guide-card-text">
+              Al finalizar la jornada laboral, pulsa <strong>🧾 Cierre de Caja</strong>. La app totalizará cuánto dinero exacto debe haber en Efectivo Dólares, cuánto en Pago Móvil Bs., cuánto en Zelle y cuánto en Zinli, restando los gastos del día. Puedes imprimir el reporte o enviártelo a tu WhatsApp de gerencia.
+            </p>
+          </div>
+
+          <div class="admin-guide-card">
+            <div class="guide-step-badge">4</div>
+            <h4 class="guide-card-title">🗃️ Códigos SKU Automáticos</h4>
+            <p class="guide-card-text">
+              Al agregar cualquier producto en <strong>Inventario</strong>, el sistema le asigna un código único e irrepetible (ej: <code>ESM-001</code>, <code>GEL-002</code>, <code>KIT-003</code>). Esto evita duplicidades y permite un rastreo exacto tanto en la tienda como en los reportes de Google Sheets.
+            </p>
+          </div>
+
+          <div class="admin-guide-card">
+            <div class="guide-step-badge">5</div>
+            <h4 class="guide-card-title">☁️ Sincronización Google Sheets</h4>
+            <p class="guide-card-text">
+              La aplicación interna está permanentemente vinculada a tu URL de Google Apps Script. Cada pedido, cliente o movimiento financiero se respalda en la nube. Si trabajas sin internet, el sistema almacena todo de forma local y lo sincroniza tan pronto regrese la conexión.
+            </p>
+          </div>
+
+          <div class="admin-guide-card">
+            <div class="guide-step-badge">6</div>
+            <h4 class="guide-card-title">💎 Fidelización de Manicuristas</h4>
+            <p class="guide-card-text">
+              En <strong>Manicuristas (CRM)</strong> mantén el contacto con los salones de belleza y academias de Maracaibo. Cuando acumulan más de 5 pedidos, puedes otorgarles categoría VIP para que disfruten de precios especiales en lote.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB-VISTA 8: CONFIGURACIÓN & NUBE -->
     <div id="subtab-admin-settings" class="admin-subtab-content" style="display:none;">
       <div class="settings-grid">
         
@@ -378,15 +960,15 @@
           <div class="card-icon-title">
             <span class="card-icon">☁️</span>
             <div>
-              <h4 class="card-heading">Respaldo y Base de Datos en Google Sheets</h4>
-              <p class="card-subheading">Sincroniza todos los pedidos, finanzas e insumos en tu Google Drive.</p>
+              <h4 class="card-heading">Respaldo Permanente en Google Sheets</h4>
+              <p class="card-subheading">Sincronización permanente con tu Google Drive sin re-introducir la URL.</p>
             </div>
           </div>
 
           <div class="form-group">
             <label for="cfg-sheets-api-url" class="form-label">URL del Web App de Google Apps Script:</label>
             <input type="url" id="cfg-sheets-api-url" class="form-input" placeholder="https://script.google.com/macros/s/.../exec">
-            <span class="form-hint">Pega la URL generada al hacer "Implementar > Nueva Implementación > Aplicación Web" en Apps Script.</span>
+            <span class="form-hint">Conexión permanente configurada por defecto a tu cuenta oficial.</span>
           </div>
 
           <div class="buttons-row">
@@ -396,7 +978,7 @@
           </div>
 
           <div class="sync-logs-box" id="cloud-sync-logs">
-            <span class="log-line">ℹ️ El sistema cuenta con persistencia local permanente. Al conectar Sheets, tendrás sincronización continua.</span>
+            <span class="log-line">🟢 Conectado permanentemente a tu Web App de Google Sheets.</span>
           </div>
         </div>
 
@@ -413,7 +995,7 @@
           <div class="form-grid-3">
             <div class="form-group">
               <label for="cfg-rate-bcv" class="form-label">Tasa del Día (Bs / USD):</label>
-              <input type="number" step="0.01" id="cfg-rate-bcv" class="form-input" value="395.50">
+              <input type="number" step="0.01" id="cfg-rate-bcv" class="form-input" value="883.40">
             </div>
             <div class="form-group">
               <label for="cfg-whatsapp" class="form-label">WhatsApp de Pedidos:</label>
@@ -463,10 +1045,147 @@
   </main>
 
   <!-- =================================================================== -->
-  <!-- MODALES: PRODUCTO, FINANZAS, COTIZACIÓN -->
+  <!-- MODALES DE OPERACIÓN: MOSTRADOR, CIERRE Z, PRODUCTO, FINANZAS -->
   <!-- =================================================================== -->
 
-  <!-- MODAL FINANCIERO -->
+  <!-- MODAL 1: MOSTRADOR RÁPIDO / POS EXPRESS -->
+  <div class="modal-overlay" id="modal-express-order" style="display:none;">
+    <div class="modal-window" style="max-width:550px;">
+      <div class="modal-header">
+        <h3 class="modal-title">⚡ Venta Rápida en Mostrador</h3>
+        <button class="close-modal-btn" data-close-modal="modal-express-order">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-express-order">
+          
+          <div class="form-group">
+            <label for="pos-client-name" class="form-label">Nombre de la Clienta / Manicurista: *</label>
+            <input type="text" id="pos-client-name" class="form-input" placeholder="Ej: Andrea Gómez (Salón Glow)" required>
+          </div>
+
+          <div class="form-group">
+            <label for="pos-select-product" class="form-label">Seleccionar Insumo: *</label>
+            <select id="pos-select-product" class="select-styled" required></select>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="pos-quantity" class="form-label">Cantidad: *</label>
+              <input type="number" id="pos-quantity" class="form-input" value="1" min="1" required>
+            </div>
+            <div class="form-group">
+              <label for="pos-payment-method" class="form-label">Método de Pago: *</label>
+              <select id="pos-payment-method" class="select-styled" required>
+                <option value="Efectivo $">💵 Efectivo Dólares ($)</option>
+                <option value="Pago Móvil">📲 Pago Móvil Banesco (Bs)</option>
+                <option value="Zelle">🟣 Zelle ($)</option>
+                <option value="Zinli">🔵 Zinli ($)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Total Estimado -->
+          <div style="background:var(--bg-subtle); border:1px solid var(--border-rose); border-radius:var(--radius-md); padding:14px; margin:14px 0; text-align:center;">
+            <div style="font-size:0.8rem; text-transform:uppercase; font-weight:700; color:var(--text-muted);">Total a Cobrar</div>
+            <div style="font-size:1.8rem; font-weight:800; color:var(--ty-primary);" id="pos-total-usd">$0.00</div>
+            <div style="font-size:0.95rem; font-weight:600; color:var(--text-secondary);" id="pos-total-bs">Bs. 0.00</div>
+          </div>
+
+          <div class="modal-footer-buttons">
+            <button type="button" class="btn-secondary" data-close-modal="modal-express-order">Cancelar</button>
+            <button type="submit" class="btn-primary">⚡ Cobrar y Descontar Stock</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: CIERRE DE CAJA DIARIO (REPORTE Z) -->
+  <div class="modal-overlay" id="modal-daily-close-report" style="display:none;">
+    <div class="modal-window quote-modal-window" style="max-width:540px;">
+      <div class="modal-header no-print">
+        <h3 class="modal-title">🧾 Cierre de Caja Diario (Reporte Z)</h3>
+        <div class="modal-header-actions">
+          <button class="btn-primary" id="btn-print-report-z">🖨️ Imprimir Cierre</button>
+          <button class="btn-whatsapp-outline" id="btn-send-report-z-wa">📲 Enviar a WhatsApp</button>
+          <button class="close-modal-btn" data-close-modal="modal-daily-close-report">✕</button>
+        </div>
+      </div>
+
+      <div class="report-z-sheet" id="printable-report-z">
+        <h3>TIENDAS YOLO®</h3>
+        <p class="center-text">Insumos para uñas y todo para la manicurista</p>
+        <p class="center-text">CIERRE DE CAJA DIARIO — REPORTE Z</p>
+        <p class="center-text">Maracaibo, Zulia</p>
+        <div class="divider-line"></div>
+        
+        <div class="row-item">
+          <span>Fecha:</span>
+          <span id="rz-date">21/10/2026</span>
+        </div>
+        <div class="row-item">
+          <span>Hora Cierre:</span>
+          <span id="rz-time">18:00</span>
+        </div>
+        <div class="row-item">
+          <span>Tasa Oficial BCV:</span>
+          <span id="rz-rate">Bs. 883.40 / $</span>
+        </div>
+
+        <div class="divider-line"></div>
+        <p><strong>DESGLOSE POR MÉTODO DE PAGO:</strong></p>
+        <div class="row-item">
+          <span>💵 Efectivo en Dólares ($):</span>
+          <strong id="rz-cash-usd">$0.00</strong>
+        </div>
+        <div class="row-item">
+          <span>📲 Pago Móvil (Bs):</span>
+          <strong id="rz-pm-bs">Bs. 0.00</strong>
+        </div>
+        <div class="row-item">
+          <span>📲 Pago Móvil Equiv. ($):</span>
+          <strong id="rz-pm-usd">$0.00</strong>
+        </div>
+        <div class="row-item">
+          <span>🟣 Zelle ($):</span>
+          <strong id="rz-zelle-usd">$0.00</strong>
+        </div>
+        <div class="row-item">
+          <span>🔵 Zinli ($):</span>
+          <strong id="rz-zinli-usd">$0.00</strong>
+        </div>
+
+        <div class="divider-line"></div>
+        <div class="row-item">
+          <span>( + ) Total Ventas de Hoy:</span>
+          <strong id="rz-total-sales">$0.00</strong>
+        </div>
+        <div class="row-item">
+          <span>( - ) Gastos / Salidas de Hoy:</span>
+          <strong id="rz-total-expenses" style="color:#b91c1c;">$0.00</strong>
+        </div>
+        <div class="divider-line"></div>
+        <div class="row-item bold-row">
+          <span>SALDO NETO EN CAJA:</span>
+          <span id="rz-net-balance">$0.00</span>
+        </div>
+        <div class="row-item bold-row">
+          <span>EQUIVALENTE EN BS:</span>
+          <span id="rz-net-bs">Bs. 0.00</span>
+        </div>
+
+        <div class="divider-line"></div>
+        <p class="center-text" style="font-size:0.75rem;">
+          Cierre verificado conforme.<br>
+          <em>“Yo lo compro, Yo lo merezco” — Tiendas Yolo®.</em>
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL 3: REGISTRAR MOVIMIENTO FINANCIERO -->
   <div class="modal-overlay" id="modal-finance-entry" style="display:none;">
     <div class="modal-window">
       <div class="modal-header">
@@ -511,8 +1230,8 @@
               <select id="fin-account" class="select-styled" required>
                 <option value="Efectivo $">💵 Efectivo Dólares ($)</option>
                 <option value="Pago Móvil">📲 Banesco Pago Móvil (Bs)</option>
-                <option value="Zelle">🇺🇸 Zelle ($)</option>
-                <option value="Zinli">💳 Zinli ($)</option>
+                <option value="Zelle">🟣 Zelle ($)</option>
+                <option value="Zinli">🔵 Zinli ($)</option>
               </select>
             </div>
             <div class="form-group">
@@ -546,7 +1265,7 @@
     </div>
   </div>
 
-  <!-- MODAL PRODUCTO -->
+  <!-- MODAL 4: INSUMO / PRODUCTO CON SKU ÚNICO AUTOMÁTICO -->
   <div class="modal-overlay" id="modal-product-entry" style="display:none;">
     <div class="modal-window">
       <div class="modal-header">
@@ -576,8 +1295,11 @@
               </select>
             </div>
             <div class="form-group">
-              <label for="prod-sku" class="form-label">Código SKU:</label>
-              <input type="text" id="prod-sku" class="form-input" placeholder="Ej: TY-BR-01">
+              <label for="prod-sku" class="form-label">
+                Código SKU Único:
+                <span style="font-size:0.7rem; color:var(--ty-primary); font-weight:700;">(🔒 Generado por el Sistema)</span>
+              </label>
+              <input type="text" id="prod-sku" class="form-input" readonly style="background:var(--bg-subtle); font-family:monospace; font-weight:700; color:var(--ty-primary);" placeholder="Generando...">
             </div>
           </div>
 
@@ -624,7 +1346,53 @@
     </div>
   </div>
 
-  <!-- MODAL COTIZACIÓN IMPRIMIBLE -->
+  <!-- MODAL 5: REGISTRAR NUEVA CLIENTA / MANICURISTA EN CRM -->
+  <div class="modal-overlay" id="modal-client-entry" style="display:none;">
+    <div class="modal-window" style="max-width:500px;">
+      <div class="modal-header">
+        <h3 class="modal-title">👥 Registrar Manicurista / Salón</h3>
+        <button class="close-modal-btn" data-close-modal="modal-client-entry">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-client-entry">
+          <div class="form-group">
+            <label for="crm-name" class="form-label">Nombre y Apellido: *</label>
+            <input type="text" id="crm-name" class="form-input" placeholder="Ej: Andrea Gómez" required>
+          </div>
+          <div class="form-group">
+            <label for="crm-phone" class="form-label">Teléfono WhatsApp: *</label>
+            <input type="text" id="crm-phone" class="form-input" placeholder="0414-6123456" required>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="crm-salon" class="form-label">Estudio / Salón:</label>
+              <input type="text" id="crm-salon" class="form-input" placeholder="Ej: Glow Nails Studio">
+            </div>
+            <div class="form-group">
+              <label for="crm-zone" class="form-label">Zona en Maracaibo:</label>
+              <input type="text" id="crm-zone" class="form-input" placeholder="Ej: Bella Vista">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="crm-tier" class="form-label">Nivel de Fidelidad / Descuento:</label>
+            <select id="crm-tier" class="select-styled">
+              <option value="Manicurista Frecuente (5%)">Manicurista Frecuente (5% desc.)</option>
+              <option value="VIP Plata (10%)">VIP Plata (10% desc.)</option>
+              <option value="VIP Oro (15%)">VIP Oro (15% desc.)</option>
+              <option value="Academia / Distribuidor">Academia / Mayorista (15% desc.)</option>
+            </select>
+          </div>
+
+          <div class="modal-footer-buttons">
+            <button type="button" class="btn-secondary" data-close-modal="modal-client-entry">Cancelar</button>
+            <button type="submit" class="btn-primary">Guardar en Club VIP</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 6: COTIZACIÓN FORMAL IMPRIMIBLE -->
   <div class="modal-overlay" id="modal-quote-viewer" style="display:none;">
     <div class="modal-window quote-modal-window">
       <div class="modal-header no-print">
@@ -639,7 +1407,7 @@
       <div class="printable-quote-document" id="printable-quote-area">
         <div class="quote-header">
           <div class="quote-brand">
-            <img src="assets/logo-yolo.png" alt="Tiendas Yolo" class="quote-logo">
+            <img src="assets/logo-yolo.png" alt="Tiendas Yolo" class="quote-logo" onerror="this.onerror=null; this.src='logo-yolo.png'">
             <div class="quote-company-info">
               <h2 class="quote-company-name">TIENDAS YOLO®</h2>
               <p class="quote-company-tagline">Insumos para uñas y todo para la manicurista</p>
@@ -650,7 +1418,7 @@
             <div class="quote-pill-id" id="print-quote-id">COT-2026-0001</div>
             <p><strong>Fecha:</strong> <span id="print-quote-date">21/10/2026</span></p>
             <p><strong>Validez:</strong> <span id="print-quote-validity">7 días hábiles</span></p>
-            <p><strong>Tasa referencial:</strong> <span id="print-quote-rate">Bs. 395.50 / $</span></p>
+            <p><strong>Tasa referencial:</strong> <span id="print-quote-rate">Bs. 883.40 / $</span></p>
           </div>
         </div>
 
@@ -690,7 +1458,7 @@
         </table>
 
         <div class="quote-terms-box">
-          <p><strong>Condiciones Comerciales:</strong> Precios calculados a la tasa del día. Delivery gratis en compras desde $15 en Maracaibo.</p>
+          <p><strong>Condiciones Comerciales:</strong> Precios calculados a la tasa oficial del día. Delivery gratis en compras desde $15 en Maracaibo.</p>
           <p class="quote-signature-note"><em>“Yo lo compro, Yo lo merezco” — Tiendas Yolo®.</em></p>
         </div>
       </div>
@@ -700,7 +1468,7 @@
 
   <div id="toast-notification-container" class="toast-container"></div>
 
-  <!-- SCRIPT PRIVADO DEL PANEL DE GESTIÓN -->
+  <!-- SCRIPT PRIVADO DEL PANEL DE GESTIÓN SICS -->
   <script src="admin.js"></script>
 </body>
 </html>
