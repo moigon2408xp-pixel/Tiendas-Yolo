@@ -383,6 +383,87 @@ body.theme-dark .brand-title {
   box-shadow: 0 2px 8px rgba(112, 26, 73, 0.3);
 }
 
+/* BOTONES DE CABECERA: INSTALAR PWA, MI CUENTA & GUÍA */
+.btn-install-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, rgba(112, 26, 73, 0.08), rgba(212, 143, 160, 0.16));
+  border: 1px solid var(--ty-rose-gold);
+  border-radius: var(--radius-pill);
+  color: var(--ty-primary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  transition: var(--trans-fast);
+  cursor: pointer;
+}
+
+body.theme-dark .btn-install-header {
+  background: rgba(212, 122, 148, 0.15);
+  border-color: var(--ty-rose-gold-light);
+  color: var(--ty-rose-gold-light);
+}
+
+.btn-install-header:hover {
+  transform: translateY(-2px);
+  background: var(--ty-primary);
+  color: #fff;
+}
+
+.account-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, #fdf2f8, #fce7f3);
+  border: 1px solid #f472b6;
+  border-radius: var(--radius-pill);
+  color: var(--ty-primary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  transition: var(--trans-fast);
+  cursor: pointer;
+}
+
+body.theme-dark .account-btn {
+  background: #381226;
+  border-color: #c77383;
+  color: #fce7f3;
+}
+
+.account-btn:hover {
+  transform: translateY(-2px);
+  background: #fbcfe8;
+}
+
+.help-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-pill);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  transition: var(--trans-fast);
+  cursor: pointer;
+}
+
+body.theme-dark .help-btn {
+  background: #270d1c;
+  border-color: rgba(212, 122, 148, 0.3);
+  color: #e2e8f0;
+}
+
+.help-btn:hover {
+  transform: translateY(-2px);
+  background: var(--border-light);
+  color: var(--text-main);
+}
+
 /* BOTÓN DE CARRITO */
 .cart-btn {
   position: relative;
@@ -2202,20 +2283,19 @@ body.theme-dark .card-heading {
   }
 
   .nav-actions {
-    gap: 6px;
+    gap: 4px;
+    display: flex;
+    align-items: center;
   }
 
-  .btn-install-header {
-    padding: 6px 10px;
-    font-size: 0.75rem;
+  .btn-install-header, .account-btn, .help-btn, .cart-btn {
+    padding: 6px 8px;
+    font-size: 0.76rem;
+    flex-shrink: 0;
   }
 
-  .install-text, .account-badge-text, .cart-total-badge {
-    display: none; /* Solo mostrar iconos en cabecera móvil */
-  }
-
-  .account-btn, .cart-btn {
-    padding: 6px 10px;
+  .install-text, .account-badge-text, .help-badge-text, .cart-total-badge {
+    display: none; /* Solo mostrar iconos en cabecera móvil para mantener todo visible */
   }
 
   .hide-on-mobile {
@@ -3368,6 +3448,209 @@ body.theme-dark .payment-box-heading {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
+}
+
+/* ============================================================================
+   ESTILOS: GUÍA & ENSEÑANZA DE USO (ESCUELA TIENDAS YOLO)
+   ============================================================================ */
+.learning-modal-window {
+  max-width: 680px;
+  width: 100%;
+}
+
+.learning-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.learning-step-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  position: relative;
+  transition: var(--trans-fast);
+}
+
+.learning-step-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--ty-rose-gold);
+  box-shadow: var(--shadow-sm);
+}
+
+.learning-step-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--ty-primary), #8e285f);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.learning-step-icon {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+
+.learning-step-card h4 {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  color: var(--ty-primary);
+  margin-bottom: 6px;
+}
+
+body.theme-dark .learning-step-card h4 {
+  color: #fbcfe8;
+}
+
+.learning-step-card p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+/* ============================================================================
+   CORRECCIÓN COMPLETA DE CONTRASTE: MODO OSCURO (WCAG AA)
+   ============================================================================ */
+body.theme-dark {
+  --text-main: #ffffff !important;
+  --text-secondary: #e2e8f0 !important;
+  --text-muted: #cbd5e1 !important;
+}
+
+body.theme-dark .catalog-section-title,
+body.theme-dark .category-pill,
+body.theme-dark .product-name,
+body.theme-dark .modal-title,
+body.theme-dark .cart-drawer-title,
+body.theme-dark .section-micro-heading,
+body.theme-dark .form-label,
+body.theme-dark .pwa-steps-box h5,
+body.theme-dark .club-intro-card h4,
+body.theme-dark .prof-display-name,
+body.theme-dark .footer-title,
+body.theme-dark .quote-box-title {
+  color: #ffffff !important;
+}
+
+body.theme-dark .product-category,
+body.theme-dark .product-desc,
+body.theme-dark .brand-subtitle,
+body.theme-dark .cart-drawer-sub,
+body.theme-dark .modal-subtitle,
+body.theme-dark .footer-desc,
+body.theme-dark .pwa-steps-list,
+body.theme-dark .club-intro-card p,
+body.theme-dark .quote-company-sub {
+  color: #e2e8f0 !important;
+}
+
+body.theme-dark .form-input,
+body.theme-dark .form-textarea,
+body.theme-dark .select-styled {
+  background-color: #1a0815 !important;
+  color: #ffffff !important;
+  border-color: rgba(212, 122, 148, 0.4) !important;
+}
+
+body.theme-dark .form-input::placeholder,
+body.theme-dark .form-textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+body.theme-dark .styled-table td,
+body.theme-dark .styled-table th {
+  color: #f1f5f9 !important;
+}
+
+body.theme-dark .btn-secondary,
+body.theme-dark .btn-ghost {
+  color: #fdf2f8 !important;
+  border-color: rgba(212, 122, 148, 0.45) !important;
+}
+
+body.theme-dark .btn-secondary:hover {
+  background-color: rgba(212, 122, 148, 0.2) !important;
+}
+
+/* Modos oscuros específicos del panel SICS & Finanzas */
+body.theme-dark .panel-title,
+body.theme-dark .kpi-value,
+body.theme-dark .currency-val-main,
+body.theme-dark .guide-card-title,
+body.theme-dark .account-bal-usd,
+body.theme-dark .order-payment-meta,
+body.theme-dark .order-items-compact,
+body.theme-dark .admin-brand-title {
+  color: #ffffff !important;
+}
+
+body.theme-dark .kpi-title,
+body.theme-dark .kpi-sub,
+body.theme-dark .currency-name,
+body.theme-dark .currency-val-sub,
+body.theme-dark .guide-card-text,
+body.theme-dark .account-name,
+body.theme-dark .account-bal-bs,
+body.theme-dark .recent-order-client,
+body.theme-dark .recent-order-meta {
+  color: #e2e8f0 !important;
+}
+
+body.theme-dark .panel-box,
+body.theme-dark .kpi-card,
+body.theme-dark .currency-card,
+body.theme-dark .admin-guide-card,
+body.theme-dark .admin-order-card,
+body.theme-dark .modal-window,
+body.theme-dark .pin-box {
+  background-color: #1e0917 !important;
+  border-color: rgba(212, 122, 148, 0.25) !important;
+  color: #ffffff !important;
+}
+
+body.theme-dark .admin-subnav-bar {
+  background-color: #150510 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.theme-dark .admin-tab-btn {
+  background-color: #2a0d22 !important;
+  border-color: rgba(212, 122, 148, 0.3) !important;
+  color: #e2e8f0 !important;
+}
+
+body.theme-dark .admin-tab-btn.active {
+  background: linear-gradient(135deg, #701a49, #9b2a68) !important;
+  color: #ffffff !important;
+  border-color: var(--ty-rose-gold) !important;
+}
+
+
+/* Documentos impresos (Cotización y Ticket) siempre claros e impecables */
+.printable-quote-document,
+.delivery-ticket-container {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+.printable-quote-document *,
+.delivery-ticket-container * {
+  color: #0f172a;
+}
+
+.quote-items-table th {
+  background: #701a49 !important;
+  color: #ffffff !important;
+}
+
+.ticket-header-band {
+  background: #701a49 !important;
+  color: #ffffff !important;
 }
 
 
