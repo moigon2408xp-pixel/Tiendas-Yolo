@@ -891,11 +891,23 @@
       totalBs: totalBs
     };
 
-    // Actualizar modal de pagos
+    // Actualizar modal de pagos con totales dinámicos
     document.getElementById('pay-modal-usd').textContent = `$${totalUSD.toFixed(2)}`;
     document.getElementById('pay-modal-bs').textContent = `Bs. ${totalBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     document.getElementById('pay-modal-rate-note').textContent = `Tasa: Bs. ${rate.toFixed(2)} / $`;
-    document.getElementById('copy-pm-bs').textContent = `Bs. ${totalBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    const copyPmBs = document.getElementById('copy-pm-bs');
+    if (copyPmBs) copyPmBs.textContent = `Bs. ${totalBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+    // Cargar cuentas bancarias personalizadas por el administrador
+    try {
+      const pmSettings = JSON.parse(localStorage.getItem('ty_payment_settings') || '{}');
+      const pmPhoneEl = document.getElementById('copy-pm-phone');
+      const pmIdEl = document.getElementById('copy-pm-id');
+      const binanceIdEl = document.getElementById('copy-binance-id');
+      if (pmPhoneEl && pmSettings.pmPhone) pmPhoneEl.textContent = pmSettings.pmPhone;
+      if (pmIdEl && pmSettings.pmId) pmIdEl.textContent = pmSettings.pmId;
+      if (binanceIdEl && pmSettings.binanceId) binanceIdEl.textContent = pmSettings.binanceId;
+    } catch(e) {}
 
     // Cerrar carrito y abrir modal de pago
     document.getElementById('cart-drawer-modal').style.display = 'none';
@@ -2099,13 +2111,259 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
       });
     });
 
-    // 15. Iniciar Atajos y Seguridad
+    // =========================================================================
+    // 15. CALCULADORA DE DELIVERY GPS & BOTONES DE COTIZACIÓN
+    // =========================================================================
+    const btnHeroGps = document.getElementById('btn-hero-calc-gps');
+    if (btnHeroGps) btnHeroGps.addEventListener('click', openGpsCalculatorModal);
+
+    const btnHubGps = document.getElementById('btn-open-gps-delivery-hub');
+    if (btnHubGps) btnHubGps.addEventListener('click', openGpsCalculatorModal);
+
+    const btnTriggerGps = document.getElementById('btn-trigger-gps-detect');
+    if (btnTriggerGps) btnTriggerGps.addEventListener('click', detectUserDeviceGps);
+
+    const selectZone = document.getElementById('select-maracaibo-zone');
+    if (selectZone) {
+      selectZone.addEventListener('change', (e) => {
+        const opt = e.target.selectedOptions[0];
+        if (opt && opt.value) {
+          const parts = opt.value.split(',');
+          const lat = parseFloat(parts[0]);
+          const lng = parseFloat(parts[1]);
+          const km = parseFloat(opt.dataset.km || calculateDistanceKm(STORE_LOCATION.lat, STORE_LOCATION.lng, lat, lng));
+          state.deliveryCoords = `${lat}, ${lng}`;
+          updateGpsCalculationDisplay(km, opt.dataset.name || opt.text);
+        }
+      });
+    }
+
+    const inputCustomGps = document.getElementById('input-custom-gps-link');
+    if (inputCustomGps) {
+      inputCustomGps.addEventListener('input', (e) => {
+        const parsed = parseCoordinatesString(e.target.value);
+        if (parsed) {
+          const km = calculateDistanceKm(STORE_LOCATION.lat, STORE_LOCATION.lng, parsed.lat, parsed.lng);
+          state.deliveryCoords = `${parsed.lat}, ${parsed.lng}`;
+          updateGpsCalculationDisplay(km, `Coordenadas: ${parsed.lat.toFixed(4)}, ${parsed.lng.toFixed(4)}`);
+        }
+      });
+    }
+
+    const btnApplyGps = document.getElementById('btn-apply-gps-to-cart');
+    if (btnApplyGps) btnApplyGps.addEventListener('click', applyGpsLocationToCart);
+
+    // Botones de Cotización Formal
+    const btnHeroQuote = document.getElementById('btn-hero-quote-generator');
+    if (btnHeroQuote) btnHeroQuote.addEventListener('click', generateFormalQuote);
+
+    const btnHeroKits = document.getElementById('btn-hero-explore-kits');
+    if (btnHeroKits) {
+      btnHeroKits.addEventListener('click', () => {
+        state.activeCategory = 'Kits';
+        renderCategories();
+        renderProducts();
+        const grid = document.getElementById('products-grid-container');
+        if (grid) grid.scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+
+    // Copiar datos de pago con un clic
+    const btnCopyPm = document.getElementById('btn-copy-pm');
+    if (btnCopyPm) {
+      btnCopyPm.addEventListener('click', () => {
+        const phone = document.getElementById('copy-pm-phone') ? document.getElementById('copy-pm-phone').textContent : '04265604070';
+        const id = document.getElementById('copy-pm-id') ? document.getElementById('copy-pm-id').textContent : 'V-28123456';
+        const bs = document.getElementById('copy-pm-bs') ? document.getElementById('copy-pm-bs').textContent : '';
+        const copyText = `Pago Móvil Tiendas Yolo:\nBanco: Banesco (0134)\nTeléfono: ${phone}\nCédula: ${id}\nMonto: ${bs}`;
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(copyText).then(() => {
+            showToast("📋 ¡Datos de Pago Móvil copiados!", "success");
+          });
+        }
+      });
+    }
+
+    const btnCopyBinance = document.getElementById('btn-copy-binance');
+    if (btnCopyBinance) {
+      btnCopyBinance.addEventListener('click', () => {
+        const binanceId = document.getElementById('copy-binance-id') ? document.getElementById('copy-binance-id').textContent : '829140291';
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(binanceId).then(() => {
+            showToast("📋 ¡Binance Pay ID copiado!", "success");
+          });
+        }
+      });
+    }
+
+    // 16. Iniciar Atajos y Seguridad
     initAdminSecurityAndShortcuts();
   }
 
   function openLearningGuideModal() {
     const modal = document.getElementById('modal-learning-guide');
     if (modal) modal.style.display = 'flex';
+  }
+
+  // ============================================================================
+  // CALCULADORA DE DELIVERY GPS MARACAIBO (MODAL INTERACTIVO)
+  // ============================================================================
+  function openGpsCalculatorModal() {
+    const modal = document.getElementById('modal-gps-calculator');
+    if (!modal) return;
+
+    if (state.deliveryDistanceKm) {
+      updateGpsCalculationDisplay(state.deliveryDistanceKm, state.deliveryCoords ? `Coordenadas: ${state.deliveryCoords}` : 'Ubicación seleccionada');
+    } else {
+      updateGpsCalculationDisplay(2.5, '5 de Julio / Cecilio Acosta');
+    }
+
+    modal.style.display = 'flex';
+  }
+
+  function updateGpsCalculationDisplay(km, zoneName = 'Ubicación seleccionada') {
+    state.deliveryDistanceKm = parseFloat(km.toFixed(1));
+    const subtotal = state.cart.reduce((s, it) => s + (it.precioUSD * it.quantity), 0);
+    const feeUSD = getDeliveryFeeByKm(km, subtotal);
+    const rate = Number(state.config.rateBCV || 883.40);
+    const feeBs = feeUSD * rate;
+    const isFree = subtotal >= Number(state.config.deliveryFreeMinUSD || 15.00);
+
+    const lblZone = document.getElementById('gps-zone-label');
+    const lblFree = document.getElementById('gps-free-badge');
+    const lblDist = document.getElementById('gps-dist-km');
+    const lblCostUSD = document.getElementById('gps-cost-usd');
+    const lblCostBs = document.getElementById('gps-cost-bs');
+    const lblTime = document.getElementById('gps-time-estimate');
+
+    if (lblZone) lblZone.textContent = `📍 Ubicación: ${zoneName}`;
+    if (lblDist) lblDist.textContent = `${km.toFixed(1)} km`;
+
+    if (lblCostUSD) {
+      if (isFree) {
+        lblCostUSD.textContent = "¡GRATIS!";
+        lblCostUSD.style.color = "#10b981";
+      } else {
+        lblCostUSD.textContent = `$${feeUSD.toFixed(2)}`;
+        lblCostUSD.style.color = "var(--ty-primary)";
+      }
+    }
+    if (lblCostBs) {
+      lblCostBs.textContent = isFree ? "Pedido superior a $15" : `Bs. ${feeBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+    if (lblFree) {
+      lblFree.textContent = isFree ? "🎉 ¡Delivery Gratis Activo!" : "✓ Gratuito en compras > $15";
+      lblFree.style.color = isFree ? "#10b981" : "var(--ty-primary)";
+    }
+    if (lblTime) {
+      const minMin = Math.round(15 + (km * 2.5));
+      const maxMin = Math.round(minMin + 15);
+      lblTime.textContent = `⏱️ Tiempo estimado de entrega: ${minMin} - ${maxMin} min`;
+    }
+  }
+
+  function detectUserDeviceGps() {
+    const btn = document.getElementById('btn-trigger-gps-detect');
+    if (!navigator.geolocation) {
+      showToast("Tu navegador no soporta GPS directo. Por favor selecciona tu zona en el menú.", "error");
+      return;
+    }
+
+    if (btn) {
+      btn.innerHTML = "🛰️ Buscando satélites GPS...";
+      btn.disabled = true;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const userLat = pos.coords.latitude;
+        const userLng = pos.coords.longitude;
+        state.deliveryCoords = `${userLat.toFixed(5)}, ${userLng.toFixed(5)}`;
+        const km = calculateDistanceKm(STORE_LOCATION.lat, STORE_LOCATION.lng, userLat, userLng);
+        updateGpsCalculationDisplay(km, "Mi Ubicación GPS Actual");
+
+        const customInput = document.getElementById('input-custom-gps-link');
+        if (customInput) customInput.value = `${userLat.toFixed(5)}, ${userLng.toFixed(5)}`;
+
+        if (btn) {
+          btn.innerHTML = "✅ Ubicación GPS Detectada";
+          btn.disabled = false;
+        }
+        showToast(`📍 GPS detectado: ${km.toFixed(1)} km desde Tiendas Yolo`, "success");
+      },
+      (err) => {
+        if (btn) {
+          btn.innerHTML = "🛰️ Detectar mi Ubicación GPS Actual";
+          btn.disabled = false;
+        }
+        console.warn("GPS error:", err.message);
+        showToast("No se pudo obtener GPS satelital. Selecciona tu zona en el menú desplegable.", "info");
+      },
+      { timeout: 9000, enableHighAccuracy: true }
+    );
+  }
+
+  function applyGpsLocationToCart() {
+    if (!state.deliveryDistanceKm) {
+      state.deliveryDistanceKm = 2.5;
+    }
+    const zoneSelect = document.getElementById('select-maracaibo-zone');
+    let zoneTitle = 'Maracaibo';
+    if (zoneSelect && zoneSelect.selectedOptions[0] && zoneSelect.value) {
+      zoneTitle = zoneSelect.selectedOptions[0].dataset.name || zoneSelect.selectedOptions[0].text;
+    }
+    const dirInput = document.getElementById('cart-delivery-address');
+    if (dirInput) {
+      dirInput.value = `${zoneTitle} (GPS: ${state.deliveryDistanceKm} km)`;
+    }
+    const coordsInput = document.getElementById('cart-delivery-coords');
+    if (coordsInput && state.deliveryCoords) {
+      coordsInput.value = state.deliveryCoords;
+    }
+
+    updateCartUI();
+    const modal = document.getElementById('modal-gps-calculator');
+    if (modal) modal.style.display = 'none';
+    showToast(`✅ Ubicación (${state.deliveryDistanceKm} km) aplicada al pedido.`, "success");
+  }
+
+  // Cargar personalización de banners y anuncios oficiales desde el Administrador
+  function loadBannerSettings() {
+    try {
+      const bSettings = JSON.parse(localStorage.getItem('ty_banner_settings') || '{}');
+      if (bSettings.heroTitle) {
+        const el = document.getElementById('txt-hero-title');
+        if (el) el.textContent = bSettings.heroTitle;
+      }
+      if (bSettings.heroDesc) {
+        const el = document.getElementById('txt-hero-desc');
+        if (el) el.textContent = bSettings.heroDesc;
+      }
+      if (bSettings.heroQuote) {
+        const el = document.getElementById('txt-hero-quote');
+        if (el) el.textContent = bSettings.heroQuote;
+      }
+      if (bSettings.topAnnouncement) {
+        const el = document.getElementById('top-delivery-badge');
+        if (el) el.textContent = bSettings.topAnnouncement;
+      }
+    } catch(e) {}
+  }
+
+  // Verificador de forzado de actualización y limpieza de caché PWA
+  function checkForForcedCacheUpdate() {
+    const forcedVer = localStorage.getItem('ty_system_version');
+    const localVer = sessionStorage.getItem('ty_system_version_loaded');
+    if (forcedVer && localVer && forcedVer !== localVer) {
+      sessionStorage.setItem('ty_system_version_loaded', forcedVer);
+      if ('caches' in window) {
+        caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))).then(() => {
+          window.location.reload(true);
+        });
+      }
+    } else if (forcedVer) {
+      sessionStorage.setItem('ty_system_version_loaded', forcedVer);
+    }
   }
 
   // ============================================================================
@@ -2123,6 +2381,8 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
     openNewProduct,
     saveEditsToStorage,
     openLearningGuideModal,
+    openGpsCalculatorModal,
+    generateFormalQuote,
     triggerLiveEditor: () => {
       if (typeof window._TY_triggerLiveEditor === 'function') {
         window._TY_triggerLiveEditor();
@@ -2151,6 +2411,8 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
     renderProducts();
     updateCartUI();
     setupEventListeners();
+    loadBannerSettings();
+    checkForForcedCacheUpdate();
     initPwaSupport();
     console.log("🌸 Tiendas Yolo® Tienda PWA Iniciada con Éxito.");
   });
