@@ -949,11 +949,47 @@
     const container = document.getElementById('admin-clients-container');
     if (!container) return;
 
+    // Cross-reference with orders to find active orders & historical counts
+    state.clients.forEach(c => {
+      const phoneClean = (c.telefono || '').replace(/\D/g, '');
+      const clientOrders = state.orders.filter(o => {
+        const oPhone = (o.clientPhone || '').replace(/\D/g, '');
+        return (phoneClean && oPhone && (phoneClean.includes(oPhone) || oPhone.includes(phoneClean))) ||
+               (o.cliente && o.cliente.toLowerCase() === (c.nombre || '').toLowerCase());
+      });
+      c._orders = clientOrders;
+      c._orderCount = clientOrders.length;
+      c._hasActiveOrder = clientOrders.some(o => ['Pendiente', 'Confirmado', 'En Preparación', 'En Delivery'].includes(o.estado));
+      c._isVip = c._orderCount >= 3 || (c.nivelFidelidad && c.nivelFidelidad.includes('VIP'));
+    });
+
+    // Update filter counts in DOM
+    const elAll = document.getElementById('crm-count-all');
+    if (elAll) elAll.textContent = state.clients.length;
+    const elActive = document.getElementById('crm-count-active');
+    if (elActive) elActive.textContent = state.clients.filter(c => c._hasActiveOrder).length;
+    const elVip = document.getElementById('crm-count-vip');
+    if (elVip) elVip.textContent = state.clients.filter(c => c._isVip).length;
+    const elHistory = document.getElementById('crm-count-history');
+    if (elHistory) elHistory.textContent = state.clients.filter(c => c._orderCount > 0).length;
+
     let filtered = state.clients;
+
+    // Apply category filter
+    const activeFilter = state.activeCrmFilter || 'all';
+    if (activeFilter === 'active') {
+      filtered = filtered.filter(c => c._hasActiveOrder);
+    } else if (activeFilter === 'vip') {
+      filtered = filtered.filter(c => c._isVip);
+    } else if (activeFilter === 'history') {
+      filtered = filtered.filter(c => c._orderCount > 0);
+    }
+
+    // Apply text search
     if (query.trim() !== '') {
       const q = query.toLowerCase();
       filtered = filtered.filter(c => 
-        c.nombre.toLowerCase().includes(q) ||
+        (c.nombre && c.nombre.toLowerCase().includes(q)) ||
         (c.salonNegocio && c.salonNegocio.toLowerCase().includes(q)) ||
         (c.telefono && c.telefono.includes(q)) ||
         (c.zonaMaracaibo && c.zonaMaracaibo.toLowerCase().includes(q))
@@ -961,7 +997,7 @@
     }
 
     if (filtered.length === 0) {
-      container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:30px; color:var(--text-muted);">No se encontraron clientas registradas con ese término.</div>`;
+      container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:30px; color:var(--text-muted);">No se encontraron clientas registradas bajo este filtro.</div>`;
       return;
     }
 
@@ -1234,6 +1270,10 @@
       document.getElementById('prod-category').value = prod.categoria;
       skuInput.value = prod.sku || generateUniqueProductSKU(prod.categoria, state.products);
       document.getElementById('prod-desc').value = prod.descripcion || '';
+      const imgInput = document.getElementById('prod-image-url');
+      const imgPrev = document.getElementById('prod-image-preview');
+      if (imgInput) imgInput.value = prod.imagenURL || 'logo-yolo.png';
+      if (imgPrev) imgPrev.src = prod.imagenURL || 'logo-yolo.png';
       document.getElementById('prod-price-usd').value = prod.precioUSD;
       document.getElementById('prod-cost-usd').value = prod.costoUSD || 0;
       document.getElementById('prod-stock').value = prod.stockActual;
@@ -1264,6 +1304,9 @@
     const stockMin = Number(document.getElementById('prod-stock-min').value);
     const featured = document.getElementById('prod-featured').value;
 
+    const imgInput = document.getElementById('prod-image-url');
+    const imgUrl = (imgInput && imgInput.value.trim()) ? imgInput.value.trim() : 'logo-yolo.png';
+
     if (!name || isNaN(price)) {
       showToast("Ingresa nombre y precio del insumo.", "error");
       return;
@@ -1282,6 +1325,7 @@
         existing.categoria = category;
         existing.sku = sku;
         existing.descripcion = desc;
+        existing.imagenURL = imgUrl;
         existing.precioUSD = price;
         existing.costoUSD = cost;
         existing.stockActual = stock;
@@ -1304,7 +1348,7 @@
         unidad: "Unidad",
         destacado: featured,
         activo: "SI",
-        imagenURL: "assets/logo-yolo.png"
+        imagenURL: imgUrl
       };
       state.products.push(savedObj);
     }
@@ -1415,6 +1459,31 @@
     if (delivFreeInput) delivFreeInput.value = state.config.deliveryFreeMinUSD || 15.00;
     const delivFeeInput = document.getElementById('cfg-delivery-flat-fee');
     if (delivFeeInput) delivFeeInput.value = state.config.deliveryFlatFeeUSD || 2.00;
+
+    // Cuentas de Pago
+    try {
+      const pmSettings = JSON.parse(localStorage.getItem('ty_payment_settings') || '{}');
+      if (document.getElementById('cfg-pm-bank')) document.getElementById('cfg-pm-bank').value = pmSettings.pmBank || 'Banesco (0134)';
+      if (document.getElementById('cfg-pm-id')) document.getElementById('cfg-pm-id').value = pmSettings.pmId || 'V-28123456';
+      if (document.getElementById('cfg-pm-phone')) document.getElementById('cfg-pm-phone').value = pmSettings.pmPhone || '0426-5604070';
+      if (document.getElementById('cfg-binance-id')) document.getElementById('cfg-binance-id').value = pmSettings.binanceId || '829140291';
+      if (document.getElementById('cfg-binance-email')) document.getElementById('cfg-binance-email').value = pmSettings.binanceEmail || 'pagos@tiendasyolo.com';
+      if (document.getElementById('cfg-zelle-email')) document.getElementById('cfg-zelle-email').value = pmSettings.zelleEmail || 'tiendasyolove@gmail.com';
+      if (document.getElementById('cfg-cash-notes')) document.getElementById('cfg-cash-notes').value = pmSettings.cashNotes || 'Solo billetes en buen estado sin roturas.';
+    } catch(e){}
+
+    // Banners & Textos
+    try {
+      const bSettings = JSON.parse(localStorage.getItem('ty_banner_settings') || '{}');
+      if (document.getElementById('cfg-banner-title')) document.getElementById('cfg-banner-title').value = bSettings.heroTitle || 'Insumos Profesionales para Manicuristas de Alto Nivel';
+      if (document.getElementById('cfg-banner-desc')) document.getElementById('cfg-banner-desc').value = bSettings.heroDesc || 'Todo para tu mesa de trabajo: Esmaltes M&Y, Base Rubber, Geles Constructores, Spider Gel, Pinceles Liner y Kits para Principiantes con entrega inmediata en Maracaibo y envíos a toda Venezuela.';
+      if (document.getElementById('cfg-banner-quote')) document.getElementById('cfg-banner-quote').value = bSettings.heroQuote || 'Yo lo compro, Yo lo merezco.';
+      if (document.getElementById('cfg-top-announcement')) document.getElementById('cfg-top-announcement').value = bSettings.topAnnouncement || 'Delivery Gratis desde $15';
+    } catch(e){}
+
+    const curVer = localStorage.getItem('ty_system_version') || 'v3.2_Oficial';
+    const lblVer = document.getElementById('lbl-system-version-active');
+    if (lblVer) lblVer.textContent = `Versión: ${curVer.slice(0, 12)}`;
   }
 
   // ============================================================================
@@ -1821,21 +1890,269 @@
     }
 
     // Botón nueva cotización en modal
+    // =========================================================================
+    // CREADOR INTERACTIVO DE COTIZACIONES PRO & SIMULADOR DE MÁRGENES
+    // =========================================================================
+    let currentQuoteItems = [];
+
+    function recalculateQuoteBuilderTotals() {
+      const discountPct = Number(document.getElementById('qb-discount-pct') ? document.getElementById('qb-discount-pct').value : 0) || 0;
+      const rate = Number(state.config.rateBCV || 883.40);
+
+      const totalSelling = currentQuoteItems.reduce((sum, item) => sum + (item.precio * item.qty), 0);
+      const totalCost = currentQuoteItems.reduce((sum, item) => sum + (item.costo * item.qty), 0);
+      const discountAmount = totalSelling * (discountPct / 100);
+      const finalSellingUSD = Math.max(0, totalSelling - discountAmount);
+      const netProfitUSD = finalSellingUSD - totalCost;
+      const marginPct = finalSellingUSD > 0 ? ((netProfitUSD / finalSellingUSD) * 100).toFixed(1) : 0;
+
+      const elTotalUSD = document.getElementById('qb-total-usd');
+      if (elTotalUSD) elTotalUSD.textContent = `$${finalSellingUSD.toFixed(2)}`;
+      const elTotalBs = document.getElementById('qb-total-bs');
+      if (elTotalBs) elTotalBs.textContent = `Bs. ${(finalSellingUSD * rate).toLocaleString('es-VE', {minimumFractionDigits: 2})}`;
+      const elCostUSD = document.getElementById('qb-cost-usd');
+      if (elCostUSD) elCostUSD.textContent = `$${totalCost.toFixed(2)}`;
+      const elProfitUSD = document.getElementById('qb-profit-usd');
+      if (elProfitUSD) elProfitUSD.textContent = `${netProfitUSD >= 0 ? '+' : ''}$${netProfitUSD.toFixed(2)}`;
+      const elProfitBs = document.getElementById('qb-profit-bs');
+      if (elProfitBs) elProfitBs.textContent = `Bs. ${(netProfitUSD * rate).toLocaleString('es-VE', {minimumFractionDigits: 2})}`;
+      const elMarginPct = document.getElementById('qb-margin-pct');
+      if (elMarginPct) elMarginPct.textContent = `${marginPct}%`;
+    }
+
+    function renderQuoteBuilderItemsTable() {
+      const tbody = document.getElementById('qb-items-tbody');
+      if (!tbody) return;
+
+      if (currentQuoteItems.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:14px;">No hay insumos añadidos a la cotización aún.</td></tr>`;
+        recalculateQuoteBuilderTotals();
+        return;
+      }
+
+      tbody.innerHTML = currentQuoteItems.map((item, idx) => {
+        const itemSelling = item.precio * item.qty;
+        const itemCost = item.costo * item.qty;
+        const itemProfit = itemSelling - itemCost;
+        return `
+          <tr>
+            <td><strong>${item.nombre}</strong></td>
+            <td>${item.qty}</td>
+            <td>$${item.costo.toFixed(2)}</td>
+            <td>$${item.precio.toFixed(2)}</td>
+            <td><strong>$${itemSelling.toFixed(2)}</strong></td>
+            <td><strong style="color:${itemProfit >= 0 ? '#10b981' : '#ef4444'};">+$${itemProfit.toFixed(2)}</strong></td>
+            <td>
+              <button type="button" class="btn-micro" data-qb-remove="${idx}" style="color:#ef4444; border-color:rgba(239,68,68,0.3);" title="Quitar insumo">✕</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      tbody.querySelectorAll('[data-qb-remove]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = Number(btn.dataset.qbRemove);
+          currentQuoteItems.splice(idx, 1);
+          renderQuoteBuilderItemsTable();
+        });
+      });
+
+      recalculateQuoteBuilderTotals();
+    }
+
     const btnQuoteBuilder = document.getElementById('btn-open-quote-builder');
     if (btnQuoteBuilder) {
       btnQuoteBuilder.addEventListener('click', () => {
-        showQuoteModal({
-          cliente: "Academia Beauty Nails",
-          telefono: "0426-5604070",
-          salonAcademia: "Academia / Salón",
-          items: state.products.slice(0, 3).map(p => ({
-            nombre: p.nombre,
-            qty: 2,
-            precio: p.precioUSD,
-            total: p.precioUSD * 2
+        currentQuoteItems = [];
+        const form = document.getElementById('form-create-quote');
+        if (form) form.reset();
+
+        // Populate select with active products
+        const selectProd = document.getElementById('qb-select-product');
+        if (selectProd) {
+          selectProd.innerHTML = state.products.map(p => 
+            `<option value="${p.id}" data-name="${p.nombre}" data-price="${p.precioUSD}" data-cost="${p.costoUSD || 0}">${p.nombre} - $${p.precioUSD.toFixed(2)} (Costo: $${(p.costoUSD || 0).toFixed(2)})</option>`
+          ).join('');
+        }
+
+        renderQuoteBuilderItemsTable();
+        const m = document.getElementById('modal-quote-builder');
+        if (m) m.style.display = 'flex';
+      });
+    }
+
+    const btnQbAdd = document.getElementById('btn-qb-add-item');
+    if (btnQbAdd) {
+      btnQbAdd.addEventListener('click', () => {
+        const selectProd = document.getElementById('qb-select-product');
+        const qtyInput = document.getElementById('qb-add-qty');
+        if (!selectProd || !qtyInput) return;
+
+        const selOption = selectProd.selectedOptions[0];
+        if (!selOption) return;
+
+        const pId = selectProd.value;
+        const pName = selOption.dataset.name || selOption.textContent;
+        const pPrice = Number(selOption.dataset.price) || 0;
+        const pCost = Number(selOption.dataset.cost) || 0;
+        const qty = Math.max(1, Number(qtyInput.value) || 1);
+
+        const existing = currentQuoteItems.find(i => i.id === pId);
+        if (existing) {
+          existing.qty += qty;
+        } else {
+          currentQuoteItems.push({
+            id: pId,
+            nombre: pName,
+            precio: pPrice,
+            costo: pCost,
+            qty: qty
+          });
+        }
+
+        qtyInput.value = 1;
+        renderQuoteBuilderItemsTable();
+      });
+    }
+
+    const qbDiscountInput = document.getElementById('qb-discount-pct');
+    if (qbDiscountInput) {
+      qbDiscountInput.addEventListener('input', recalculateQuoteBuilderTotals);
+    }
+
+    const formCreateQuote = document.getElementById('form-create-quote');
+    if (formCreateQuote) {
+      formCreateQuote.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (currentQuoteItems.length === 0) {
+          alert('Por favor agrega al menos un insumo a la cotización.');
+          return;
+        }
+
+        const clientName = document.getElementById('qb-client-name').value.trim();
+        const clientPhone = document.getElementById('qb-client-phone').value.trim();
+        const clientZone = document.getElementById('qb-client-zone').value.trim() || 'Maracaibo';
+        const discountPct = Number(document.getElementById('qb-discount-pct').value || 0);
+
+        const totalSelling = currentQuoteItems.reduce((s, i) => s + (i.precio * i.qty), 0);
+        const totalCost = currentQuoteItems.reduce((s, i) => s + (i.costo * i.qty), 0);
+        const finalTotalUSD = Math.max(0, totalSelling - (totalSelling * (discountPct / 100)));
+        const netProfitUSD = finalTotalUSD - totalCost;
+        const marginPct = finalTotalUSD > 0 ? ((netProfitUSD / finalTotalUSD) * 100).toFixed(1) : 0;
+
+        const quoteObj = {
+          id: 'COT-' + (state.quotes.length + 1).toString().padStart(4, '0'),
+          fecha: new Date().toLocaleDateString('es-VE'),
+          cliente: clientName,
+          telefono: clientPhone,
+          salonAcademia: clientZone,
+          descuentoPct: discountPct,
+          items: currentQuoteItems.map(i => ({
+            nombre: i.nombre,
+            qty: i.qty,
+            precio: i.precio,
+            costo: i.costo,
+            total: i.precio * i.qty
           })),
-          subtotalUSD: state.products.slice(0, 3).reduce((s, p) => s + (p.precioUSD * 2), 0)
-        });
+          subtotalUSD: totalSelling,
+          totalUSD: finalTotalUSD,
+          costUSD: totalCost,
+          profitUSD: netProfitUSD,
+          marginPct: marginPct
+        };
+
+        state.quotes.unshift(quoteObj);
+        saveState();
+        renderAdminQuotes();
+
+        document.getElementById('modal-quote-builder').style.display = 'none';
+        showQuoteModal(quoteObj);
+        showToast('✅ Cotización generada con margen calculado.');
+      });
+    }
+
+    // =========================================================================
+    // FILTROS CRM DE MANICURISTAS
+    // =========================================================================
+    document.querySelectorAll('[data-crm-filter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-crm-filter]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.activeCrmFilter = btn.dataset.crmFilter;
+        renderClientsGrid(document.getElementById('clients-search-input') ? document.getElementById('clients-search-input').value : '');
+      });
+    });
+
+    // =========================================================================
+    // GUARDAR CUENTAS DE PAGO & TEXTOS DE BANNERS
+    // =========================================================================
+    const btnSavePayments = document.getElementById('btn-save-payments-config');
+    if (btnSavePayments) {
+      btnSavePayments.addEventListener('click', () => {
+        const paymentSettings = {
+          pmBank: document.getElementById('cfg-pm-bank') ? document.getElementById('cfg-pm-bank').value.trim() : 'Banesco (0134)',
+          pmId: document.getElementById('cfg-pm-id') ? document.getElementById('cfg-pm-id').value.trim() : 'V-28123456',
+          pmPhone: document.getElementById('cfg-pm-phone') ? document.getElementById('cfg-pm-phone').value.trim() : '0426-5604070',
+          binanceId: document.getElementById('cfg-binance-id') ? document.getElementById('cfg-binance-id').value.trim() : '829140291',
+          binanceEmail: document.getElementById('cfg-binance-email') ? document.getElementById('cfg-binance-email').value.trim() : 'pagos@tiendasyolo.com',
+          zelleEmail: document.getElementById('cfg-zelle-email') ? document.getElementById('cfg-zelle-email').value.trim() : 'tiendasyolove@gmail.com',
+          cashNotes: document.getElementById('cfg-cash-notes') ? document.getElementById('cfg-cash-notes').value.trim() : 'Solo billetes en buen estado.'
+        };
+        localStorage.setItem('ty_payment_settings', JSON.stringify(paymentSettings));
+        state.config.paymentInfo = `${paymentSettings.pmBank} | ${paymentSettings.pmId} | ${paymentSettings.pmPhone} | Binance ID: ${paymentSettings.binanceId}`;
+        saveState();
+        showToast('✅ Cuentas de pago guardadas y sincronizadas.');
+      });
+    }
+
+    const btnSaveBanners = document.getElementById('btn-save-banners-config');
+    if (btnSaveBanners) {
+      btnSaveBanners.addEventListener('click', () => {
+        const bannerSettings = {
+          heroTitle: document.getElementById('cfg-banner-title') ? document.getElementById('cfg-banner-title').value.trim() : '',
+          heroDesc: document.getElementById('cfg-banner-desc') ? document.getElementById('cfg-banner-desc').value.trim() : '',
+          heroQuote: document.getElementById('cfg-banner-quote') ? document.getElementById('cfg-banner-quote').value.trim() : '',
+          topAnnouncement: document.getElementById('cfg-top-announcement') ? document.getElementById('cfg-top-announcement').value.trim() : ''
+        };
+        localStorage.setItem('ty_banner_settings', JSON.stringify(bannerSettings));
+        showToast('✅ Banners y textos de la tienda guardados.');
+      });
+    }
+
+    // =========================================================================
+    // FORZAR ACTUALIZACIÓN EN DISPOSITIVOS (BORRADO DE CACHÉ PWA)
+    // =========================================================================
+    function triggerDeviceForceRefresh() {
+      const newVersion = 'v3.2_' + Date.now();
+      localStorage.setItem('ty_system_version', newVersion);
+
+      if ('caches' in window) {
+        caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))));
+      }
+
+      if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({ action: 'skipWaiting' });
+        navigator.serviceWorker.controller.postMessage({ action: 'clearCache' });
+      }
+
+      const lblVer = document.getElementById('lbl-system-version-active');
+      if (lblVer) lblVer.textContent = `Versión: ${newVersion.slice(0, 10)} Oficial`;
+
+      showToast('🔄 ¡Caché invalidada! Todos los teléfonos y computadoras descargarán la versión nueva inmediatamente.', 'success');
+    }
+
+    const btnTopbarRefresh = document.getElementById('btn-topbar-force-refresh');
+    if (btnTopbarRefresh) btnTopbarRefresh.addEventListener('click', triggerDeviceForceRefresh);
+
+    const btnGlobalRefresh = document.getElementById('btn-force-cache-clear-global');
+    if (btnGlobalRefresh) btnGlobalRefresh.addEventListener('click', triggerDeviceForceRefresh);
+
+    // Vista previa de imagen al editar insumo
+    const prodImgInput = document.getElementById('prod-image-url');
+    if (prodImgInput) {
+      prodImgInput.addEventListener('input', (e) => {
+        const prev = document.getElementById('prod-image-preview');
+        if (prev) prev.src = e.target.value.trim() || 'logo-yolo.png';
       });
     }
 
