@@ -16,7 +16,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="styles.css?v=20261023c">
   <style>
     /* Estilos Luxury Backoffice Tiendas Yolo */
     :root {
@@ -570,10 +571,7 @@
         <span id="topbar-cloud-text">Sheets Online</span>
       </div>
 
-      <!-- Botón Mostrador / POS Express (Tienda Física) -->
-      <button type="button" class="admin-circle-btn btn-fast-order" id="btn-topbar-fast-order" title="🏪 Mostrador Tienda Física (Venta Express)">
-        🏪
-      </button>
+
 
       <!-- Botón Cierre de Caja Diario (Reporte Z) -->
       <button type="button" class="admin-circle-btn" id="btn-topbar-report-z" title="🧾 Cierre de Caja Diario (Reporte Z)">
@@ -776,6 +774,16 @@
     <!-- SUB-VISTA 4: FINANZAS COMPLETAS & FLUJO MULTI-DIVISA -->
     <div id="subtab-admin-finances" class="admin-subtab-content" style="display:none;">
       
+      <!-- BARRA DE FILTRO POR FECHAS CONTABLES -->
+      <div class="finance-date-filter-bar">
+        <span style="font-weight:700; font-size:0.88rem; color:var(--text-main);">📅 Período Contable:</span>
+        <button type="button" class="btn-filter-date active" data-period="today">Hoy</button>
+        <button type="button" class="btn-filter-date" data-period="week">Esta Semana</button>
+        <button type="button" class="btn-filter-date" data-period="month">Este Mes</button>
+        <button type="button" class="btn-filter-date" data-period="year">Este Año</button>
+        <button type="button" class="btn-filter-date" data-period="all">Histórico Completo</button>
+      </div>
+
       <!-- CUADRÍCULA MULTI-DIVISA -->
       <div class="finance-currencies-grid">
         <div class="currency-card pm-card">
@@ -1077,12 +1085,12 @@
 
           <div class="form-grid-2">
             <div class="form-group">
-              <label for="cfg-delivery-free-min" class="form-label">Mínimo para Delivery Gratis ($):</label>
-              <input type="number" step="0.50" id="cfg-delivery-free-min" class="form-input" value="15.00">
+              <label for="cfg-delivery-per-km" class="form-label">Tarifa Delivery por Km ($):</label>
+              <input type="number" step="0.10" id="cfg-delivery-per-km" class="form-input" value="0.50" readonly title="Tarifa oficial: $0.50 por km de recorrido">
             </div>
             <div class="form-group">
-              <label for="cfg-delivery-flat-fee" class="form-label">Tarifa Estándar Delivery ($):</label>
-              <input type="number" step="0.50" id="cfg-delivery-flat-fee" class="form-input" value="2.00">
+              <label for="cfg-store-gps" class="form-label">Coordenadas Sede Origen (GPS):</label>
+              <input type="text" id="cfg-store-gps" class="form-input" value="10.605420, -71.659259" readonly>
             </div>
           </div>
 
@@ -1175,7 +1183,7 @@
             </div>
             <div class="form-group">
               <label for="cfg-top-announcement" class="form-label">Barra Superior de Anuncio:</label>
-              <input type="text" id="cfg-top-announcement" class="form-input" value="Maracaibo: Delivery Gratis desde $15">
+              <input type="text" id="cfg-top-announcement" class="form-input" value="Maracaibo: Delivery por GPS a $0.50/km">
             </div>
           </div>
 
@@ -1335,57 +1343,7 @@
     </div>
   </div>
 
-  <!-- MODAL 1: MOSTRADOR RÁPIDO / POS EXPRESS -->
-  <div class="modal-overlay" id="modal-express-order" style="display:none;">
-    <div class="modal-window" style="max-width:550px;">
-      <div class="modal-header">
-        <h3 class="modal-title">🏪 Venta en Mostrador (POS)</h3>
-        <button class="close-modal-btn" data-close-modal="modal-express-order">✕</button>
-      </div>
-      <div class="modal-body">
-        <form id="form-express-order">
-          
-          <div class="form-group">
-            <label for="pos-client-name" class="form-label">Nombre de la Clienta / Manicurista: *</label>
-            <input type="text" id="pos-client-name" class="form-input" placeholder="Ej: Andrea Gómez (Salón Glow)" required>
-          </div>
-
-          <div class="form-group">
-            <label for="pos-select-product" class="form-label">Seleccionar Insumo: *</label>
-            <select id="pos-select-product" class="select-styled" required></select>
-          </div>
-
-          <div class="form-grid-2">
-            <div class="form-group">
-              <label for="pos-quantity" class="form-label">Cantidad: *</label>
-              <input type="number" id="pos-quantity" class="form-input" value="1" min="1" required>
-            </div>
-            <div class="form-group">
-              <label for="pos-payment-method" class="form-label">Método de Pago: *</label>
-              <select id="pos-payment-method" class="select-styled" required>
-                <option value="Efectivo $">💵 Efectivo Dólares ($)</option>
-                <option value="Pago Móvil">📲 Pago Móvil Banesco (Bs)</option>
-                <option value="Binance">🟡 Binance Pay ($ USDT)</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Total Estimado -->
-          <div style="background:var(--bg-subtle); border:1px solid var(--border-rose); border-radius:var(--radius-md); padding:14px; margin:14px 0; text-align:center;">
-            <div style="font-size:0.8rem; text-transform:uppercase; font-weight:700; color:var(--text-muted);">Total a Cobrar</div>
-            <div style="font-size:1.8rem; font-weight:800; color:var(--ty-primary);" id="pos-total-usd">$0.00</div>
-            <div style="font-size:0.95rem; font-weight:600; color:var(--text-secondary);" id="pos-total-bs">Bs. 0.00</div>
-          </div>
-
-          <div class="modal-footer-buttons">
-            <button type="button" class="btn-secondary" data-close-modal="modal-express-order">Cancelar</button>
-            <button type="submit" class="btn-primary">🛍️ Cobrar y Descontar Stock</button>
-          </div>
-
-        </form>
-      </div>
-    </div>
-  </div>
+  >
 
   <!-- MODAL 2: CIERRE DE CAJA DIARIO (REPORTE Z) -->
   <div class="modal-overlay" id="modal-daily-close-report" style="display:none;">
@@ -1761,6 +1719,6 @@
   <div id="toast-notification-container" class="toast-container"></div>
 
   <!-- SCRIPT PRIVADO DEL PANEL DE GESTIÓN -->
-  <script src="admin.js"></script>
+  <script src="admin.js?v=20261023c"></script>
 </body>
 </html>
