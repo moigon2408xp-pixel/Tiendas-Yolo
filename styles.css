@@ -136,11 +136,11 @@ button {
    BARRA SUPERIOR INFORMATIVA & TASA
    ============================================================================ */
 .top-info-bar {
-  background: linear-gradient(90deg, #4a0e2e, #ea6fbf, #8e285f);
+  background: #ea6fbf;
   color: var(--text-white);
   padding: 6px 16px;
   font-size: 0.82rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   z-index: 100;
 }
 
@@ -478,7 +478,7 @@ body.theme-dark .help-btn {
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  background: linear-gradient(135deg, #ea6fbf, #8e285f);
+  background: var(--ty-primary);
   color: var(--text-white);
   border-radius: var(--radius-pill);
   font-weight: 700;
@@ -548,15 +548,15 @@ body.theme-dark .help-btn {
    HERO BANNER GLAMOUR
    ============================================================================ */
 .hero-glam-card {
-  background: linear-gradient(135deg, #b82375 0%, #d83d94 28%, #ea6fbf 68%, #f48ecf 100%);
+  background: #ea6fbf;
   color: var(--text-white);
   border-radius: var(--radius-lg);
   padding: 36px 40px;
   margin-bottom: 28px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 10px 32px rgba(234, 111, 191, 0.35), 0 4px 12px rgba(184, 35, 117, 0.25);
-  border: 1px solid rgba(244, 142, 207, 0.45);
+  box-shadow: 0 10px 32px rgba(234, 111, 191, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .hero-glam-card::before {
@@ -2314,38 +2314,51 @@ body.theme-dark .card-heading {
   }
 
   /* Impresión limpia exclusiva del Reporte Z (Cierre de Caja Diario) */
-  body.printing-report-z-only * {
-    visibility: hidden !important;
+  body.printing-report-z-only {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
   }
-  body.printing-report-z-only #modal-daily-close-report,
-  body.printing-report-z-only #modal-daily-close-report .receipt-ticket-z,
-  body.printing-report-z-only #modal-daily-close-report .receipt-ticket-z * {
-    visibility: visible !important;
+  body.printing-report-z-only > *:not(#modal-daily-close-report) {
+    display: none !important;
   }
   body.printing-report-z-only #modal-daily-close-report {
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
+    display: block !important;
+    position: static !important;
     width: 100% !important;
+    height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
-    display: block !important;
+    box-shadow: none !important;
+    inset: auto !important;
+  }
+  body.printing-report-z-only #modal-daily-close-report .modal-content,
+  body.printing-report-z-only #modal-daily-close-report .modal-inner {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
   }
   body.printing-report-z-only .receipt-ticket-z {
+    display: block !important;
     position: relative !important;
     margin: 0 auto !important;
-    max-width: 360px !important;
+    width: 330px !important;
+    max-width: 100% !important;
     box-shadow: none !important;
-    border: 1px dashed #444 !important;
+    border: 1px dashed #333 !important;
     page-break-after: avoid !important;
     page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
   body.printing-report-z-only .modal-header,
-  body.printing-report-z-only .modal-footer {
+  body.printing-report-z-only .modal-footer,
+  body.printing-report-z-only .close-modal-btn {
     display: none !important;
   }
-
   /* Impresión limpia de Nota de Entrega para clientes */
   body.printing-delivery-note * {
     visibility: hidden !important;
@@ -3920,5 +3933,213 @@ body.theme-dark .admin-tab-btn.active {
   background: #ea6fbf !important;
   color: #ffffff !important;
 }
+
+/* ============================================================================
+   REDES SOCIALES ESTILO CREACIONES JJ (ICONOS FLOTANTES CON HOVER DE COLOR)
+   ============================================================================ */
+.bio-social-bar {
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.bio-social-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 1.5px solid rgba(234, 111, 191, 0.35);
+  color: var(--ty-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  text-decoration: none;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.bio-social-icon i {
+  transition: transform 0.25s ease, color 0.25s ease;
+  line-height: 1;
+}
+
+.bio-social-icon:hover {
+  transform: translateY(-4px) scale(1.12);
+  color: #ffffff !important;
+}
+
+.bio-social-icon:hover i {
+  transform: scale(1.15);
+  color: #ffffff !important;
+}
+
+/* Hover interactivo exacto con la paleta de marca de cada red social */
+.bio-social-icon.wa:hover {
+  background: #25D366 !important;
+  border-color: #25D366 !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 22px rgba(37, 211, 102, 0.5) !important;
+}
+
+.bio-social-icon.ig:hover {
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%) !important;
+  border-color: transparent !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 22px rgba(214, 36, 159, 0.5) !important;
+}
+
+.bio-social-icon.tt:hover {
+  background: #010101 !important;
+  border-color: #fe2c55 !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 22px rgba(254, 44, 85, 0.5), 0 0 16px rgba(0, 242, 254, 0.45) !important;
+}
+
+.bio-social-icon.fb:hover {
+  background: #1877F2 !important;
+  border-color: #1877F2 !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 22px rgba(24, 119, 242, 0.5) !important;
+}
+
+.bio-social-icon.mail:hover {
+  background: #ea6fbf !important;
+  border-color: #ea6fbf !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 22px rgba(234, 111, 191, 0.55) !important;
+}
+
+/* Versión compacta para topbar */
+.bio-social-bar.mini-bar {
+  gap: 8px;
+}
+.bio-social-bar.mini-bar .bio-social-icon {
+  width: 30px;
+  height: 30px;
+  font-size: 0.95rem;
+  border-width: 1px;
+}
+
+/* Modo oscuro para redes sociales */
+body.theme-dark .bio-social-icon,
+html.theme-dark .bio-social-icon {
+  background: #240c1c;
+  border-color: rgba(234, 111, 191, 0.4);
+  color: #ea6fbf;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+/* ============================================================================
+   SELECTOR DE TONOS/COLORES EN PRODUCTOS (INSUSHOP MINIMAL SWATCHES)
+   ============================================================================ */
+.product-swatches-row {
+  margin: 6px 0 10px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.swatch-label {
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+}
+
+.swatch-label strong {
+  color: var(--ty-primary);
+  font-weight: 700;
+}
+
+.swatches-dots {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.swatch-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+  padding: 0;
+  outline: none;
+  position: relative;
+}
+
+.swatch-dot:hover {
+  transform: scale(1.25);
+}
+
+.swatch-dot.active {
+  transform: scale(1.28);
+  box-shadow: 0 0 0 2px var(--ty-primary), 0 2px 8px rgba(234, 111, 191, 0.45);
+}
+
+/* ============================================================================
+   BARRA DE FILTRO POR FECHAS CONTABLES (FINANZAS ADMIN)
+   ============================================================================ */
+.finance-date-filter-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+  background: var(--bg-card);
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+}
+
+.btn-filter-date {
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-rose);
+  background: var(--bg-surface);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: var(--trans-fast);
+}
+
+.btn-filter-date:hover {
+  background: var(--ty-butter-yellow-light);
+  border-color: var(--ty-butter-yellow-dark);
+}
+
+.btn-filter-date.active {
+  background: var(--ty-primary);
+  color: #ffffff;
+  border-color: var(--ty-primary);
+  box-shadow: 0 2px 8px rgba(234, 111, 191, 0.35);
+}
+
+body.theme-dark .finance-date-filter-bar,
+html.theme-dark .finance-date-filter-bar {
+  background: #200916;
+  border-color: rgba(212, 122, 148, 0.25);
+}
+
+body.theme-dark .btn-filter-date,
+html.theme-dark .btn-filter-date {
+  background: #2b0f20;
+  color: #fce7f3;
+  border-color: rgba(234, 111, 191, 0.3);
+}
+
+body.theme-dark .btn-filter-date.active,
+html.theme-dark .btn-filter-date.active {
+  background: var(--ty-primary);
+  color: #ffffff;
+}
+
 
 
