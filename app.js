@@ -10,7 +10,7 @@
 (function () {
   'use strict';
 
-  const STORAGE_KEY = 'TIENDAS_YOLO_DATA_V1';
+  const STORAGE_KEY = 'TIENDAS_YOLO_DATA_V2';
   const PROFILE_STORAGE_KEY = 'TY_CLIENT_PROFILE_V1';
   const EDITS_STORAGE_KEY = 'TY_LANDING_EDITS_V1';
   const ADMIN_PIN_DEFAULT = '2026';
@@ -26,147 +26,190 @@
   const SEED_PRODUCTS = [
     {
       id: "TY-PROD-001",
-      sku: "MY-CG-01",
-      nombre: "Esmalte M&Y Color Gel (Colección)",
-      categoria: "Esmaltes",
-      descripcion: "Esmalte semipermanente de alta pigmentación, secado UV/LED rápido y brillo duradero.",
-      precioUSD: 3.50,
-      costoUSD: 1.80,
-      stockActual: 48,
-      stockMinimo: 10,
-      unidad: "Unidad",
+      sku: "YOLO-001",
+      nombre: "Cat Eye MY (Colección Ojo de Gato)",
+      categoria: "Esmaltes Semipermanentes",
+      descripcion: "Esmalte semipermanente efecto ojo de gato magnético multidimensional. Alta densidad y brillo cristalino.",
+      precioUSD: 16.00,
+      costoUSD: 9.50,
+      stockActual: 30,
+      stockMinimo: 5,
+      unidad: "Colección",
       destacado: "SI",
       activo: "SI",
-      imagenURL: "logo-yolo.png"
+      imagenURL: "logo-yolo.png",
+      colores: [
+        { nombre: "01 Galaxia Rose", hex: "#e05297" },
+        { nombre: "02 Silver Star", hex: "#d1d5db" },
+        { nombre: "03 Deep Purple", hex: "#6b21a8" },
+        { nombre: "04 Golden Sun", hex: "#eab308" },
+        { nombre: "05 Emerald Green", hex: "#059669" }
+      ]
     },
     {
       id: "TY-PROD-002",
-      sku: "TY-BR-01",
-      nombre: "Base Rubber Tiendas Yolo 15ml",
-      categoria: "Esmaltes",
-      descripcion: "Base autonivelante de alta viscosidad para nivelación de uña natural y refuerzo contra quiebres.",
-      precioUSD: 4.50,
-      costoUSD: 2.20,
-      stockActual: 35,
-      stockMinimo: 8,
-      unidad: "Unidad",
+      sku: "YOLO-002",
+      nombre: "Jelly Gel MY (Esmaltes Translúcidos)",
+      categoria: "Esmaltes Semipermanentes",
+      descripcion: "Colección de esmaltes translúcidos efecto gelatina / vidrio coreano. Cobertura uniforme y brillo espejo.",
+      precioUSD: 10.00,
+      costoUSD: 5.50,
+      stockActual: 25,
+      stockMinimo: 5,
+      unidad: "Colección",
       destacado: "SI",
       activo: "SI",
-      imagenURL: "logo-yolo.png"
+      imagenURL: "logo-yolo.png",
+      colores: [
+        { nombre: "Jelly Cherry", hex: "#dc2626" },
+        { nombre: "Peach Pink", hex: "#fb7185" },
+        { nombre: "Berry Purple", hex: "#a855f7" },
+        { nombre: "Nude Caramel", hex: "#d97706" }
+      ]
     },
     {
       id: "TY-PROD-003",
-      sku: "TY-TC-01",
-      nombre: "Top Coat No Wipe Ultra Brillo 15ml",
-      categoria: "Esmaltes",
-      descripcion: "Sellador final sin capa de inhibición. Acabado cristal intacto hasta por 28 días.",
-      precioUSD: 4.00,
-      costoUSD: 2.00,
-      stockActual: 40,
-      stockMinimo: 10,
-      unidad: "Unidad",
+      sku: "YOLO-003",
+      nombre: "Colección Amatista x6 Geles",
+      categoria: "Esmaltes Semipermanentes",
+      descripcion: "Set de 6 tonos violetas y púrpuras semipermanentes ultra pigmentados para manicure de salón.",
+      precioUSD: 12.00,
+      costoUSD: 6.80,
+      stockActual: 20,
+      stockMinimo: 4,
+      unidad: "Set x6",
       destacado: "SI",
       activo: "SI",
       imagenURL: "logo-yolo.png"
     },
     {
       id: "TY-PROD-004",
-      sku: "TY-SG-01",
-      nombre: "Spider Gel Elástico (Blanco / Negro)",
-      categoria: "Geles y Acrílicos",
-      descripcion: "Gel elástico de alta densidad para trazos geométricos, líneas ultrafinas y nail art.",
+      sku: "YOLO-004",
+      nombre: "Finish Gel MY 15ml (Top Coat Extremo)",
+      categoria: "Esmaltes Semipermanentes",
+      descripcion: "Sellador final no wipe de alto impacto. No amarillea y mantiene el brillo impecable por más de 25 días.",
       precioUSD: 3.00,
-      costoUSD: 1.40,
-      stockActual: 25,
-      stockMinimo: 5,
+      costoUSD: 1.50,
+      stockActual: 60,
+      stockMinimo: 15,
+      unidad: "Unidad",
+      destacado: "SI",
+      activo: "SI",
+      imagenURL: "logo-yolo.png"
+    },
+    {
+      id: "TY-PROD-005",
+      sku: "YOLO-005",
+      nombre: "Top Coat Matte MY 15ml",
+      categoria: "Esmaltes Semipermanentes",
+      descripcion: "Sellador mate efecto terciopelo sedoso para acabados modernos y elegantes.",
+      precioUSD: 3.00,
+      costoUSD: 1.50,
+      stockActual: 40,
+      stockMinimo: 10,
       unidad: "Unidad",
       destacado: "NO",
       activo: "SI",
       imagenURL: "logo-yolo.png"
     },
     {
-      id: "TY-PROD-005",
-      sku: "TY-UVG-01",
-      nombre: "UV Gel Constructor Blanco / Clear 30g",
-      categoria: "Geles y Acrílicos",
-      descripcion: "Gel de construcción de alta consistencia para esculpido con moldes, tips y capping.",
-      precioUSD: 5.50,
-      costoUSD: 2.80,
-      stockActual: 20,
-      stockMinimo: 5,
-      unidad: "Unidad",
-      destacado: "SI",
-      activo: "SI",
-      imagenURL: "logo-yolo.png"
-    },
-    {
       id: "TY-PROD-006",
-      sku: "TY-KIT-01",
-      nombre: "Kit Principiante Manicurista Pro (Lámpara + 3 Esmaltes + Base + Top + Lima)",
-      categoria: "Kits",
-      descripcion: "Set completo para iniciarse en manicure semipermanente profesional. Incluye todo lo esencial.",
-      precioUSD: 22.00,
-      costoUSD: 12.50,
-      stockActual: 15,
-      stockMinimo: 3,
-      unidad: "Kit",
+      sku: "YOLO-006",
+      nombre: "Protein Bond KR (Deshidratador y Primer)",
+      categoria: "Preparadores",
+      descripcion: "Fórmula niveladora libre de ácido con keratina. Máxima adherencia sin dañar la uña natural.",
+      precioUSD: 2.00,
+      costoUSD: 1.00,
+      stockActual: 50,
+      stockMinimo: 12,
+      unidad: "Unidad",
       destacado: "SI",
       activo: "SI",
       imagenURL: "logo-yolo.png"
     },
     {
       id: "TY-PROD-007",
-      sku: "TY-PIN-01",
-      nombre: "Pincel Kolinsky #8 para Acrílico con Mango Strass",
-      categoria: "Pinceles y Herramientas",
-      descripcion: "Cerdas 100% pelo natural Kolinsky para control milimétrico de la perla acrílica.",
-      precioUSD: 7.50,
-      costoUSD: 3.80,
-      stockActual: 30,
-      stockMinimo: 6,
-      unidad: "Unidad",
+      sku: "YOLO-007",
+      nombre: "Uñas Postizas Decoradas con Piedras",
+      categoria: "Uñas Postizas Decoradas",
+      descripcion: "Set de uñas press-on listas para aplicar con cristalería incrustada y acabados de lujo.",
+      precioUSD: 1.50,
+      costoUSD: 0.70,
+      stockActual: 35,
+      stockMinimo: 8,
+      unidad: "Set",
       destacado: "SI",
       activo: "SI",
       imagenURL: "logo-yolo.png"
     },
     {
       id: "TY-PROD-008",
-      sku: "TY-LAMP-01",
-      nombre: "Lámpara LED UV Sun X5 Plus 54W Sensor Smart",
-      categoria: "Lámparas y Equipos",
-      descripcion: "Secado ultra rápido en 10s con 36 perlas LED de luz blanca inofensiva para los ojos.",
-      precioUSD: 14.00,
-      costoUSD: 8.00,
-      stockActual: 18,
-      stockMinimo: 4,
-      unidad: "Unidad",
+      sku: "YOLO-008",
+      nombre: "Set de Pinceles para Gel UV & Polygel",
+      categoria: "Pinceles",
+      descripcion: "Pinceles de corte plano y lengua de gato para aplicación precisa de sistemas artificiales.",
+      precioUSD: 2.00,
+      costoUSD: 0.90,
+      stockActual: 45,
+      stockMinimo: 10,
+      unidad: "Set",
       destacado: "SI",
       activo: "SI",
       imagenURL: "logo-yolo.png"
     },
     {
       id: "TY-PROD-009",
-      sku: "TY-TIP-01",
-      nombre: "Tips Soft Gel Almendra / Stiletto (500 unds)",
-      categoria: "Geles y Acrílicos",
-      descripcion: "Cápsulas preformadas flexibles de cobertura completa para extensiones ultra resistentes.",
-      precioUSD: 5.00,
-      costoUSD: 2.10,
-      stockActual: 28,
+      sku: "YOLO-009",
+      nombre: "Punteros Dotting Tools Nail Art (x5)",
+      categoria: "Herramientas",
+      descripcion: "5 herramientas de doble punta con esferas metálicas para mandalas, puntos y flores.",
+      precioUSD: 2.00,
+      costoUSD: 0.85,
+      stockActual: 30,
       stockMinimo: 6,
-      unidad: "Caja",
-      destacado: "SI",
+      unidad: "Set x5",
+      destacado: "NO",
       activo: "SI",
       imagenURL: "logo-yolo.png"
     },
     {
       id: "TY-PROD-010",
-      sku: "TY-LIQ-01",
-      nombre: "Uña de Hierro / Endurecedor Nutritivo 15ml",
-      categoria: "Líquidos y Preparación",
-      descripcion: "Tratamiento intensivo con calcio y queratina para recuperar uñas maltratadas o escamadas.",
-      precioUSD: 3.00,
-      costoUSD: 1.30,
+      sku: "YOLO-010",
+      nombre: "Pinceles Liner Ultrafinos Nail Art (x3)",
+      categoria: "Pinceles",
+      descripcion: "Set de 3 liners de precisión (7mm, 9mm, 11mm) para líneas francesas y trazos finos.",
+      precioUSD: 2.00,
+      costoUSD: 0.90,
+      stockActual: 40,
+      stockMinimo: 8,
+      unidad: "Set x3",
+      destacado: "SI",
+      activo: "SI",
+      imagenURL: "logo-yolo.png"
+    },
+    {
+      id: "TY-PROD-011",
+      sku: "YOLO-011",
+      nombre: "Pestañas Corridas Efecto 3D/5D",
+      categoria: "Otros",
+      descripcion: "Pestañas postizas en tira con banda flexible y efecto volumen ruso natural.",
+      precioUSD: 2.00,
+      costoUSD: 0.80,
+      stockActual: 50,
+      stockMinimo: 10,
+      unidad: "Par",
+      destacado: "NO",
+      activo: "SI",
+      imagenURL: "logo-yolo.png"
+    },
+    {
+      id: "TY-PROD-012",
+      sku: "YOLO-012",
+      nombre: "Aceite de Cutícula Nutritivo MY",
+      categoria: "Preparadores",
+      descripcion: "Aceite aromático con gotero y vitaminas para sellar y nutrir la piel post manicura.",
+      precioUSD: 1.50,
+      costoUSD: 0.70,
       stockActual: 45,
       stockMinimo: 10,
       unidad: "Unidad",
@@ -175,32 +218,164 @@
       imagenURL: "logo-yolo.png"
     },
     {
-      id: "TY-PROD-011",
-      sku: "TY-PEST-01",
-      nombre: "Pestañas Magnéticas + Delineador y Aplicador",
-      categoria: "Pestañas y Belleza",
-      descripcion: "Colocación rápida sin pegamento en segundos, efecto volumen natural y reutilizables.",
-      precioUSD: 6.50,
-      costoUSD: 3.20,
-      stockActual: 22,
-      stockMinimo: 5,
-      unidad: "Kit",
+      id: "TY-PROD-013",
+      sku: "YOLO-013",
+      nombre: "Lima Sponge Pulidora 100/180",
+      categoria: "Limas",
+      descripcion: "Bloque amortiguado de grano fino para abrir canales de adherencia y suavizar bordes.",
+      precioUSD: 1.00,
+      costoUSD: 0.45,
+      stockActual: 100,
+      stockMinimo: 20,
+      unidad: "Unidad",
       destacado: "SI",
       activo: "SI",
       imagenURL: "logo-yolo.png"
     },
     {
-      id: "TY-PROD-012",
-      sku: "TY-DEC-01",
-      nombre: "Piedra Volcánica & Cristales de Cristal Aurora",
-      categoria: "Decoración",
-      descripcion: "Surtido de piedras facetadas con brillo multicolor para pedrería en uñas y encapsulados.",
+      id: "TY-PROD-014",
+      sku: "YOLO-014",
+      nombre: "Lima Profesional Zebra 80/80",
+      categoria: "Limas",
+      descripcion: "Lima de grano extra fuerte para rebajar acrílico, polygel y dar forma a puntas estructurales.",
+      precioUSD: 0.50,
+      costoUSD: 0.22,
+      stockActual: 120,
+      stockMinimo: 25,
+      unidad: "Unidad",
+      destacado: "SI",
+      activo: "SI",
+      imagenURL: "logo-yolo.png"
+    },
+    {
+      id: "TY-PROD-015",
+      sku: "YOLO-015",
+      nombre: "Tips Softgel x240 Preformados",
+      categoria: "Tips Uñas Jelly/softgel",
+      descripcion: "Caja de 240 cápsulas de gel flexibles (coffin, almendra o stiletto) de cobertura completa.",
+      precioUSD: 7.00,
+      costoUSD: 3.90,
+      stockActual: 30,
+      stockMinimo: 6,
+      unidad: "Caja x240",
+      destacado: "SI",
+      activo: "SI",
+      imagenURL: "logo-yolo.png"
+    },
+    {
+      id: "TY-PROD-016",
+      sku: "YOLO-016",
+      nombre: "UV Builder Gel MY 30g Constructor",
+      categoria: "Geles",
+      descripcion: "Gel constructor autonivelante de alta viscosidad para esculpido con moldes y tips.",
       precioUSD: 2.50,
-      costoUSD: 1.00,
+      costoUSD: 1.20,
+      stockActual: 35,
+      stockMinimo: 8,
+      unidad: "Unidad",
+      destacado: "SI",
+      activo: "SI",
+      imagenURL: "logo-yolo.png"
+    },
+    {
+      id: "TY-PROD-017",
+      sku: "YOLO-017",
+      nombre: "Rubber Base Nude & Shimmer MY 15ml",
+      categoria: "Esmaltes Semipermanentes",
+      descripcion: "Base niveladora con color para fortalecer uñas débiles y dar estructura tipo kapping.",
+      precioUSD: 2.00,
+      costoUSD: 0.95,
       stockActual: 50,
-      stockMinimo: 10,
-      unidad: "Cajita",
+      stockMinimo: 12,
+      unidad: "Unidad",
+      destacado: "SI",
+      activo: "SI",
+      imagenURL: "logo-yolo.png",
+      colores: [
+        { nombre: "Cover Nude", hex: "#e2b39c" },
+        { nombre: "Milky White", hex: "#f3f4f6" },
+        { nombre: "Soft Pink", hex: "#fbcfe8" },
+        { nombre: "Shimmer Rose", hex: "#f472b6" }
+      ]
+    },
+    {
+      id: "TY-PROD-018",
+      sku: "YOLO-018",
+      nombre: "Spider Gel Elástico para Nail Art",
+      categoria: "Decoraciones",
+      descripcion: "Gel elástico de máxima densidad para trazos geométricos perfectos y telaraña.",
+      precioUSD: 2.00,
+      costoUSD: 0.90,
+      stockActual: 30,
+      stockMinimo: 6,
+      unidad: "Unidad",
       destacado: "NO",
+      activo: "SI",
+      imagenURL: "logo-yolo.png",
+      colores: [
+        { nombre: "Negro Intenso", hex: "#111827" },
+        { nombre: "Blanco Puro", hex: "#ffffff" },
+        { nombre: "Oro Metálico", hex: "#ca8a04" },
+        { nombre: "Plata Brillo", hex: "#9ca3af" }
+      ]
+    },
+    {
+      id: "TY-PROD-019",
+      sku: "YOLO-019",
+      nombre: "Polvo Aurora Efecto Espejo Unicornio",
+      categoria: "Decoraciones",
+      descripcion: "Pigmento micronizado con aplicador de esponja para efecto tornasol / espejo sobre gel.",
+      precioUSD: 2.50,
+      costoUSD: 1.10,
+      stockActual: 25,
+      stockMinimo: 5,
+      unidad: "Unidad",
+      destacado: "SI",
+      activo: "SI",
+      imagenURL: "logo-yolo.png"
+    },
+    {
+      id: "TY-PROD-020",
+      sku: "YOLO-020",
+      nombre: "Drill Torno Profesional 45.000 RPM",
+      categoria: "Herramientas",
+      descripcion: "Pulidor eléctrico profesional recargable para retiro express y manicura rusa. Ultra silencioso.",
+      precioUSD: 43.00,
+      costoUSD: 26.00,
+      stockActual: 10,
+      stockMinimo: 2,
+      unidad: "Equipo",
+      destacado: "SI",
+      activo: "SI",
+      imagenURL: "logo-yolo.png"
+    },
+    {
+      id: "TY-PROD-021",
+      sku: "YOLO-021",
+      nombre: "Mini Lámpara Jelly Flash Curing LED",
+      categoria: "Herramientas",
+      descripcion: "Lámpara de mano tipo linterna para precurado y fijación instantánea de tips softgel.",
+      precioUSD: 8.00,
+      costoUSD: 4.50,
+      stockActual: 18,
+      stockMinimo: 4,
+      unidad: "Unidad",
+      destacado: "SI",
+      activo: "SI",
+      imagenURL: "logo-yolo.png"
+    },
+    {
+      id: "TY-PROD-022",
+      sku: "YOLO-022",
+      nombre: "Lámpara UV/LED Sun 168W Secado Rápido",
+      categoria: "Herramientas",
+      descripcion: "Cabina profesional de 168W con temporizador inteligente y base desmontable para pedicura.",
+      precioUSD: 18.00,
+      costoUSD: 10.50,
+      stockActual: 12,
+      stockMinimo: 3,
+      unidad: "Equipo",
+      destacado: "SI",
       activo: "SI",
       imagenURL: "logo-yolo.png"
     }
@@ -221,9 +396,9 @@
 
   // Coordenadas oficiales de Tiendas Yolo Maracaibo (Centro / 5 de Julio)
   const STORE_LOCATION = {
-    name: "Tiendas Yolo® Maracaibo",
-    lat: 10.6427,
-    lng: -71.6125
+    name: "Tiendas Yolo® Maracaibo (Barrio Nueva Independencia)",
+    lat: 10.60542008723256,
+    lng: -71.6592591041028
   };
 
   // Fórmula de Haversine para cálculo de distancia en línea recta precisa
@@ -257,20 +432,14 @@
     return null;
   }
 
-  // Tarificador de Delivery dinámico por distancia (Estilo Yummy)
-  function getDeliveryFeeByKm(km, subtotalUSD) {
-    if (subtotalUSD >= Number(state.config.deliveryFreeMinUSD || 15.00)) {
-      return 0.00; // ¡GRATIS por compra mayor o igual a $15!
-    }
+  // Tarificador de Delivery por kilometraje oficial: $0.50/km (Desde coordenadas de origen)
+  function getDeliveryFeeByKm(km) {
     if (km === null || km === undefined || isNaN(km)) {
-      return Number(state.config.deliveryFlatFeeUSD || 2.50);
+      return 1.50; // Tarifa referencial estimada
     }
-    if (km <= 3.0) return 1.50;      // Zona Cercana (Centro, 5 de Julio, Casco)
-    if (km <= 6.0) return 2.50;      // Zona Media (Bella Vista, Indio Mara, La Lago)
-    if (km <= 10.0) return 3.50;     // Zona Ampliada (La Limpia, Delicias Norte, Cumbres)
-    if (km <= 15.0) return 4.50;     // Zona Periférica (San Francisco, Milagro Norte)
-    // Más de 15 km: base $5.00 + $0.50 por km adicional
-    return 5.00 + (Math.ceil(km - 15) * 0.50);
+    // 0.50$ por kilometro de recorrido desde el punto de origen
+    const calculated = Math.round(km * 0.50 * 100) / 100;
+    return Math.max(1.00, calculated);
   }
 
   const state = {
@@ -284,6 +453,7 @@
     searchQuery: '',
     sortCriteria: 'featured',
     cardQuantities: {},
+    selectedColors: {},
     isEditMode: false,
     deferredPwaPrompt: null,
     currentPaymentOrder: null,
@@ -530,14 +700,21 @@
 
   function getCategoryIcon(cat) {
     const map = {
-      'Esmaltes': '✨',
+      'Esmaltes Semipermanentes': '💅',
+      'Preparadores': '💧',
+      'Uñas Postizas Decoradas': '✨',
+      'Pinceles': '🖌️',
+      'Otros': '🎀',
+      'Limas': '🪄',
+      'Tips Uñas Jelly/softgel': '💎',
+      'Geles': '🧪',
+      'Decoraciones': '🌟',
+      'Herramientas': '⚙️',
+      'Esmaltes': '💅',
       'Geles y Acrílicos': '💎',
       'Pinceles y Herramientas': '🖌️',
       'Lámparas y Equipos': '💡',
-      'Kits': '🎁',
-      'Líquidos y Preparación': '🌸',
-      'Pestañas y Belleza': '👁️',
-      'Decoración': '🔮'
+      'Kits': '🎁'
     };
     return map[cat] || '💅';
   }
@@ -636,6 +813,20 @@
             <span class="product-category">${p.categoria || 'Insumo'}</span>
             <h4 class="product-title" title="${p.nombre}">${p.nombre}</h4>
             <p class="product-desc">${p.descripcion || ''}</p>
+            ${(p.colores && p.colores.length > 0) ? `
+              <div class="product-swatches-row">
+                <span class="swatch-label">Tono: <strong>${(p.colores[state.selectedColors[p.id] || 0] || p.colores[0]).nombre}</strong></span>
+                <div class="swatches-dots">
+                  ${p.colores.map((c, idx) => `
+                    <button type="button" class="swatch-dot ${(state.selectedColors[p.id] || 0) === idx ? 'active' : ''}" 
+                            style="background-color: ${c.hex};" 
+                            title="${c.nombre}" 
+                            onclick="window.YoloApp.selectProductColor('${p.id}', ${idx}, event)">
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
 
             <div class="product-price-row">
               <span class="price-usd">$${priceUSD.toFixed(2)}</span>
@@ -2370,6 +2561,11 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
   // EXPOSICIÓN GLOBAL PARA BOTONES EN EL DOM
   // ============================================================================
   window.YoloApp = {
+    selectProductColor: function(prodId, colorIdx, e) {
+      if (e) e.stopPropagation();
+      state.selectedColors[prodId] = colorIdx;
+      renderProducts();
+    },
     adjustCardQty,
     addToCart,
     updateCartItemQty,
