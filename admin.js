@@ -9,7 +9,7 @@
 (function () {
   'use strict';
 
-  const STORAGE_KEY = 'TIENDAS_YOLO_DATA_V1';
+  const STORAGE_KEY = 'TIENDAS_YOLO_DATA_V2';
   const PIN_SESSION_KEY = 'TY_ADMIN_AUTH';
   const DEFAULT_SHEETS_URL = "https://script.google.com/macros/s/AKfycby7q4Lyy_RF3qFjW2jdzKVqKQHODW2tMTBEBbG4EcFXosdrzE_iOCxeodVWYis0_-1QCQ/exec";
   const BCV_API_URL = "https://ve.dolarapi.com/v1/dolares/oficial";
@@ -691,6 +691,33 @@
     });
   }
 
+  // Filtro de fechas contables
+  function matchesFinancePeriod(dateStr, period) {
+    if (!period || period === 'all') return true;
+    if (!dateStr) return true;
+    const now = new Date();
+    let d;
+    if (dateStr.includes('/')) {
+      const parts = dateStr.split('/');
+      d = new Date(parts[2], parts[1] - 1, parts[0]);
+    } else {
+      d = new Date(dateStr);
+    }
+    if (isNaN(d.getTime())) return true;
+
+    if (period === 'today') {
+      return d.toDateString() === now.toDateString();
+    } else if (period === 'week') {
+      const diffDays = (now - d) / (1000 * 60 * 60 * 24);
+      return diffDays >= 0 && diffDays <= 7;
+    } else if (period === 'month') {
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    } else if (period === 'year') {
+      return d.getFullYear() === now.getFullYear();
+    }
+    return true;
+  }
+
   // FINANZAS MULTIDIVISA & LIBRO DIARIO
   function renderFinancesTable(filterQuery = '') {
     const tbody = document.getElementById('finances-table-body');
@@ -698,15 +725,19 @@
 
     const rate = Number(state.config.rateBCV || 883.40);
 
-    // Balances Multi-divisa
-    const pmEntries = state.finances.filter(f => f.cuentaMetodo === 'Pago Móvil');
+    // Período contable seleccionado
+    const period = state.financeDatePeriod || 'today';
+    const periodFinances = state.finances.filter(f => matchesFinancePeriod(f.fecha, period));
+
+    // Balances Multi-divisa en el período
+    const pmEntries = periodFinances.filter(f => f.cuentaMetodo === 'Pago Móvil');
     const pmUSD = pmEntries.reduce((s, f) => f.tipo === 'Ingreso' ? s + Number(f.montoUSD || 0) : s - Number(f.montoUSD || 0), 0);
     const pmBs = pmUSD * rate;
 
-    const cashEntries = state.finances.filter(f => f.cuentaMetodo === 'Efectivo $');
+    const cashEntries = periodFinances.filter(f => f.cuentaMetodo === 'Efectivo $');
     const cashUSD = cashEntries.reduce((s, f) => f.tipo === 'Ingreso' ? s + Number(f.montoUSD || 0) : s - Number(f.montoUSD || 0), 0);
 
-    const binanceEntries = state.finances.filter(f => f.cuentaMetodo === 'Binance');
+    const binanceEntries = periodFinances.filter(f => f.cuentaMetodo === 'Binance');
     const binanceUSD = binanceEntries.reduce((s, f) => f.tipo === 'Ingreso' ? s + Number(f.montoUSD || 0) : s - Number(f.montoUSD || 0), 0);
 
     const curPmUsdEl = document.getElementById('cur-pm-usd');
@@ -719,10 +750,10 @@
     const curBinanceUsdEl = document.getElementById('cur-binance-usd');
     if (curBinanceUsdEl) curBinanceUsdEl.textContent = `$${binanceUSD.toFixed(2)}`;
 
-    // Resumen de Ganancias y Margen
-    const totalIn = state.finances.filter(f => f.tipo === 'Ingreso').reduce((s, f) => s + Number(f.montoUSD || 0), 0);
-    const totalCogs = state.finances.filter(f => f.tipo === 'Costo').reduce((s, f) => s + Number(f.montoUSD || 0), 0);
-    const totalExpenses = state.finances.filter(f => f.tipo === 'Gasto').reduce((s, f) => s + Number(f.montoUSD || 0), 0);
+    // Resumen de Ganancias y Margen en el período
+    const totalIn = periodFinances.filter(f => f.tipo === 'Ingreso').reduce((s, f) => s + Number(f.montoUSD || 0), 0);
+    const totalCogs = periodFinances.filter(f => f.tipo === 'Costo').reduce((s, f) => s + Number(f.montoUSD || 0), 0);
+    const totalExpenses = periodFinances.filter(f => f.tipo === 'Gasto').reduce((s, f) => s + Number(f.montoUSD || 0), 0);
     const net = totalIn - (totalCogs + totalExpenses);
     const netPct = totalIn > 0 ? ((net / totalIn) * 100).toFixed(1) : 0;
 
@@ -741,7 +772,7 @@
     renderExpenseCategoryBreakdown(totalCogs + totalExpenses);
 
     // Filtro de Tabla
-    let filtered = state.finances;
+    let filtered = periodFinances;
     if (filterQuery.trim() !== '') {
       const q = filterQuery.toLowerCase();
       filtered = filtered.filter(f => 
@@ -1017,9 +1048,14 @@
           <span>Pedidos: <strong>${c.totalPedidos || 1}</strong></span>
           <span>Invertido: <strong>$${(c.totalCompradoUSD || 0).toFixed(2)}</strong></span>
         </div>
-        <button class="btn-whatsapp-outline" style="justify-content:center; padding:8px 12px; font-size:0.84rem;" data-action="chat-client" data-phone="${c.telefono}">
-          💬 Escribir por WhatsApp
-        </button>
+        <div style="display:flex; gap:8px;">
+          <button class="btn-whatsapp-outline" style="flex:1; justify-content:center; padding:8px 12px; font-size:0.84rem;" data-action="chat-client" data-phone="${c.telefono}">
+            💬 WhatsApp
+          </button>
+          <button class="btn-action-icon" style="background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; border-radius:var(--radius-sm); padding:6px 12px; cursor:pointer;" data-action="delete-client" data-id="${c.id || c.telefono}" title="Eliminar clienta del CRM">
+            🗑️
+          </button>
+        </div>
       </div>
     `).join('');
 
@@ -1028,6 +1064,18 @@
         let phone = btn.dataset.phone.replace(/\D/g, '');
         if (!phone.startsWith('58')) phone = '58' + phone.replace(/^0+/, '');
         window.open(`https://wa.me/${phone}?text=${encodeURIComponent('💅 ¡Hola! Te escribimos de Tiendas Yolo para saludarte y compartirte nuestras promociones en insumos para uñas del día.')}`, '_blank');
+      });
+    });
+
+    container.querySelectorAll('[data-action="delete-client"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.dataset.id;
+        if (confirm('¿Deseas eliminar a esta clienta del CRM permanentemente?')) {
+          state.clients = state.clients.filter(c => (c.id || c.telefono) !== targetId);
+          saveData();
+          showToast('Clienta eliminada con éxito del CRM', 'info');
+          renderClientsGrid();
+        }
       });
     });
   }
@@ -1578,13 +1626,15 @@
     const btnTheme = document.getElementById('btn-toggle-theme');
     if (btnTheme) {
       btnTheme.addEventListener('click', () => {
-        document.body.classList.toggle('theme-dark');
-        localStorage.setItem('TY_THEME', document.body.classList.contains('theme-dark') ? 'dark' : 'light');
+        const isDark = document.body.classList.toggle('theme-dark');
+        document.documentElement.classList.toggle('theme-dark', isDark);
+        localStorage.setItem('TY_THEME', isDark ? 'dark' : 'light');
       });
     }
 
     if (localStorage.getItem('TY_THEME') === 'dark') {
       document.body.classList.add('theme-dark');
+      document.documentElement.classList.add('theme-dark');
     }
 
     // Tabs
@@ -1733,9 +1783,12 @@
       btnPrintZ.addEventListener('click', () => {
         document.body.classList.add('printing-report-z-only');
         window.print();
+        window.addEventListener('afterprint', () => {
+          document.body.classList.remove('printing-report-z-only');
+        }, { once: true });
         setTimeout(() => {
           document.body.classList.remove('printing-report-z-only');
-        }, 1000);
+        }, 2000);
       });
     }
 
