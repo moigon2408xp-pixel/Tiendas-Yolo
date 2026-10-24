@@ -103,13 +103,13 @@
   const ADMIN_USERS = {
     carlos: {
       id: 'carlos',
-      name: '👑 Carlos Murillo (Dueño / Fundador)',
+      name: '👑 Carlos Morillo (Dueño / Fundador)',
       role: 'Dirección General & Propietario',
       pin: '1234'
     },
-    yaceli: {
-      id: 'yaceli',
-      name: '👑 Yaceli Beltrán (Dueña / Fundadora)',
+    iyasely: {
+      id: 'iyasely',
+      name: '👑 Iyasely Beltran (Dueña / Fundadora)',
       role: 'Dirección General & Propietaria',
       pin: '1234'
     },
@@ -120,6 +120,8 @@
       pin: '2026'
     }
   };
+  // Compatibilidad con sesiones previas
+  ADMIN_USERS.yaceli = ADMIN_USERS.iyasely;
 
   function checkAuthentication() {
     const isAuth = sessionStorage.getItem(PIN_SESSION_KEY);
