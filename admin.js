@@ -1916,7 +1916,7 @@
         const qId = document.getElementById('print-quote-id').textContent;
         const cName = document.getElementById('print-client-name').textContent;
         const tUSD = document.getElementById('print-quote-grand-usd').textContent;
-        const text = encodeURIComponent(`💅 *TIENDAS YOLO® — COTIZACIÓN FORMAL*\n📄 *ID:* ${qId}\n👤 *Cliente:* ${cName}\n💎 *TOTAL:* ${tUSD}\n_Validez: 7 días continuos. Delivery en Maracaibo por kilometraje GPS ($0.50/km desde Urb. El Trébol)._`);
+        const text = encodeURIComponent(`💅 *TIENDAS YOLO® — COTIZACIÓN FORMAL*\n📄 *ID:* ${qId}\n👤 *Cliente:* ${cName}\n💎 *TOTAL:* ${tUSD}\n_Validez: 7 días continuos. Delivery en Maracaibo según dirección de entrega._`);
         window.open(`https://wa.me/?text=${text}`, '_blank');
       });
     }
