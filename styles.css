@@ -881,8 +881,9 @@ body.theme-dark .catalog-section-title {
 }
 
 .product-image-container {
-  height: 200px;
-  background: linear-gradient(135deg, #fdf2f6, #fce7f0);
+  width: 100%;
+  height: 220px;
+  background: var(--bg-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -891,18 +892,43 @@ body.theme-dark .catalog-section-title {
 }
 
 body.theme-dark .product-image-container {
-  background: linear-gradient(135deg, #2b0b1d, #3d1028);
+  background: #1b0713;
 }
 
 .product-img {
-  max-height: 80%;
-  max-width: 80%;
-  object-fit: contain;
-  transition: transform var(--trans-smooth);
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
 }
 
 .product-card:hover .product-img {
   transform: scale(1.06);
+}
+
+.badge-tag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 5;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  letter-spacing: 0.02em;
+}
+
+.badge-tag.featured {
+  background: linear-gradient(135deg, #FFF9D2, #FFE57F);
+  color: #7c144e;
+  border: 1px solid rgba(229, 190, 78, 0.75);
 }
 
 .product-badges-top {
@@ -2624,8 +2650,8 @@ body.theme-dark .card-heading {
   }
 
   .product-image-container {
-    height: 130px !important;
-    padding: 6px;
+    height: 160px !important;
+    padding: 0 !important;
   }
 
   .product-details {
@@ -4839,6 +4865,75 @@ body.theme-dark .club-intro-card p {
   color: var(--text-muted);
   margin-top: 4px;
 }
+
+/* ============================================================================
+   ESTILOS GESTOR DE TONOS & FOTOS POR TONO (MODO EDITOR)
+   ============================================================================ */
+.pe-tone-row {
+  display: grid;
+  grid-template-columns: 36px 1fr 1fr 40px;
+  gap: 8px;
+  align-items: center;
+  background: var(--bg-subtle);
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+}
+
+.pe-tone-color {
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  background: transparent;
+  padding: 0;
+}
+
+.pe-tone-img-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pe-tone-thumb {
+  width: 34px;
+  height: 34px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--border-light);
+  flex-shrink: 0;
+}
+
+.btn-delete-tone {
+  background: #fee2e2;
+  color: #ef4444;
+  border: none;
+  border-radius: var(--radius-sm);
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: 700;
+  transition: background 0.2s ease;
+}
+
+.btn-delete-tone:hover {
+  background: #fecaca;
+}
+
+/* SVG ICONS LUXURY ALIGNMENT */
+.install-icon svg,
+.account-icon svg,
+.help-icon svg,
+.cart-icon svg,
+.search-icon svg {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
 
 
 
