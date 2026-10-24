@@ -4,7 +4,7 @@
  * ============================================================================
  */
 
-const CACHE_NAME = 'tiendas-yolo-cache-v6';
+const CACHE_NAME = 'tiendas-yolo-cache-v7';
 const STATIC_ASSETS = [
   './',
   './index.html',
