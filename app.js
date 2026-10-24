@@ -385,7 +385,7 @@
 
   const DEFAULT_CONFIG = {
     sheetsApiUrl: DEFAULT_SHEETS_URL,
-    rateBCV: 883.40,
+    rateBCV: 887.30,
     rateLastUpdated: new Date().toISOString(),
     whatsappNumber: "584146553430",
     deliveryFreeMinUSD: null,
@@ -546,7 +546,7 @@
   }
 
   function updateRateDisplay(isLive = false) {
-    const rate = Number(state.config.rateBCV || 886.23);
+    const rate = Number(state.config.rateBCV || 887.30);
     const rateEl = document.getElementById('top-rate-display');
     if (rateEl) {
       rateEl.innerHTML = `${isLive ? '🟢' : '💵'} Bs. ${rate.toFixed(2)} / $ ${isLive ? '<span style="font-size:0.7em; opacity:0.85;">(En Vivo BCV)</span>' : ''}`;
@@ -1030,7 +1030,7 @@
 
     const totalQty = state.cart.reduce((sum, item) => sum + item.quantity, 0);
     const subtotalUSD = state.cart.reduce((sum, item) => sum + (item.precioUSD * item.quantity), 0);
-    const rate = Number(state.config.rateBCV || 883.40);
+    const rate = Number(state.config.rateBCV || 887.30);
 
     const delTypeSelect = document.getElementById('cart-delivery-type');
     const delType = delTypeSelect ? delTypeSelect.value : 'delivery-maracaibo';
@@ -1145,6 +1145,19 @@
       return;
     }
 
+    // Verificación estricta de stock disponible para evitar sobreventa concurrente
+    loadData();
+    for (const item of state.cart) {
+      const prod = state.products.find(p => p.id === item.id);
+      const available = prod ? Number(prod.stockActual || 0) : 0;
+      if (!prod || available < item.quantity) {
+        alert(`⚠️ El insumo "${item.nombre}" se ha agotado o supera el stock disponible (${available} unidades en inventario). Por favor ajusta tu carrito.`);
+        showToast(`⚠️ Stock insuficiente para "${item.nombre}" (${available} disponibles)`, "error");
+        updateCartUI();
+        return;
+      }
+    }
+
     const clientName = document.getElementById('cart-client-name').value.trim();
     const clientPhone = document.getElementById('cart-client-phone').value.trim();
     const clientAddress = document.getElementById('cart-delivery-address').value.trim();
@@ -1165,7 +1178,7 @@
     }
 
     const totalUSD = subtotalUSD + deliveryUSD;
-    const rate = Number(state.config.rateBCV || 883.40);
+    const rate = Number(state.config.rateBCV || 887.30);
     const totalBs = totalUSD * rate;
     const coordsVal = document.getElementById('cart-delivery-coords') ? document.getElementById('cart-delivery-coords').value.trim() : '';
 
@@ -1214,6 +1227,21 @@
     if (!state.currentPaymentOrder) {
       alert("No hay una orden activa.");
       return;
+    }
+
+    // Doble verificación al momento exacto de procesar el pago para evitar sobreventa
+    loadData();
+    for (const item of (state.currentPaymentOrder.items || [])) {
+      const prod = state.products.find(p => p.id === item.id);
+      const available = prod ? Number(prod.stockActual || 0) : 0;
+      if (!prod || available < item.quantity) {
+        alert(`⚠️ Lo sentimos, el insumo "${item.nombre}" fue adquirido hace un momento y solo quedan ${available} unidades disponibles. Por favor ajusta tu pedido.`);
+        showToast(`⚠️ Stock agotado o insuficiente para "${item.nombre}"`, "error");
+        document.getElementById('modal-payment-auth').style.display = 'none';
+        document.getElementById('cart-drawer-modal').style.display = 'flex';
+        updateCartUI();
+        return;
+      }
     }
 
     const method = document.getElementById('pay-input-method').value;
@@ -1280,7 +1308,7 @@
   // ============================================================================
   function renderDeliveryNote(order) {
     if (!order) return;
-    const rate = Number(order.rateBCV || state.config.rateBCV || 883.40);
+    const rate = Number(order.rateBCV || state.config.rateBCV || 887.30);
     const totalBs = Number(order.totalBs || (order.totalUSD * rate));
 
     const setTxt = (id, val) => {
@@ -1478,7 +1506,7 @@
     }
 
     const subtotalUSD = items.reduce((sum, item) => sum + (Number(item.precioUSD) * item.quantity), 0);
-    const rate = Number(state.config.rateBCV || 883.40);
+    const rate = Number(state.config.rateBCV || 887.30);
     const subtotalBs = subtotalUSD * rate;
     const deliveryUSD = state.deliveryDistanceKm ? getDeliveryFeeByKm(state.deliveryDistanceKm) : 2.50;
     const grandUSD = subtotalUSD + deliveryUSD;
@@ -1585,6 +1613,16 @@
       document.getElementById('prof-display-phone').textContent = `WhatsApp: ${state.clientProfile.phone}`;
       document.getElementById('prof-display-address').textContent = `Dirección: ${state.clientProfile.address}`;
 
+      const profGps = document.getElementById('prof-display-gps');
+      if (profGps) {
+        if (state.clientProfile.gpsCoords) {
+          profGps.textContent = `📍 GPS Guardado: ${state.clientProfile.gpsCoords}`;
+          profGps.style.display = 'block';
+        } else {
+          profGps.textContent = '📍 GPS Guardado: Sin fijar';
+        }
+      }
+
       // Historial de órdenes de esta clienta
       const historyList = document.getElementById('account-orders-history-list');
       const myOrders = state.orders.filter(o => o.clientPhone === state.clientProfile.phone || o.clientName === state.clientProfile.name);
@@ -1605,6 +1643,17 @@
     } else {
       formView.style.display = 'block';
       profView.style.display = 'none';
+      if (state.clientProfile) {
+        if (document.getElementById('acc-input-name')) document.getElementById('acc-input-name').value = state.clientProfile.name || '';
+        if (document.getElementById('acc-input-phone')) document.getElementById('acc-input-phone').value = state.clientProfile.phone || '';
+        if (document.getElementById('acc-input-doc')) document.getElementById('acc-input-doc').value = state.clientProfile.doc || '';
+        if (document.getElementById('acc-input-salon')) document.getElementById('acc-input-salon').value = state.clientProfile.salon || '';
+        if (document.getElementById('acc-input-instagram')) document.getElementById('acc-input-instagram').value = state.clientProfile.instagram || '';
+        if (document.getElementById('acc-input-address')) document.getElementById('acc-input-address').value = state.clientProfile.address || '';
+        if (document.getElementById('acc-input-gps')) document.getElementById('acc-input-gps').value = state.clientProfile.gpsCoords || '';
+        const statusGps = document.getElementById('acc-gps-status');
+        if (statusGps) statusGps.textContent = state.clientProfile.gpsCoords ? "✅ Fijado" : "Sin fijar";
+      }
     }
 
     modal.style.display = 'flex';
@@ -1618,9 +1667,10 @@
     const salon = document.getElementById('acc-input-salon').value.trim();
     const instagram = document.getElementById('acc-input-instagram').value.trim();
     const address = document.getElementById('acc-input-address').value.trim();
+    const gpsCoords = document.getElementById('acc-input-gps') ? document.getElementById('acc-input-gps').value.trim() : '';
 
     state.clientProfile = {
-      name, phone, doc, salon, instagram, address,
+      name, phone, doc, salon, instagram, address, gpsCoords,
       level: '🌟 Manicurista VIP Yolo',
       ordersCount: (state.clientProfile && state.clientProfile.ordersCount) || 0
     };
@@ -1636,9 +1686,20 @@
     document.getElementById('cart-client-name').value = state.clientProfile.name || '';
     document.getElementById('cart-client-phone').value = state.clientProfile.phone || '';
     document.getElementById('cart-client-salon').value = state.clientProfile.salon || '';
-    document.getElementById('cart-client-delivery-address') && (document.getElementById('cart-client-delivery-address').value = state.clientProfile.address || '');
+    if (document.getElementById('cart-client-delivery-address')) {
+      document.getElementById('cart-client-delivery-address').value = state.clientProfile.address || '';
+    }
     document.getElementById('cart-delivery-address').value = state.clientProfile.address || '';
-    showToast("✨ Datos autocompletados desde tu perfil", "success");
+    if (state.clientProfile.gpsCoords) {
+      const coordsInput = document.getElementById('cart-delivery-coords');
+      if (coordsInput) {
+        coordsInput.value = state.clientProfile.gpsCoords;
+        if (typeof updateDeliveryDistanceCalc === 'function') {
+          updateDeliveryDistanceCalc();
+        }
+      }
+    }
+    showToast("✨ Datos y GPS autocompletados desde tu perfil", "success");
   }
 
   // ============================================================================
@@ -2242,7 +2303,7 @@
         state.deliveryCoords = `${coords.lat}, ${coords.lng}`;
         const km = calculateDistanceKm(STORE_LOCATION.lat, STORE_LOCATION.lng, coords.lat, coords.lng);
         const fee = getDeliveryFeeByKm(km);
-        const rate = Number(state.config.rateBCV || 883.40);
+        const rate = Number(state.config.rateBCV || 887.30);
         const feeBs = fee * rate;
 
         if (badgeGpsText) {
@@ -2308,7 +2369,7 @@
         const coords = document.getElementById('cart-delivery-coords') ? document.getElementById('cart-delivery-coords').value.trim() : '';
 
         const subtotal = state.cart.reduce((s, i) => s + (i.precioUSD * i.quantity), 0);
-        const rate = Number(state.config.rateBCV || 883.40);
+        const rate = Number(state.config.rateBCV || 887.30);
         
         let deliveryFee = 0;
         let deliveryLabel = '';
@@ -2389,7 +2450,39 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
           document.getElementById('acc-input-salon').value = state.clientProfile.salon || '';
           document.getElementById('acc-input-instagram').value = state.clientProfile.instagram || '';
           document.getElementById('acc-input-address').value = state.clientProfile.address || '';
+          if (document.getElementById('acc-input-gps')) {
+            document.getElementById('acc-input-gps').value = state.clientProfile.gpsCoords || '';
+          }
+          const statusGps = document.getElementById('acc-gps-status');
+          if (statusGps) statusGps.textContent = state.clientProfile.gpsCoords ? "✅ Fijado" : "Sin fijar";
         }
+      });
+    }
+
+    const btnAccDetectGps = document.getElementById('btn-acc-detect-gps');
+    if (btnAccDetectGps) {
+      btnAccDetectGps.addEventListener('click', () => {
+        if (!navigator.geolocation) {
+          showToast("Tu navegador no soporta geolocalización directa.", "warning");
+          return;
+        }
+        btnAccDetectGps.textContent = "📡 Localizando...";
+        navigator.geolocation.getCurrentPosition(
+          pos => {
+            const coords = `${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)}`;
+            const inputGps = document.getElementById('acc-input-gps');
+            if (inputGps) inputGps.value = coords;
+            const statusGps = document.getElementById('acc-gps-status');
+            if (statusGps) statusGps.textContent = "✅ Fijado";
+            btnAccDetectGps.textContent = "📡 Fijar GPS Actual";
+            showToast("📍 Ubicación GPS guardada con éxito", "success");
+          },
+          err => {
+            btnAccDetectGps.textContent = "📡 Fijar GPS Actual";
+            showToast("No se pudo obtener GPS automáticamente. Puedes pegar tus coordenadas o link de Maps.", "warning");
+          },
+          { enableHighAccuracy: true, timeout: 8000 }
+        );
       });
     }
 
@@ -2648,7 +2741,7 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
   function updateGpsCalculationDisplay(km, zoneName = 'Ubicación seleccionada') {
     state.deliveryDistanceKm = parseFloat(km.toFixed(1));
     const feeUSD = getDeliveryFeeByKm(km);
-    const rate = Number(state.config.rateBCV || 883.40);
+    const rate = Number(state.config.rateBCV || 887.30);
     const feeBs = feeUSD * rate;
 
     const lblZone = document.getElementById('gps-zone-label');
