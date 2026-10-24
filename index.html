@@ -23,7 +23,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <link rel="stylesheet" href="styles.css?v=20261023c">
+  <link rel="stylesheet" href="styles.css?v=20261023e">
 </head>
 <body class="theme-light">
 
@@ -58,7 +58,7 @@
       <div class="info-item">
         <span class="pulse-dot"></span>
         <span class="info-label">💅 Maracaibo:</span>
-        <span class="info-highlight" id="top-delivery-badge">📍 Delivery GPS: $0.50/km</span>
+        <span class="info-highlight" id="top-delivery-badge">📍 Delivery en Maracaibo con cobro según destino</span>
       </div>
       <div class="info-item rate-ticker" id="rate-ticker-box" title="Haz clic para actualizar la tasa del día" style="cursor:pointer;">
         <span class="info-label">💵 Tasa Hoy:</span>
@@ -67,7 +67,7 @@
       </div>
       <div class="info-item">
         <div class="bio-social-bar mini-bar">
-          <a href="https://wa.me/584265604070?text=Hola%20Tiendas%20Yolo,%20deseo%20hacer%20un%20pedido" target="_blank" class="bio-social-icon wa" title="WhatsApp 0426-5604070">
+          <a href="https://wa.me/584146553430?text=Hola%20Tiendas%20Yolo,%20deseo%20hacer%20un%20pedido" target="_blank" class="bio-social-icon wa" title="WhatsApp 0414-6553430">
             <i class="fa-brands fa-whatsapp"></i>
           </a>
           <a href="https://instagram.com/tiendas.yolo" target="_blank" class="bio-social-icon ig" title="Instagram @tiendas.yolo">
@@ -95,7 +95,7 @@
         </div>
         <div class="brand-titles">
           <h1 class="brand-title" data-editable="true" id="txt-brand-name">Tiendas Yolo<span class="brand-reg">®</span></h1>
-          <p class="brand-subtitle" data-editable="true" id="txt-brand-slogan">Insumos para uñas y todo para la manicurista · RIF: J-503390468</p>
+          <p class="brand-subtitle" data-editable="true" id="txt-brand-slogan">Insumos para uñas, belleza y cuidado personal · RIF: J-503390468</p>
         </div>
       </a>
 
@@ -146,51 +146,16 @@
   <main class="main-content">
 
     <!-- =================================================================== -->
-    <!-- SOCIAL HUB / LINK-IN-BIO BAR (CONECTA CON TIENDAS YOLO) -->
+    <!-- NAVEGACIÓN PRINCIPAL INSUSHOP STYLE (CATÁLOGO / SOBRE NOSOTROS) -->
     <!-- =================================================================== -->
-    <section class="social-hub-section">
-      <div class="social-hub-container">
-        <a href="https://wa.me/584265604070" target="_blank" rel="noopener noreferrer" class="social-hub-btn wa-pill">
-          <span class="hub-icon">📲</span>
-          <div class="hub-texts">
-            <span class="hub-title">WhatsApp Oficial</span>
-            <span class="hub-sub">0426-5604070</span>
-          </div>
-        </a>
-
-        <a href="https://instagram.com/tiendas.yolo" target="_blank" rel="noopener noreferrer" class="social-hub-btn ig-pill">
-          <span class="hub-icon">📸</span>
-          <div class="hub-texts">
-            <span class="hub-title">Instagram</span>
-            <span class="hub-sub">@tiendas.yolo</span>
-          </div>
-        </a>
-
-        <a href="https://tiktok.com/@tiendas.yolo" target="_blank" rel="noopener noreferrer" class="social-hub-btn tiktok-pill">
-          <span class="hub-icon">🎵</span>
-          <div class="hub-texts">
-            <span class="hub-title">TikTok</span>
-            <span class="hub-sub">@tiendas.yolo</span>
-          </div>
-        </a>
-
-        <div class="social-hub-btn deliv-pill" id="btn-open-gps-delivery-hub" style="cursor:pointer;" title="Clic para calcular tu delivery por GPS">
-          <span class="hub-icon">📍</span>
-          <div class="hub-texts">
-            <span class="hub-title">Delivery GPS</span>
-            <span class="hub-sub">Maracaibo · Calcular Tarifa</span>
-          </div>
-        </div>
-
-        <div class="social-hub-btn envios-pill">
-          <span class="hub-icon">📦</span>
-          <div class="hub-texts">
-            <span class="hub-title">Envíos Nacionales</span>
-            <span class="hub-sub">MRW • Tealca • Zoom</span>
-          </div>
-        </div>
-      </div>
-    </section>
+    <div class="store-nav-tabs-bar">
+      <button class="store-nav-tab-btn active" id="tab-nav-catalog">
+        💅 Catálogo de Insumos
+      </button>
+      <button class="store-nav-tab-btn" id="tab-nav-about">
+        ✨ Sobre Nosotros & FAQ
+      </button>
+    </div>
 
     <!-- =================================================================== -->
     <!-- HERO BANNER GLAMOUR COMPACTO & ELEGANTE -->
@@ -207,7 +172,7 @@
           </p>
           <div class="hero-quote-box">
             <span class="quote-mark">“</span>
-            <span class="quote-text" data-editable="true" id="txt-hero-quote">Yo lo compro, Yo lo merezco.</span>
+            <span class="quote-text" data-editable="true" id="txt-hero-quote">YOLO del acrónimo You Only Live Once, solo se vive una vez no es una idea de marketing simplemente sino una frase con alma juvenil y moderna que se ha convertido en la filosofía que nos inspira y guía nuestro sueño. Porque mereces consentirte y que tus manos reflejen la belleza y seguridad que llevas dentro.</span>
             <span class="quote-author">— Filosofía Tiendas Yolo</span>
           </div>
           <div class="hero-cta-group">
@@ -220,7 +185,7 @@
             <button class="btn-secondary" id="btn-hero-quote-generator">
               📄 Generar Presupuesto
             </button>
-            <a href="https://wa.me/584265604070?text=Hola%20Tiendas%20Yolo%2C%20deseo%20m%C3%A1s%20informaci%C3%B3n%20sobre%20sus%20insumos" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-outline">
+            <a href="https://wa.me/584146553430?text=Hola%20Tiendas%20Yolo%2C%20deseo%20m%C3%A1s%20informaci%C3%B3n%20sobre%20sus%20insumos" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-outline">
               💬 WhatsApp
             </a>
           </div>
@@ -230,8 +195,8 @@
           <div class="hero-card-floating">
             <img src="logo-yolo.png" alt="Tiendas Yolo" class="hero-floating-logo" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
             <div class="hero-promo-badge">
-              <span class="promo-title">📍 Delivery por GPS</span>
-              <span class="promo-sub">$0.50/km directo a tu mesa de trabajo</span>
+              <span class="promo-title">📍 Delivery en Maracaibo</span>
+              <span class="promo-sub">Cobro según distancia directo a tu mesa de trabajo</span>
             </div>
           </div>
         </div>
@@ -239,11 +204,19 @@
     </section>
 
     <!-- =================================================================== -->
-    <!-- SELECTOR DE CATEGORÍAS -->
+    <!-- SELECTOR DE CATEGORÍAS Y FILTRO DE TONOS/COLORES -->
     <!-- =================================================================== -->
     <section class="store-filter-bar">
       <div class="categories-scroll-wrapper" id="categories-container">
         <!-- Render dinámico de categorías -->
+      </div>
+
+      <!-- BARRA DE FILTRADO POR TONO/COLOR INSUSHOP -->
+      <div class="color-filter-bar">
+        <span class="color-filter-title">🎨 Filtrar por Tono:</span>
+        <div class="color-filter-dots-wrap" id="color-filter-container">
+          <!-- Render dinámico de tonos -->
+        </div>
       </div>
     </section>
 
@@ -269,6 +242,138 @@
 
     <section class="products-grid" id="products-grid-container">
       <!-- Tarjetas de productos inyectadas dinámicamente -->
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- SECCIÓN SOBRE NOSOTROS & MÓDULOS DE MARCA (INSPIRACIÓN INSUSHOP)   -->
+    <!-- =================================================================== -->
+    <section id="section-sobre-nosotros" class="insu-brand-section">
+      <div class="insu-section-header">
+        <h3 class="insu-section-title">Sobre Tiendas Yolo®</h3>
+        <p class="insu-section-sub">
+          Tu aliado de confianza en insumos profesionales para uñas, belleza y cuidado personal en Maracaibo y envíos a toda Venezuela. RIF: J-503390468.
+        </p>
+      </div>
+
+      <!-- BANNER KIT EMPRENDEDORA -->
+      <div class="insu-banner-entrepreneur">
+        <div class="insu-entrepreneur-content">
+          <span class="insu-entrepreneur-tag">✨ Oportunidad para Emprendedoras</span>
+          <h3 class="insu-entrepreneur-title">Empieza hoy tu salón desde casa con tu Kit a la medida</h3>
+          <p class="insu-entrepreneur-desc">
+            Te asesoramos paso a paso con los insumos esenciales: lámparas UV/LED, preparadores M&Y, bases rubber, pinceles liner y top coat de larga duración con precios de distribuidor.
+          </p>
+          <div class="insu-entrepreneur-actions">
+            <a href="https://wa.me/584146553430?text=Hola%20Tiendas%20Yolo%2C%20deseo%20asesor%C3%ADa%20para%20armar%20mi%20Kit%20Emprendedora" target="_blank" rel="noopener noreferrer" class="btn-insu-gold">
+              💬 Asesoría por WhatsApp
+            </a>
+            <button type="button" class="btn-insu-glass" onclick="window.YoloApp.generateFormalQuote()">
+              📄 Armar Presupuesto Formal
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- GRID DE CARACTERÍSTICAS / ENVÍOS NACIONALES & DELIVERY -->
+      <div class="insu-features-grid">
+        <div class="insu-feature-card">
+          <div class="insu-feature-icon">🛵</div>
+          <div class="insu-feature-content">
+            <h4>Delivery en Maracaibo</h4>
+            <p>Salidas directas desde Urb. El Trébol / C-2 Sur. Tarifa justa de <strong>$0.50 por kilómetro</strong> calculada con GPS a tu ubicación exacta.</p>
+          </div>
+        </div>
+
+        <div class="insu-feature-card">
+          <div class="insu-feature-icon">📦</div>
+          <div class="insu-feature-content">
+            <h4>Envíos a Toda Venezuela</h4>
+            <p>Despachos diarios y protegidos mediante <strong>MRW, Tealca y Zoom</strong> con cobro en destino y número de guía inmediato.</p>
+          </div>
+        </div>
+
+        <div class="insu-feature-card">
+          <div class="insu-feature-icon">💎</div>
+          <div class="insu-feature-content">
+            <h4>Calidad 100% Garantizada</h4>
+            <p>Insumos seleccionados y testeados para garantizar máxima adherencia, duración de 21+ días y acabados de salón profesional.</p>
+          </div>
+        </div>
+
+        <div class="insu-feature-card">
+          <div class="insu-feature-icon">⭐</div>
+          <div class="insu-feature-content">
+            <h4>Club Manicurista</h4>
+            <p>Acumula puntos en cada compra, accede a descuentos especiales por volumen y ofertas relámpago exclusivas.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACORDEÓN DE PREGUNTAS FRECUENTES (FAQ) -->
+      <div class="insu-faq-box">
+        <h4 style="font-family: var(--font-serif); font-size: 1.35rem; color: var(--ty-primary); margin-bottom: 18px; text-align: center;">
+          ❓ Preguntas Frecuentes
+        </h4>
+
+        <div class="faq-accordion-item">
+          <button type="button" class="faq-accordion-header">
+            <span>¿Cómo realizo un pedido en la tienda?</span>
+            <span class="faq-arrow">▼</span>
+          </button>
+          <div class="faq-accordion-body">
+            <p>Solo selecciona tus insumos favoritos en el catálogo, escoge los tonos deseados y presiona <strong>🛒 Agregar</strong>. Al terminar, ve a tu Carrito, verifica tu orden, introduce tus datos y selecciona tu método de pago preferido (Pago Móvil BCV, Banesco o Binance USDT). ¡Te enviaremos tu Nota de Entrega digital al instante por WhatsApp!</p>
+          </div>
+        </div>
+
+        <div class="faq-accordion-item">
+          <button type="button" class="faq-accordion-header">
+            <span>¿Cómo calculan el costo del delivery en Maracaibo?</span>
+            <span class="faq-arrow">▼</span>
+          </button>
+          <div class="faq-accordion-body">
+            <p>Nuestro delivery tiene un costo exacto y transparente de <strong>$0.50 por kilómetro de recorrido</strong> medido desde nuestra sede en Urb. El Trébol / Circunvalación 2 Sur hasta tu dirección de entrega. Puedes calcular el costo exacto antes de ordenar con nuestro botón <strong>📍 Calcular Delivery GPS</strong>.</p>
+          </div>
+        </div>
+
+        <div class="faq-accordion-item">
+          <button type="button" class="faq-accordion-header">
+            <span>¿Hacen envíos a otras ciudades de Venezuela?</span>
+            <span class="faq-arrow">▼</span>
+          </button>
+          <div class="faq-accordion-body">
+            <p>¡Sí! Enviamos a nivel nacional mediante <strong>MRW, Zoom y Tealca</strong> con cobro a destino (COD). Empacamos tus esmaltes, lámparas y geles con embalaje protector contra golpes y te suministramos el número de guía el mismo día de despacho.</p>
+          </div>
+        </div>
+
+        <div class="faq-accordion-item">
+          <button type="button" class="faq-accordion-header">
+            <span>¿A qué tasa calculan los pagos en Bolívares (Bs)?</span>
+            <span class="faq-arrow">▼</span>
+          </button>
+          <div class="faq-accordion-body">
+            <p>Todos nuestros precios en Bolívares se calculan estrictamente a la <strong>Tasa Oficial del Banco Central de Venezuela (BCV)</strong> del día, garantizando total transparencia y legalidad en cada transacción.</p>
+          </div>
+        </div>
+
+        <div class="faq-accordion-item">
+          <button type="button" class="faq-accordion-header">
+            <span>¿Puedo solicitar un presupuesto formal antes de comprar?</span>
+            <span class="faq-arrow">▼</span>
+          </button>
+          <div class="faq-accordion-body">
+            <p>Por supuesto. Con nuestro botón <strong>📄 Generar Presupuesto</strong> o desde el menú inferior, puedes generar una cotización formal detallada en PDF con precios en USD y Bs BCV para presentar a tu academia, socia o salón.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- BANNER DE CIERRE WHATSAPP -->
+      <div class="insu-help-cta-banner">
+        <h3>¿Tienes dudas con algún tono o insumo?</h3>
+        <p>Escríbenos directamente a nuestro WhatsApp oficial y una manicurista de nuestro equipo te orientará de inmediato.</p>
+        <a href="https://wa.me/584146553430?text=Hola%20Tiendas%20Yolo%2C%20tengo%20una%20consulta%20sobre%20un%20producto" target="_blank" rel="noopener noreferrer" class="btn-insu-gold" style="display:inline-flex; margin:0 auto;">
+          💬 Chatear con Soporte: 0414-6553430
+        </a>
+      </div>
     </section>
 
   </main>
@@ -311,7 +416,7 @@
         <img src="logo-yolo.png" alt="Tiendas Yolo" class="footer-logo" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
         <div>
           <h4 class="footer-title">Tiendas Yolo®</h4>
-          <p class="footer-desc">Insumos para uñas y todo para la manicurista en Maracaibo, Zulia.</p>
+          <p class="footer-desc">Insumos para uñas, belleza y cuidado personal en Maracaibo, Zulia.</p>
           <p class="footer-desc"><em>“Yo lo compro, Yo lo merezco”</em></p>
         </div>
       </div>
@@ -319,7 +424,7 @@
       <div class="footer-links">
         <span class="footer-col-title">Contacto & Redes Oficiales</span>
         <div class="bio-social-bar" style="justify-content:flex-start; margin-bottom:12px;">
-          <a href="https://wa.me/584265604070?text=Hola%20Tiendas%20Yolo,%20deseo%20hacer%20un%20pedido" target="_blank" class="bio-social-icon wa" title="WhatsApp 0426-5604070">
+          <a href="https://wa.me/584146553430?text=Hola%20Tiendas%20Yolo,%20deseo%20hacer%20un%20pedido" target="_blank" class="bio-social-icon wa" title="WhatsApp 0414-6553430">
             <i class="fa-brands fa-whatsapp"></i>
           </a>
           <a href="https://instagram.com/tiendas.yolo" target="_blank" class="bio-social-icon ig" title="Instagram @tiendas.yolo">
@@ -332,7 +437,7 @@
             <i class="fa-regular fa-envelope"></i>
           </a>
         </div>
-        <a href="https://wa.me/584265604070" target="_blank" rel="noopener noreferrer">📲 WhatsApp: 0426-5604070</a>
+        <a href="https://wa.me/584146553430" target="_blank" rel="noopener noreferrer">📲 WhatsApp: 0414-6553430</a>
         <a href="mailto:tiendasyolo@gmail.com">✉️ Correo: tiendasyolo@gmail.com</a>
         <a href="https://instagram.com/tiendas.yolo" target="_blank" rel="noopener noreferrer">📸 Instagram: @tiendas.yolo</a>
         <a href="https://tiktok.com/@tiendas.yolo" target="_blank" rel="noopener noreferrer">🎵 TikTok: @tiendas.yolo</a>
@@ -373,17 +478,6 @@
       </div>
 
       <div class="cart-drawer-body">
-        
-        <!-- BARRA DE DELIVERY GRATIS MARACAIBO -->
-        <div class="delivery-progress-wrap" id="delivery-progress-box">
-          <div class="delivery-progress-header">
-            <span id="delivery-progress-text">🚚 Agrega $15.00 para Delivery GRATIS en Maracaibo</span>
-            <strong id="delivery-progress-status">$0.00 / $15.00</strong>
-          </div>
-          <div class="delivery-progress-bar">
-            <div class="delivery-progress-fill" id="delivery-progress-fill" style="width: 0%;"></div>
-          </div>
-        </div>
 
         <!-- LISTA DE PRODUCTOS EN EL CARRITO -->
         <div class="cart-items-list" id="cart-items-list">
@@ -407,7 +501,7 @@
           <div class="form-grid-2">
             <div class="form-group">
               <label for="cart-client-phone" class="form-label">Teléfono WhatsApp: *</label>
-              <input type="tel" id="cart-client-phone" class="form-input" placeholder="0426-1234567">
+              <input type="tel" id="cart-client-phone" class="form-input" placeholder="0414-1234567">
             </div>
             <div class="form-group">
               <label for="cart-client-salon" class="form-label">Nombre del Salón / Estudio:</label>
@@ -419,7 +513,7 @@
             <label for="cart-delivery-type" class="form-label">Modalidad de Entrega:</label>
             <select id="cart-delivery-type" class="select-styled">
               <option value="delivery-maracaibo">🛵 Delivery a Domicilio con GPS (Maracaibo)</option>
-              <option value="retiro-personal">🛍️ Retiro en Tienda Física (Gratis)</option>
+              <option value="retiro-personal">🛍️ Retiro Personal / Pick-up (Previo acuerdo)</option>
               <option value="envio-nacional">📦 Envío Nacional (MRW / Tealca / Zoom)</option>
             </select>
           </div>
@@ -546,7 +640,7 @@
             </div>
             <div class="bank-pill-details">
               <p>• <strong>Banco:</strong> Banesco (0134)</p>
-              <p>• <strong>Teléfono:</strong> <span id="copy-pm-phone">04265604070</span></p>
+              <p>• <strong>Teléfono:</strong> <span id="copy-pm-phone">04146553430</span></p>
               <p>• <strong>Cédula / RIF:</strong> <span id="copy-pm-id">V-28123456</span></p>
               <p>• <strong>Monto exacto:</strong> <span id="copy-pm-bs">Bs. 0.00</span></p>
             </div>
@@ -645,7 +739,7 @@
           <img src="logo-yolo.png" alt="Tiendas Yolo" class="ticket-logo" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
           <h2 class="ticket-store-name">TIENDAS YOLO®</h2>
           <p class="ticket-slogan">Insumos para Uñas & Todo para la Manicurista</p>
-          <p class="ticket-location">Maracaibo, Zulia — Venezuela • RIF: J-503390468 | WhatsApp: 0426-5604070</p>
+          <p class="ticket-location">Maracaibo, Zulia — Venezuela • RIF: J-503390468 | WhatsApp: 0414-6553430</p>
           <div class="ticket-badge-pill" id="ticket-badge-auth">
             ✅ PAGO AUTENTICADO & REGISTRADO
           </div>
@@ -687,7 +781,7 @@
           </div>
           <div class="ticket-total-row">
             <span>Delivery:</span>
-            <span id="ticket-delivery-usd" class="text-success">¡GRATIS!</span>
+            <span id="ticket-delivery-usd" class="font-bold">$0.00</span>
           </div>
           <div class="ticket-total-row total-highlight">
             <strong>TOTAL A PAGAR:</strong>
@@ -737,7 +831,7 @@
             <div class="quote-company-info">
               <h2 class="quote-company-name">TIENDAS YOLO®</h2>
               <p class="quote-company-tagline">Insumos para uñas y todo para la manicurista · RIF: J-503390468</p>
-              <p class="quote-company-sub">Maracaibo, Zulia — Venezuela | RIF: J-503390468 | WhatsApp: 0426-5604070</p>
+              <p class="quote-company-sub">Maracaibo, Zulia — Venezuela | RIF: J-503390468 | WhatsApp: 0414-6553430</p>
               <p class="quote-company-sub">Instagram: @tiendas.yolo | Correo: tiendasyolo@gmail.com</p>
             </div>
           </div>
@@ -778,7 +872,7 @@
             </tr>
             <tr>
               <td colspan="3" class="text-right font-bold">Delivery / Despacho:</td>
-              <td colspan="2" class="font-bold text-success" id="print-quote-delivery-status">¡DELIVERY GRATIS EN MARACAIBO!</td>
+              <td colspan="2" class="font-bold" id="print-quote-delivery-status">Tarifa según destino ($0.50/km)</td>
             </tr>
             <tr class="grand-total-quote-row">
               <td colspan="3" class="text-right font-bold">TOTAL GENERAL:</td>
@@ -848,7 +942,7 @@
             <div class="form-grid-2">
               <div class="form-group">
                 <label for="acc-input-phone" class="form-label">Teléfono WhatsApp: *</label>
-                <input type="tel" id="acc-input-phone" class="form-input" placeholder="0426-5604070" required>
+                <input type="tel" id="acc-input-phone" class="form-input" placeholder="0414-6553430" required>
               </div>
               <div class="form-group">
                 <label for="acc-input-doc" class="form-label">Cédula / RIF:</label>
@@ -886,7 +980,7 @@
               <h4 id="prof-display-name">Andrea González</h4>
               <span class="vip-badge" id="prof-display-level">🌟 Manicurista VIP Yolo</span>
               <p id="prof-display-salon">Salón: Glow Nails Studio • @glownails</p>
-              <p id="prof-display-phone">RIF: J-503390468 | WhatsApp: 0426-5604070</p>
+              <p id="prof-display-phone">RIF: J-503390468 | WhatsApp: 0414-6553430</p>
               <p id="prof-display-address">Dirección: Maracaibo</p>
             </div>
           </div>
@@ -930,14 +1024,16 @@
             <div class="form-group">
               <label for="pe-input-cat" class="form-label">Categoría: *</label>
               <select id="pe-input-cat" class="select-styled" required>
-                <option value="Esmaltes">Esmaltes</option>
-                <option value="Geles y Acrílicos">Geles y Acrílicos</option>
-                <option value="Pinceles y Herramientas">Pinceles y Herramientas</option>
-                <option value="Lámparas y Equipos">Lámparas y Equipos</option>
-                <option value="Kits">Kits</option>
-                <option value="Líquidos y Preparación">Líquidos y Preparación</option>
-                <option value="Pestañas y Belleza">Pestañas y Belleza</option>
-                <option value="Decoración">Decoración</option>
+                <option value="Esmaltes Semipermanentes">Esmaltes Semipermanentes</option>
+                <option value="Preparadores">Preparadores</option>
+                <option value="Press ON">Press ON</option>
+                <option value="Pinceles">Pinceles</option>
+                <option value="Limas">Limas</option>
+                <option value="Tips Uñas Jelly y Softgel">Tips Uñas Jelly y Softgel</option>
+                <option value="Geles">Geles</option>
+                <option value="Decoraciones">Decoraciones</option>
+                <option value="Herramientas">Herramientas</option>
+                <option value="Otros">Otros</option>
               </select>
             </div>
 
@@ -968,10 +1064,16 @@
           </div>
 
           <div class="form-group">
-            <label for="pe-input-img" class="form-label">URL de la Imagen o Nombre de archivo: *</label>
+            <label for="pe-input-img" class="form-label">Foto del Insumo / Producto: *</label>
             <div class="image-input-preview-group">
-              <input type="text" id="pe-input-img" class="form-input" placeholder="logo-yolo.png o enlace https://...">
+              <input type="text" id="pe-input-img" class="form-input" placeholder="logo-yolo.png o sube una imagen">
               <img id="pe-img-preview" src="logo-yolo.png" alt="Preview" class="pe-preview-thumb" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
+            </div>
+            <div style="margin-top:6px;">
+              <label class="btn-secondary" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px; font-size:0.8rem; padding:6px 14px;">
+                📁 Subir foto desde mi dispositivo
+                <input type="file" id="pe-file-upload-input" accept="image/*" style="display:none;">
+              </label>
             </div>
           </div>
 
@@ -1123,15 +1225,17 @@
           <label class="form-label" for="select-maracaibo-zone">Zona o Parroquia:</label>
           <select id="select-maracaibo-zone" class="select-styled" style="width:100%;">
             <option value="">Selecciona tu zona...</option>
-            <option value="10.6650,-71.6080" data-name="Bella Vista / Cecilio Acosta" data-km="2.4">Bella Vista / Cecilio Acosta (~2.4 km)</option>
-            <option value="10.6550,-71.6220" data-name="5 de Julio / Indio Mara" data-km="2.8">5 de Julio / Indio Mara (~2.8 km)</option>
-            <option value="10.6850,-71.6150" data-name="Zona Norte / Fuerzas Armadas" data-km="4.8">Zona Norte / Fuerzas Armadas (~4.8 km)</option>
-            <option value="10.6600,-71.6450" data-name="La Limpia / Curva de Molina" data-km="6.5">La Limpia / Curva de Molina (~6.5 km)</option>
-            <option value="10.6480,-71.6250" data-name="Delicias / Paraíso" data-km="3.2">Delicias / Paraíso (~3.2 km)</option>
-            <option value="10.6380,-71.6050" data-name="El Milagro / Santa Lucía" data-km="2.1">El Milagro / Santa Lucía (~2.1 km)</option>
-            <option value="10.5850,-71.6350" data-name="San Francisco / Sierra Maestra" data-km="9.2">San Francisco / Sierra Maestra (~9.2 km)</option>
-            <option value="10.6800,-71.6500" data-name="Los Olivos / La Victoria" data-km="7.0">Los Olivos / La Victoria (~7.0 km)</option>
-            <option value="10.6150,-71.6300" data-name="Sabaneta / Metrosol" data-km="5.8">Sabaneta / Metrosol (~5.8 km)</option>
+            <option value="10.6054,-71.6593" data-name="Urb. El Trébol / C-2 Sur (Local)" data-km="0.5">Urb. El Trébol / C-2 Sur (Local) (~0.5 km)</option>
+            <option value="10.6150,-71.6420" data-name="Sabaneta / Metrosol" data-km="2.6">Sabaneta / Metrosol (~2.6 km)</option>
+            <option value="10.5850,-71.6450" data-name="San Francisco / Coromoto / Sierra Maestra" data-km="3.4">San Francisco / Coromoto / Sierra Maestra (~3.4 km)</option>
+            <option value="10.6350,-71.6600" data-name="Circunvalación 2 / Amparo" data-km="4.0">Circunvalación 2 / Amparo (~4.0 km)</option>
+            <option value="10.6480,-71.6350" data-name="Delicias / Paraíso" data-km="6.6">Delicias / Paraíso (~6.6 km)</option>
+            <option value="10.6600,-71.6650" data-name="La Limpia / Curva de Molina" data-km="7.4">La Limpia / Curva de Molina (~7.4 km)</option>
+            <option value="10.6550,-71.6250" data-name="5 de Julio / Indio Mara" data-km="8.1">5 de Julio / Indio Mara (~8.1 km)</option>
+            <option value="10.6450,-71.6080" data-name="El Milagro / Santa Lucía" data-km="8.7">El Milagro / Santa Lucía (~8.7 km)</option>
+            <option value="10.6750,-71.6550" data-name="Los Olivos / La Victoria" data-km="9.5">Los Olivos / La Victoria (~9.5 km)</option>
+            <option value="10.6650,-71.6150" data-name="Bella Vista / Cecilio Acosta" data-km="10.0">Bella Vista / Cecilio Acosta (~10.0 km)</option>
+            <option value="10.6950,-71.6250" data-name="Zona Norte / Fuerzas Armadas" data-km="13.0">Zona Norte / Fuerzas Armadas (~13.0 km)</option>
           </select>
         </div>
 
@@ -1145,14 +1249,13 @@
         <div id="gps-calc-results-box" style="background:var(--bg-subtle); border:1.5px solid var(--ty-magenta-fuchsia); border-radius:var(--radius-md); padding:16px; margin-bottom:16px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
             <span style="font-weight:700; font-size:0.85rem; color:var(--ty-primary-dark);" id="gps-zone-label">Ubicación: Selecciona una zona</span>
-            <span style="font-size:0.78rem; font-weight:700; color:#10b981;" id="gps-free-badge">✓ Gratuito > $15</span>
           </div>
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:center;">
-            <div style="background:#fff; padding:10px; border-radius:8px; border:1px solid var(--border-light);">
+            <div style="background:var(--bg-card); color:var(--text-main); padding:10px; border-radius:8px; border:1px solid var(--border-light);" class="gps-stat-card">
               <span style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Distancia</span>
               <div style="font-size:1.3rem; font-weight:800; color:var(--text-main);" id="gps-dist-km">0.0 km</div>
             </div>
-            <div style="background:#fff; padding:10px; border-radius:8px; border:1px solid var(--border-light);">
+            <div style="background:var(--bg-card); color:var(--text-main); padding:10px; border-radius:8px; border:1px solid var(--border-light);" class="gps-stat-card">
               <span style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Tarifa Delivery</span>
               <div style="font-size:1.3rem; font-weight:800; color:var(--ty-primary-dark);" id="gps-cost-usd">$0.00</div>
               <span style="font-size:0.75rem; font-weight:600; color:var(--text-secondary);" id="gps-cost-bs">Bs. 0.00</span>
@@ -1174,6 +1277,6 @@
   <div id="toast-notification-container" class="toast-container"></div>
 
   <!-- SCRIPT DE TIENDA PÚBLICA -->
-  <script src="app.js?v=20261023c"></script>
+  <script src="app.js?v=20261023e"></script>
 </body>
 </html>
