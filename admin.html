@@ -17,7 +17,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <link rel="stylesheet" href="styles.css?v=20261023c">
+  <link rel="stylesheet" href="styles.css?v=20261023e">
   <style>
     /* Estilos Luxury Backoffice Tiendas Yolo */
     :root {
@@ -185,9 +185,9 @@
     }
 
     .bcv-admin-pill {
-      background: rgba(16, 185, 129, 0.18);
-      border: 1px solid rgba(16, 185, 129, 0.4);
-      color: #34d399;
+      background: #e0f2fe;
+      border: 1px solid rgba(3, 105, 161, 0.25);
+      color: #0369a1;
       padding: 6px 14px;
       border-radius: var(--radius-pill);
       font-size: 0.78rem;
@@ -199,16 +199,16 @@
       transition: all var(--transition-fast);
     }
     .bcv-admin-pill:hover {
-      background: rgba(16, 185, 129, 0.28);
-      border-color: #10b981;
+      background: #bae6fd;
+      border-color: #0284c7;
       transform: translateY(-1px);
     }
     .bcv-pulse-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 8px #10b981;
+      background: #0284c7;
+      box-shadow: 0 0 8px #0284c7;
       animation: pulse-glow 2s infinite;
     }
     @keyframes pulse-glow {
@@ -217,9 +217,9 @@
     }
 
     .cloud-admin-pill {
-      background: rgba(59, 130, 246, 0.16);
-      border: 1px solid rgba(59, 130, 246, 0.35);
-      color: #93c5fd;
+      background: #e0f2fe;
+      border: 1px solid rgba(3, 105, 161, 0.25);
+      color: #0369a1;
       padding: 6px 14px;
       border-radius: var(--radius-pill);
       font-size: 0.78rem;
@@ -231,13 +231,13 @@
       transition: all var(--transition-fast);
     }
     .cloud-admin-pill:hover {
-      background: rgba(59, 130, 246, 0.26);
-      border-color: #3b82f6;
+      background: #bae6fd;
+      border-color: #0284c7;
     }
     .cloud-admin-pill.online {
-      background: rgba(16, 185, 129, 0.16);
-      border-color: rgba(16, 185, 129, 0.35);
-      color: #6ee7b7;
+      background: #e0f2fe;
+      border-color: rgba(3, 105, 161, 0.25);
+      color: #0369a1;
     }
 
     /* Sub-nav Administrativo */
@@ -550,14 +550,18 @@
       <div>
         <div class="admin-brand-title">
           Tiendas Yolo®
-          <span class="admin-badge-pro">OFICIAL PRO</span>
         </div>
-        <div class="admin-brand-subtitle">Backoffice · Finanzas · Tienda Física Maracaibo</div>
+        <div class="admin-brand-subtitle">Backoffice · Finanzas · Tienda Online Maracaibo</div>
       </div>
     </a>
 
     <!-- CONTROLES CIRCULARES & STATUS EN VIVO -->
     <div class="admin-controls-group">
+
+      <!-- Botón Volver a la Tienda Web Pública -->
+      <a href="index.html" class="admin-pill-btn" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px; background:linear-gradient(135deg, var(--ty-primary), #d45ba8); color:#fff; padding:6px 14px; border-radius:var(--radius-pill); font-weight:700; font-size:0.82rem; box-shadow:0 2px 8px rgba(0,0,0,0.15);" title="Ver Tienda Web Pública">
+        🛍️ Ver Tienda Web
+      </a>
 
       <!-- Tasa Oficial BCV en vivo (Click para actualizar) -->
       <div class="bcv-admin-pill" id="topbar-bcv-pill" title="Tasa oficial BCV actualizada en tiempo real (Clic para refrescar)">
@@ -1075,7 +1079,7 @@
             </div>
             <div class="form-group">
               <label for="cfg-whatsapp" class="form-label">WhatsApp de Pedidos:</label>
-              <input type="text" id="cfg-whatsapp" class="form-input" value="584265604070">
+              <input type="text" id="cfg-whatsapp" class="form-input" value="584146553430">
             </div>
             <div class="form-group">
               <label for="cfg-admin-pin" class="form-label">PIN de Acceso al Panel:</label>
@@ -1120,7 +1124,7 @@
               </div>
               <div class="form-group">
                 <label for="cfg-pm-phone" class="form-label">Teléfono Pago Móvil:</label>
-                <input type="text" id="cfg-pm-phone" class="form-input" value="0426-5604070" placeholder="0426-5604070">
+                <input type="text" id="cfg-pm-phone" class="form-input" value="0414-6553430" placeholder="0414-6553430">
               </div>
             </div>
           </div>
@@ -1661,7 +1665,7 @@
             <div class="quote-company-info">
               <h2 class="quote-company-name">TIENDAS YOLO®</h2>
               <p class="quote-company-tagline">Insumos para uñas y todo para la manicurista</p>
-              <p class="quote-company-sub">Maracaibo, Zulia — Venezuela | WhatsApp: 0426-5604070</p>
+              <p class="quote-company-sub">Maracaibo, Zulia — Venezuela | WhatsApp: 0414-6553430</p>
             </div>
           </div>
           <div class="quote-meta-box">
@@ -1708,7 +1712,7 @@
         </table>
 
         <div class="quote-terms-box">
-          <p><strong>Condiciones Comerciales:</strong> Precios calculados a la tasa oficial del día. Delivery gratis en compras desde $15 en Maracaibo.</p>
+          <p><strong>Condiciones Comerciales:</strong> Precios calculados a la tasa oficial del BCV del día. Delivery en Maracaibo calculado por kilometraje GPS desde Urb. El Trébol ($0.50/km).</p>
           <p class="quote-signature-note"><em>“Yo lo compro, Yo lo merezco” — Tiendas Yolo®.</em></p>
         </div>
       </div>
@@ -1719,6 +1723,6 @@
   <div id="toast-notification-container" class="toast-container"></div>
 
   <!-- SCRIPT PRIVADO DEL PANEL DE GESTIÓN -->
-  <script src="admin.js?v=20261023c"></script>
+  <script src="admin.js?v=20261023e"></script>
 </body>
 </html>
