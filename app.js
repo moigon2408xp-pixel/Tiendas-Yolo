@@ -546,7 +546,7 @@
   }
 
   function updateRateDisplay(isLive = false) {
-    const rate = Number(state.config.rateBCV || 883.40);
+    const rate = Number(state.config.rateBCV || 886.23);
     const rateEl = document.getElementById('top-rate-display');
     if (rateEl) {
       rateEl.innerHTML = `${isLive ? '🟢' : '💵'} Bs. ${rate.toFixed(2)} / $ ${isLive ? '<span style="font-size:0.7em; opacity:0.85;">(En Vivo BCV)</span>' : ''}`;
@@ -1529,10 +1529,15 @@
     const quoteObj = {
       id: quoteId,
       date: today,
+      fecha: today,
       clientName,
+      cliente: clientName,
       clientPhone,
+      telefono: clientPhone,
       clientSalon,
+      salon: clientSalon,
       clientAddress,
+      direccion: clientAddress,
       items,
       subtotalUSD,
       deliveryUSD,
@@ -2031,6 +2036,9 @@
     const container = document.getElementById('toast-notification-container');
     if (!container) return;
 
+    // Limpiar notificaciones previas para evitar apilamiento molesto
+    container.innerHTML = '';
+
     const toast = document.createElement('div');
     toast.className = `toast-msg ${type}`;
     toast.textContent = message;
@@ -2040,7 +2048,7 @@
       toast.style.opacity = '0';
       toast.style.transform = 'translateY(10px)';
       setTimeout(() => toast.remove(), 300);
-    }, 3200);
+    }, 2800);
   }
 
   // ============================================================================
@@ -2827,6 +2835,7 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
     updateCartUI();
     setupEventListeners();
     loadBannerSettings();
+    loadEditsFromStorage();
     checkForForcedCacheUpdate();
     initPwaSupport();
     console.log("🌸 Tiendas Yolo® Tienda PWA Iniciada con Éxito.");
