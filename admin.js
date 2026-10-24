@@ -661,19 +661,22 @@
       return;
     }
 
-    const rate = Number(state.config.rateBCV || 883.40);
+    const rate = Number(state.config.rateBCV || 886.23);
 
     tbody.innerHTML = filtered.map(quote => {
       const totalUSD = Number(quote.subtotalUSD || quote.totalUSD || 0);
       const totalBs = totalUSD * rate;
       const itemsCount = quote.items ? quote.items.length : 0;
+      const quoteDate = quote.fecha || quote.date || (quote.createdAt ? new Date(quote.createdAt).toLocaleDateString('es-VE') : new Date().toLocaleDateString('es-VE'));
+      const quoteClient = quote.cliente || quote.clientName || 'Cliente / Manicurista';
+      const quotePhone = quote.telefono || quote.clientPhone || '-';
 
       return `
         <tr>
           <td><span class="order-id-badge">${quote.id}</span></td>
-          <td>${quote.fecha}</td>
-          <td><strong>${quote.cliente || 'Academia'}</strong></td>
-          <td>${quote.telefono || '-'}</td>
+          <td>${quoteDate}</td>
+          <td><strong>${quoteClient}</strong></td>
+          <td>${quotePhone}</td>
           <td>${itemsCount} insumos</td>
           <td><strong>$${totalUSD.toFixed(2)}</strong></td>
           <td>Bs. ${totalBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
@@ -757,7 +760,8 @@
     const totalIn = periodFinances.filter(f => f.tipo === 'Ingreso').reduce((s, f) => s + Number(f.montoUSD || 0), 0);
     const totalCogs = periodFinances.filter(f => f.tipo === 'Costo').reduce((s, f) => s + Number(f.montoUSD || 0), 0);
     const totalExpenses = periodFinances.filter(f => f.tipo === 'Gasto').reduce((s, f) => s + Number(f.montoUSD || 0), 0);
-    const net = totalIn - (totalCogs + totalExpenses);
+    const totalFiscal = periodFinances.filter(f => f.tipo === 'Fiscal' || f.categoria === 'Impuestos y Fiscal').reduce((s, f) => s + Number(f.montoUSD || 0), 0);
+    const net = totalIn - (totalCogs + totalExpenses + totalFiscal);
     const netPct = totalIn > 0 ? ((net / totalIn) * 100).toFixed(1) : 0;
 
     const inValEl = document.getElementById('fin-pill-in-val');
@@ -771,8 +775,11 @@
     const netPctEl = document.getElementById('fin-pill-net-pct');
     if (netPctEl) netPctEl.textContent = `Margen: ${netPct}%`;
 
+    // Gráfico Visual de Balance y Flujo
+    renderFinancesVisualChart(totalIn, totalCogs, totalExpenses, totalFiscal, net);
+
     // Desglose de Gastos por Categoría
-    renderExpenseCategoryBreakdown(totalCogs + totalExpenses);
+    renderExpenseCategoryBreakdown(totalCogs + totalExpenses + totalFiscal);
 
     // Filtro de Tabla
     let filtered = periodFinances;
@@ -796,6 +803,7 @@
       let typeColor = '#10b981';
       if (f.tipo === 'Costo') { typeBadge = '🔴 Costo Mercancía'; typeColor = '#ef4444'; }
       if (f.tipo === 'Gasto') { typeBadge = '🟠 Gasto Operativo'; typeColor = '#f59e0b'; }
+      if (f.tipo === 'Fiscal') { typeBadge = '🟣 Gasto Fiscal'; typeColor = '#8b5cf6'; }
       if (f.tipo === 'Retiro') { typeBadge = '🔵 Retiro Utilidad'; typeColor = '#3b82f6'; }
 
       return `
@@ -862,6 +870,52 @@
     }).join('');
   }
 
+  function renderFinancesVisualChart(totalIn, totalCogs, totalExpenses, totalFiscal, net) {
+    const container = document.getElementById('fin-bar-chart-bars');
+    if (!container) return;
+
+    const maxVal = Math.max(totalIn, (totalCogs + totalExpenses + totalFiscal), Math.abs(net), 1);
+    const calcWidth = (val) => Math.min(100, Math.max(val > 0 ? 3 : 0, (Math.abs(val) / maxVal) * 100)).toFixed(0);
+
+    container.innerHTML = `
+      <div class="fin-bar-item">
+        <span class="fin-bar-label">📥 Ingresos (Ventas)</span>
+        <div class="fin-bar-track">
+          <div class="fin-bar-fill" style="width:${calcWidth(totalIn)}%; background:#10b981;"></div>
+        </div>
+        <span class="fin-bar-val" style="color:#10b981;">$${totalIn.toFixed(2)}</span>
+      </div>
+      <div class="fin-bar-item">
+        <span class="fin-bar-label">📦 Costo Mercancía</span>
+        <div class="fin-bar-track">
+          <div class="fin-bar-fill" style="width:${calcWidth(totalCogs)}%; background:#ef4444;"></div>
+        </div>
+        <span class="fin-bar-val" style="color:#ef4444;">$${totalCogs.toFixed(2)}</span>
+      </div>
+      <div class="fin-bar-item">
+        <span class="fin-bar-label">📤 Gastos Operativos</span>
+        <div class="fin-bar-track">
+          <div class="fin-bar-fill" style="width:${calcWidth(totalExpenses)}%; background:#f59e0b;"></div>
+        </div>
+        <span class="fin-bar-val" style="color:#f59e0b;">$${totalExpenses.toFixed(2)}</span>
+      </div>
+      <div class="fin-bar-item">
+        <span class="fin-bar-label">🟣 Gastos Fiscales</span>
+        <div class="fin-bar-track">
+          <div class="fin-bar-fill" style="width:${calcWidth(totalFiscal)}%; background:#8b5cf6;"></div>
+        </div>
+        <span class="fin-bar-val" style="color:#8b5cf6;">$${totalFiscal.toFixed(2)}</span>
+      </div>
+      <div class="fin-bar-item" style="border-top:1px dashed var(--border-light); padding-top:6px; margin-top:4px;">
+        <span class="fin-bar-label" style="font-weight:700;">💰 Utilidad Neta</span>
+        <div class="fin-bar-track">
+          <div class="fin-bar-fill" style="width:${calcWidth(net)}%; background:${net >= 0 ? 'linear-gradient(90deg, #10b981, #059669)' : '#ef4444'};"></div>
+        </div>
+        <span class="fin-bar-val" style="color:${net >= 0 ? '#10b981' : '#ef4444'}; font-size:0.95rem;">$${net.toFixed(2)}</span>
+      </div>
+    `;
+  }
+
   // INVENTARIO CON SKU ÚNICO
   function renderInventoryTable(query = '') {
     const tbody = document.getElementById('inventory-table-body');
@@ -903,8 +957,8 @@
             </div>
           </td>
           <td>${prod.categoria}</td>
-          <td>
-            <span style="font-family:monospace; font-size:0.84rem; font-weight:700; color:var(--ty-primary); background:var(--bg-subtle); padding:2px 6px; border-radius:4px; border:1px solid var(--border-rose);">
+          <td style="white-space:nowrap !important;">
+            <span class="sku-badge" style="font-family:monospace; font-size:0.84rem; font-weight:700; color:var(--ty-primary); background:var(--bg-subtle); padding:3px 8px; border-radius:4px; border:1px solid var(--border-rose); white-space:nowrap !important; display:inline-block;">
               ${prod.sku || '-'}
             </span>
           </td>
@@ -2216,6 +2270,93 @@
         if (ordersTabBtn) ordersTabBtn.click();
       });
     }
+
+    const bcvPill = document.getElementById('topbar-bcv-pill');
+    if (bcvPill) {
+      bcvPill.style.cursor = 'pointer';
+      bcvPill.addEventListener('click', () => fetchLiveBcvRateAdmin(true));
+    }
+  }
+
+  // =========================================================================
+  // GESTIÓN DE PERFILES DE ADMINISTRACIÓN (DUEÑA / GERENTE)
+  // =========================================================================
+  const ADMIN_PROFILES = [
+    { id: 'duena', name: '👑 Dueña (Dirección General)', role: 'Dueña' },
+    { id: 'gerente', name: '💼 Gerente (Manager Operativo)', role: 'Gerente' }
+  ];
+
+  function initAdminProfileSwitcher() {
+    const badgeEl = document.getElementById('admin-profile-badge');
+    const nameEl = document.getElementById('admin-profile-name');
+    let currentProfileId = localStorage.getItem('TY_ACTIVE_ADMIN_PROFILE') || 'duena';
+
+    function updateBadge() {
+      const prof = ADMIN_PROFILES.find(p => p.id === currentProfileId) || ADMIN_PROFILES[0];
+      if (nameEl) nameEl.textContent = prof.name;
+      if (badgeEl) badgeEl.title = `Sesión activa: ${prof.name} (Toca para alternar)`;
+    }
+
+    updateBadge();
+
+    if (badgeEl) {
+      badgeEl.style.cursor = 'pointer';
+      badgeEl.onclick = () => {
+        currentProfileId = currentProfileId === 'duena' ? 'gerente' : 'duena';
+        localStorage.setItem('TY_ACTIVE_ADMIN_PROFILE', currentProfileId);
+        updateBadge();
+        const prof = ADMIN_PROFILES.find(p => p.id === currentProfileId);
+        showToast(`Perfil cambiado a: ${prof.name}`, 'info');
+      };
+    }
+  }
+
+  // =========================================================================
+  // CONSULTA EN TIEMPO REAL TASA OFICIAL BCV
+  // =========================================================================
+  async function fetchLiveBcvRateAdmin(showFeedback = false) {
+    try {
+      const topRateEl = document.getElementById('topbar-bcv-rate');
+      const pillEl = document.getElementById('topbar-bcv-pill');
+      if (showFeedback && pillEl) {
+        pillEl.style.opacity = '0.6';
+      }
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4500);
+      const res = await fetch("https://ve.dolarapi.com/v1/dolares/oficial", { signal: controller.signal });
+      clearTimeout(timeoutId);
+
+      if (res.ok) {
+        const data = await res.json();
+        const liveRate = Number(data.promedio);
+        if (liveRate > 0) {
+          state.config.rateBCV = liveRate;
+          state.config.rateLastUpdated = new Date().toISOString();
+          saveState();
+          if (topRateEl) topRateEl.textContent = `Bs. ${liveRate.toFixed(2)}`;
+          if (pillEl) pillEl.style.opacity = '1';
+          if (showFeedback) {
+            showToast(`💵 Tasa BCV Oficial actualizada: Bs. ${liveRate.toFixed(2)} / $`, 'success');
+          }
+          if (state.adminTab === 'admin-finances') renderFinancesTable();
+          if (state.adminTab === 'admin-orders') renderAdminOrders();
+          if (state.adminTab === 'admin-quotes') renderAdminQuotes();
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn("Tasa BCV obtenida de caché local:", err.message);
+    }
+
+    const fallbackRate = Number(state.config.rateBCV || 886.23);
+    const topRateEl = document.getElementById('topbar-bcv-rate');
+    if (topRateEl) topRateEl.textContent = `Bs. ${fallbackRate.toFixed(2)}`;
+    const pillEl = document.getElementById('topbar-bcv-pill');
+    if (pillEl) pillEl.style.opacity = '1';
+    if (showFeedback) {
+      showToast(`💵 Tasa BCV: Bs. ${fallbackRate.toFixed(2)} / $`, 'info');
+    }
   }
 
   // Arranque e inicialización
@@ -2223,6 +2364,7 @@
     loadState();
     checkAuthentication();
     setupEventListeners();
+    initAdminProfileSwitcher();
     fetchLiveBcvRateAdmin(false);
     renderAllAdminModules();
 
