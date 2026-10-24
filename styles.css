@@ -4623,5 +4623,119 @@ body.theme-dark .faq-accordion-header {
   margin-right: auto;
 }
 
+/* ============================================================================
+   CLUB INTRO CARD — CONTRASTE ULTRA PRECISO EN LIGHT Y DARK
+   ============================================================================ */
+.club-intro-card {
+  background: linear-gradient(135deg, rgba(234, 111, 191, 0.12), rgba(184, 35, 117, 0.08));
+  border: 1px solid var(--ty-primary);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+.club-intro-card h4 {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  color: var(--ty-primary-dark);
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+.club-intro-card p {
+  font-size: 0.85rem;
+  color: var(--text-main);
+  line-height: 1.45;
+  margin: 0;
+}
+body.theme-dark .club-intro-card {
+  background: linear-gradient(135deg, rgba(74, 11, 49, 0.75), rgba(112, 26, 73, 0.6)) !important;
+  border-color: var(--ty-primary);
+}
+body.theme-dark .club-intro-card h4 {
+  color: #ffbfe5 !important;
+}
+body.theme-dark .club-intro-card p {
+  color: #fdf2f6 !important;
+}
+
+/* ============================================================================
+   SKU BADGE — NO WRAP PARA QUE NO SE CORTE EN DOS LÍNEAS
+   ============================================================================ */
+.sku-badge,
+.styled-table td .sku-badge,
+.styled-table td span[style*="monospace"] {
+  white-space: nowrap !important;
+  display: inline-block !important;
+  letter-spacing: 0.02em;
+}
+
+/* ============================================================================
+   ADMIN PROFILE SWITCHER PILL & INTERACCIÓN
+   ============================================================================ */
+.admin-profile-pill {
+  cursor: pointer;
+  transition: transform 0.18s ease, background 0.2s ease, box-shadow 0.2s ease;
+  user-select: none;
+}
+.admin-profile-pill:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+
+/* ============================================================================
+   GRÁFICOS FINANCIEROS SIMPLIFICADOS (BAR CHART & CASH FLOW)
+   ============================================================================ */
+.fin-chart-box {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 20px;
+}
+.fin-chart-title {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  color: var(--ty-primary-dark);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.fin-bar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 8px 0;
+}
+.fin-bar-item {
+  display: grid;
+  grid-template-columns: 140px 1fr 100px;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.84rem;
+}
+.fin-bar-label {
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+}
+.fin-bar-track {
+  height: 12px;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  position: relative;
+}
+.fin-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.fin-bar-val {
+  text-align: right;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+
 
 
