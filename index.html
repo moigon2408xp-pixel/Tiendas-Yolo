@@ -298,10 +298,10 @@
       <!-- GRID DE CARACTERÍSTICAS / ENVÍOS NACIONALES & DELIVERY -->
       <div class="insu-features-grid">
         <div class="insu-feature-card">
-          <div class="insu-feature-icon">🛵</div>
+          <div class="insu-feature-icon">🚗</div>
           <div class="insu-feature-content">
             <h4>Delivery en Maracaibo</h4>
-            <p>Salidas directas desde Urb. El Trébol / C-2 Sur. Tarifa justa de <strong>$0.50 por kilómetro</strong> calculada con GPS a tu ubicación exacta.</p>
+            <p>Salidas directas desde Urb. El Trébol / C-2 Sur en vehículo particular. Tarifa calculada según la distancia exacta hasta tu dirección de entrega.</p>
           </div>
         </div>
 
@@ -352,7 +352,7 @@
             <span class="faq-arrow">▼</span>
           </button>
           <div class="faq-accordion-body">
-            <p>Nuestro delivery tiene un costo exacto y transparente de <strong>$0.50 por kilómetro de recorrido</strong> medido desde nuestra sede en Urb. El Trébol / Circunvalación 2 Sur hasta tu dirección de entrega. Puedes calcular el costo exacto antes de ordenar con nuestro botón <strong>📍 Calcular Delivery GPS</strong>.</p>
+            <p>Nuestro delivery se calcula según la distancia desde nuestra sede en Urb. El Trébol / Circunvalación 2 Sur hasta tu dirección de entrega. Puedes calcular tu tarifa antes de ordenar con nuestro botón <strong>📍 Calcular Delivery GPS</strong>.</p>
           </div>
         </div>
 
@@ -540,7 +540,7 @@
           <div class="form-group">
             <label for="cart-delivery-type" class="form-label">Modalidad de Entrega:</label>
             <select id="cart-delivery-type" class="select-styled">
-              <option value="delivery-maracaibo">🛵 Delivery a Domicilio con GPS (Maracaibo)</option>
+              <option value="delivery-maracaibo">🚗 Delivery en Vehículo Particular con GPS (Maracaibo)</option>
               <option value="retiro-personal">🛍️ Retiro Personal / Pick-up (Previo acuerdo)</option>
               <option value="envio-nacional">📦 Envío Nacional (MRW / Tealca / Zoom)</option>
             </select>
@@ -553,7 +553,7 @@
               <span class="delivery-tier-tag" id="delivery-gps-tag">Tiendas Yolo Maracaibo</span>
             </div>
             <button type="button" class="btn-gps-detect" id="btn-detect-gps">
-              🛵 Usar mi ubicación actual (GPS en 1 clic)
+              🚗 Usar mi ubicación actual (GPS en 1 clic)
             </button>
             <input type="text" id="cart-delivery-coords" class="form-input" placeholder="O pega enlace de Google Maps / Coordenadas (Lat, Lng)" style="font-size:0.8rem; padding:7px 10px; margin-bottom:4px;">
             <div class="delivery-calc-badge" id="delivery-calc-badge">
@@ -590,6 +590,10 @@
           <div class="total-line">
             <span>Subtotal Insumos:</span>
             <span id="cart-summary-subtotal">$0.00</span>
+          </div>
+          <div class="total-line" id="cart-vip-discount-row" style="display:none; color:var(--ty-primary-dark); font-weight:700;">
+            <span>👑 Descuento Club VIP (<span id="cart-vip-pct-label">10%</span>):</span>
+            <span id="cart-summary-vip-discount">-$0.00</span>
           </div>
           <div class="total-line" id="cart-delivery-fee-row">
             <span>Delivery Maracaibo:</span>
@@ -679,7 +683,7 @@
               <strong>💵 DÓLARES EN EFECTIVO (MARACAIBO)</strong>
             </div>
             <div class="bank-pill-details">
-              <p>• Pago contra entrega en mano al motorizado.</p>
+              <p>• Pago contra entrega en mano al conductor del vehículo.</p>
               <p>• Por favor entregar billetes en buen estado (sin roturas ni rayones).</p>
             </div>
           </div>
@@ -732,6 +736,21 @@
           <div class="form-group">
             <label for="pay-input-holder" class="form-label">Nombre del Titular / Teléfono Emisor: *</label>
             <input type="text" id="pay-input-holder" class="form-input" placeholder="Ej: Andrea Gómez (0414-9876543)" required>
+          </div>
+
+          <!-- ADJUNTAR CAPTURA / COMPROBANTE DE PAGO MÓVIL -->
+          <div class="form-group" style="margin-top:10px; background:var(--bg-subtle); padding:12px; border-radius:var(--radius-md); border:1px dashed var(--border-rose);">
+            <label class="form-label" style="font-weight:700; color:var(--ty-primary-dark); margin-bottom:6px;">📸 Adjuntar Captura / Comprobante de Pago:</label>
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <label class="btn-secondary" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px; font-size:0.82rem; padding:8px 14px; margin:0;">
+                📎 Subir Comprobante (Capture)
+                <input type="file" id="pay-input-voucher" accept="image/*" style="display:none;">
+              </label>
+              <span id="pay-voucher-filename" style="font-size:0.75rem; color:var(--text-muted);">Sin archivo seleccionado</span>
+            </div>
+            <div id="pay-voucher-preview-box" style="margin-top:8px; display:none;">
+              <img id="pay-voucher-img-preview" src="" alt="Comprobante de Pago" style="max-height:140px; max-width:100%; border-radius:6px; border:1px solid var(--border-light); object-fit:contain; background:#fff;">
+            </div>
           </div>
 
           <div class="auth-security-notice">
@@ -1210,7 +1229,7 @@
             <div class="learning-step-badge">Paso 1</div>
             <div class="learning-step-icon">🛍️</div>
             <h4>Explora y Arma tu Carrito</h4>
-            <p>Filtra por categorías (Esmaltes, Geles, Lámparas, Kits). Usa los botones <strong>+</strong> y <strong>-</strong> para seleccionar cantidades. Tarifa de delivery exacta en Maracaibo calculada por GPS a <strong>$0.50 por km</strong>.</p>
+            <p>Filtra por categorías (Esmaltes, Geles, Lámparas, Kits). Usa los botones <strong>+</strong> y <strong>-</strong> para seleccionar cantidades. Tarifa de delivery calculada según tu distancia exacta en Maracaibo.</p>
           </div>
 
           <div class="learning-step-card">
@@ -1334,6 +1353,6 @@
   <div id="toast-notification-container" class="toast-container"></div>
 
   <!-- SCRIPT DE TIENDA PÚBLICA -->
-  <script src="app.js?v=20261024_v8"></script>
+  <script src="app.js?v=20261024_v9"></script>
 </body>
 </html>
