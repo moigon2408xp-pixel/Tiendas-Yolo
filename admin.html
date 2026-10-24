@@ -17,7 +17,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <link rel="stylesheet" href="styles.css?v=20261023e">
+  <link rel="stylesheet" href="styles.css?v=20261024a">
   <style>
     /* Estilos Luxury Backoffice Tiendas Yolo */
     :root {
@@ -566,7 +566,7 @@
       <!-- Tasa Oficial BCV en vivo (Click para actualizar) -->
       <div class="bcv-admin-pill" id="topbar-bcv-pill" title="Tasa oficial BCV actualizada en tiempo real (Clic para refrescar)">
         <span class="bcv-pulse-dot"></span>
-        <span>BCV: <strong id="topbar-bcv-rate">Bs. 883.40</strong> / $</span>
+        <span>BCV: <strong id="topbar-bcv-rate">Bs. 886.23</strong> / $</span>
       </div>
 
       <!-- Estado Google Sheets en vivo -->
@@ -574,8 +574,6 @@
         <span>☁️</span>
         <span id="topbar-cloud-text">Sheets Online</span>
       </div>
-
-
 
       <!-- Botón Cierre de Caja Diario (Reporte Z) -->
       <button type="button" class="admin-circle-btn" id="btn-topbar-report-z" title="🧾 Cierre de Caja Diario (Reporte Z)">
@@ -587,10 +585,10 @@
         🎓
       </button>
 
-      <!-- Perfil Oficial Administrador / Desarrollador -->
-      <div class="admin-profile-pill" id="admin-profile-badge" title="Sesión Administrador: Moisés González">
+      <!-- Alternador de Perfil: Dueña / Dirección General vs Gerente / Operativo -->
+      <div class="admin-profile-pill" id="admin-profile-badge" title="Toca aquí para alternar perfil administrativo (Dueña ↔ Gerente)">
         <span class="bcv-pulse-dot" style="background:#ea6fbf; box-shadow:0 0 8px #ea6fbf;"></span>
-        <span>👨‍💻 Moisés González</span>
+        <span id="admin-profile-name">👑 Dueña (Dirección General)</span>
       </div>
 
       <!-- Forzar Actualización en Dispositivos PWA -->
@@ -851,6 +849,17 @@
             <h3 class="kpi-value highlight-profit" id="fin-pill-net-val">$0.00</h3>
             <span class="kpi-sub" id="fin-pill-net-pct">Margen: 0%</span>
           </div>
+        </div>
+      </div>
+
+      <!-- GRÁFICO VISUAL COMPARATIVO DE INGRESOS, COSTOS Y UTILIDAD -->
+      <div class="fin-chart-box" id="fin-visual-chart-box">
+        <div class="fin-chart-title">
+          <span>📊 Balance & Flujo Operativo en Tiempo Real</span>
+          <span style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-sans);">Inspirado en Planillas Contables Oficiales</span>
+        </div>
+        <div class="fin-bar-chart" id="fin-bar-chart-bars">
+          <!-- Generado dinámicamente en admin.js -->
         </div>
       </div>
 
@@ -1445,6 +1454,7 @@
                 <option value="Ingreso">🟢 Ingreso (Venta de Insumos)</option>
                 <option value="Costo">🔴 Costo de Mercancía / Reposición</option>
                 <option value="Gasto">🟠 Gasto Operativo (Delivery, Bolsas, Redes)</option>
+                <option value="Fiscal">🟣 Gasto Fiscal / Impuestos (SENIAT, Patente, IGTF)</option>
                 <option value="Retiro">🔵 Retiro de Utilidad</option>
               </select>
             </div>
@@ -1453,6 +1463,7 @@
               <select id="fin-category" class="select-styled" required>
                 <option value="Venta Insumos">Venta de Insumos</option>
                 <option value="Compra Mercancía">Compra de Mercancía / Stock</option>
+                <option value="Impuestos y Fiscal">Impuestos / SENIAT / Patente / IGTF</option>
                 <option value="Delivery y Traslados">Delivery y Traslados</option>
                 <option value="Empaques y Bolsas">Empaques y Bolsas</option>
                 <option value="Publicidad e Instagram">Publicidad e Instagram</option>
