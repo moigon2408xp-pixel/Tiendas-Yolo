@@ -391,7 +391,10 @@
     deliveryFreeMinUSD: null,
     deliveryFlatFeeUSD: 2.50,
     adminPin: "2026",
-    paymentInfo: "Banesco (0134) | CI: V-28123456 | Telf: 0414-6553430\nBinance Pay ID: 829140291 (USDT)"
+    paymentInfo: "Banesco (0134) | CI: V-28123456 | Telf: 0414-6553430\nBinance Pay ID: 829140291 (USDT)",
+    vipClubActive: true,
+    vipMinOrders: 5,
+    vipDiscountPercent: 10
   };
 
   // Coordenadas oficiales de Tiendas Yolo Maracaibo (Urb. El Trébol / Circunvalación 2 Sur)
@@ -414,21 +417,50 @@
     return Math.round((R * c) * 10) / 10; // Redondeado a 1 decimal
   }
 
-  // Extractor inteligente de coordenadas (lat, lng directas o enlaces de Google Maps)
+  // Validador y corrector de coordenadas geográficas de Maracaibo y Zulia
+  function sanitizeMaracaiboCoords(lat, lng) {
+    if (typeof lat !== 'number' || typeof lng !== 'number' || isNaN(lat) || isNaN(lng)) return null;
+    // Si el usuario copió las coordenadas al revés (ej: -71.65, 10.60)
+    if (Math.abs(lat) > 50 && Math.abs(lng) < 25) {
+      const temp = lat;
+      lat = lng;
+      lng = temp;
+    }
+    // Maracaibo está en latitud Norte (positiva ~10.x) y longitud Oeste (negativa ~ -71.x)
+    lat = Math.abs(lat);
+    if (lng > 0) lng = -lng;
+    return { lat, lng };
+  }
+
+  // Extractor inteligente de coordenadas (lat/lng directas, enlaces Google Maps, daddr, !3d/!4d)
   function parseCoordinatesString(str) {
     if (!str || typeof str !== 'string') return null;
     const trimmed = str.trim();
-    // 1. Coordenadas directas: "10.6427, -71.6125" o "10.6427 -71.6125"
+
+    // 1. Embed o URL de Google Maps con !3d y !4d
+    const embedMatch = trimmed.match(/!3d(-?\d{1,2}\.\d+)!4d(-?\d{1,3}\.\d+)/);
+    if (embedMatch) {
+      return sanitizeMaracaiboCoords(parseFloat(embedMatch[1]), parseFloat(embedMatch[2]));
+    }
+
+    // 2. URL de Google Maps con @lat,lng
+    const atMatch = trimmed.match(/@(-?\d{1,2}\.\d+),(-?\d{1,3}\.\d+)/);
+    if (atMatch) {
+      return sanitizeMaracaiboCoords(parseFloat(atMatch[1]), parseFloat(atMatch[2]));
+    }
+
+    // 3. Parámetros de query: ?q=, &q=, daddr=, destination=, ll=
+    const queryMatch = trimmed.match(/(?:[?&]|\b)(?:q|daddr|destination|ll)=(-?\d{1,2}\.\d+)[,\s]+(-?\d{1,3}\.\d+)/);
+    if (queryMatch) {
+      return sanitizeMaracaiboCoords(parseFloat(queryMatch[1]), parseFloat(queryMatch[2]));
+    }
+
+    // 4. Coordenadas directas: "10.6427, -71.6125" o "10.6427 -71.6125"
     const directMatch = trimmed.match(/(-?\d{1,2}\.\d+)[,\s]+(-?\d{1,3}\.\d+)/);
     if (directMatch) {
-      return { lat: parseFloat(directMatch[1]), lng: parseFloat(directMatch[2]) };
+      return sanitizeMaracaiboCoords(parseFloat(directMatch[1]), parseFloat(directMatch[2]));
     }
-    // 2. URL de Google Maps: maps.google.com/?q=... o @lat,lng
-    const urlMatch = trimmed.match(/@(-?\d{1,2}\.\d+),(-?\d{1,3}\.\d+)/) ||
-                     trimmed.match(/q=(-?\d{1,2}\.\d+),(-?\d{1,3}\.\d+)/);
-    if (urlMatch) {
-      return { lat: parseFloat(urlMatch[1]), lng: parseFloat(urlMatch[2]) };
-    }
+
     return null;
   }
 
@@ -437,7 +469,6 @@
     if (km === null || km === undefined || isNaN(km)) {
       return 1.50; // Tarifa referencial estimada
     }
-    // 0.50$ por kilometro de recorrido desde el punto de origen
     const calculated = Math.round(km * 0.50 * 100) / 100;
     return Math.max(1.00, calculated);
   }
@@ -449,6 +480,7 @@
     quotes: [],
     config: Object.assign({}, DEFAULT_CONFIG),
     clientProfile: null,
+    tempPaymentVoucher: null,
     activeCategory: 'all',
     activeColorFilter: 'all',
     searchQuery: '',
@@ -1044,6 +1076,18 @@
     const delTypeSelect = document.getElementById('cart-delivery-type');
     const delType = delTypeSelect ? delTypeSelect.value : 'delivery-maracaibo';
 
+    // Descuento automático Club Manicurista VIP
+    const vipActive = state.config.vipClubActive !== false;
+    const vipMinOrders = Number(state.config.vipMinOrders || 5);
+    const vipDiscountPct = Number(state.config.vipDiscountPercent || 10);
+    const clientOrders = (state.clientProfile && state.clientProfile.ordersCount) || 0;
+    const isVIP = vipActive && clientOrders >= vipMinOrders;
+
+    let vipDiscountUSD = 0;
+    if (isVIP && subtotalUSD > 0) {
+      vipDiscountUSD = Math.round(subtotalUSD * (vipDiscountPct / 100) * 100) / 100;
+    }
+
     let deliveryUSD = 0;
     if (subtotalUSD > 0) {
       if (delType === 'retiro-personal' || delType === 'envio-nacional') {
@@ -1053,7 +1097,7 @@
       }
     }
 
-    const totalUSD = subtotalUSD + deliveryUSD;
+    const totalUSD = Math.max(0, subtotalUSD - vipDiscountUSD) + deliveryUSD;
     const totalBs = totalUSD * rate;
 
     if (counter) counter.textContent = totalQty;
@@ -1062,11 +1106,25 @@
 
     // Actualizar totales en el drawer
     const sSub = document.getElementById('cart-summary-subtotal');
+    const sVipRow = document.getElementById('cart-vip-discount-row');
+    const sVipPct = document.getElementById('cart-vip-pct-label');
+    const sVipDisc = document.getElementById('cart-summary-vip-discount');
     const sDel = document.getElementById('cart-summary-delivery');
     const sTotUSD = document.getElementById('cart-summary-total-usd');
     const sTotBs = document.getElementById('cart-summary-total-bs');
 
     if (sSub) sSub.textContent = `$${subtotalUSD.toFixed(2)}`;
+
+    if (sVipRow && sVipDisc) {
+      if (isVIP && vipDiscountUSD > 0) {
+        sVipRow.style.display = 'flex';
+        if (sVipPct) sVipPct.textContent = `${vipDiscountPct}%`;
+        sVipDisc.textContent = `-$${vipDiscountUSD.toFixed(2)}`;
+      } else {
+        sVipRow.style.display = 'none';
+      }
+    }
+
     if (sDel) {
       if (delType === 'retiro-personal') {
         sDel.textContent = "Retiro Personal (Sin Costo)";
@@ -1179,6 +1237,18 @@
     const subtotalUSD = state.cart.reduce((sum, item) => sum + (item.precioUSD * item.quantity), 0);
     const delType = document.getElementById('cart-delivery-type').value;
     
+    // Descuento VIP si aplica
+    const vipActive = state.config.vipClubActive !== false;
+    const vipMinOrders = Number(state.config.vipMinOrders || 5);
+    const vipDiscountPct = Number(state.config.vipDiscountPercent || 10);
+    const clientOrders = (state.clientProfile && state.clientProfile.ordersCount) || 0;
+    const isVIP = vipActive && clientOrders >= vipMinOrders;
+
+    let vipDiscountUSD = 0;
+    if (isVIP && subtotalUSD > 0) {
+      vipDiscountUSD = Math.round(subtotalUSD * (vipDiscountPct / 100) * 100) / 100;
+    }
+
     let deliveryUSD = 0;
     if (delType === 'retiro-personal' || delType === 'envio-nacional') {
       deliveryUSD = 0;
@@ -1186,7 +1256,7 @@
       deliveryUSD = getDeliveryFeeByKm(state.deliveryDistanceKm);
     }
 
-    const totalUSD = subtotalUSD + deliveryUSD;
+    const totalUSD = Math.max(0, subtotalUSD - vipDiscountUSD) + deliveryUSD;
     const rate = Number(state.config.rateBCV || 887.30);
     const totalBs = totalUSD * rate;
     const coordsVal = document.getElementById('cart-delivery-coords') ? document.getElementById('cart-delivery-coords').value.trim() : '';
@@ -1202,6 +1272,9 @@
       notes: document.getElementById('cart-notes').value.trim(),
       items: JSON.parse(JSON.stringify(state.cart)),
       subtotalUSD: subtotalUSD,
+      isVIP: isVIP,
+      vipDiscountPercent: isVIP ? vipDiscountPct : 0,
+      vipDiscountUSD: vipDiscountUSD,
       deliveryUSD: deliveryUSD,
       totalUSD: totalUSD,
       rateBCV: rate,
@@ -1269,18 +1342,56 @@
     const orderId = `NE-2026-${String(Date.now()).slice(-4)}`;
     const nowStr = new Date().toLocaleString('es-VE', { dateStyle: 'short', timeStyle: 'short' });
 
+    // Enlace de navegación GPS directo para el conductor del vehículo
+    let deliveryNavUrl = null;
+    const destCoords = state.currentPaymentOrder.deliveryCoords;
+    if (destCoords) {
+      const parsed = parseCoordinatesString(destCoords);
+      if (parsed) {
+        deliveryNavUrl = `https://www.google.com/maps/dir/?api=1&destination=${parsed.lat},${parsed.lng}`;
+      } else {
+        deliveryNavUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destCoords)}`;
+      }
+    }
+
+    let delTypeLabel = state.currentPaymentOrder.deliveryType;
+    if (delTypeLabel === 'delivery-maracaibo') delTypeLabel = 'Delivery en Vehículo';
+    else if (delTypeLabel === 'retiro-personal') delTypeLabel = 'Retiro en Tienda';
+    else if (delTypeLabel === 'envio-nacional') delTypeLabel = 'Envío Nacional';
+
     const completedOrder = Object.assign({}, state.currentPaymentOrder, {
       id: orderId,
+      cliente: state.currentPaymentOrder.clientName,
+      telefono: state.currentPaymentOrder.clientPhone,
+      salon: state.currentPaymentOrder.clientSalon,
+      direccion: state.currentPaymentOrder.clientAddress,
+      tipoEntrega: delTypeLabel,
+      fecha: nowStr,
       authCode: authCode,
       date: nowStr,
       paymentMethod: method,
       paymentBank: bank,
       paymentRef: ref,
       paymentHolder: holder,
-      status: 'AUTENTICADO_PAGADO'
+      referenciaPago: ref,
+      bancoOrigen: bank,
+      metodoPago: method,
+      voucherImg: state.tempPaymentVoucher || null,
+      deliveryNavUrl: deliveryNavUrl,
+      status: 'AUTENTICADO_PAGADO',
+      estado: 'Pendiente'
     });
 
     state.orders.unshift(completedOrder);
+
+    // Limpiar comprobante temporal y campo de subida
+    state.tempPaymentVoucher = null;
+    const vInput = document.getElementById('pay-input-voucher');
+    if (vInput) vInput.value = '';
+    const vName = document.getElementById('pay-voucher-filename');
+    if (vName) vName.textContent = 'Sin archivo seleccionado';
+    const vPrev = document.getElementById('pay-voucher-preview-box');
+    if (vPrev) vPrev.style.display = 'none';
 
     // Si tiene perfil de clienta, registrar en su historial
     if (state.clientProfile) {
@@ -1330,9 +1441,9 @@
     setTxt('ticket-auth-code', order.authCode || 'AUTH-YOLO-000000');
     
     let delTypeDesc = order.deliveryType || 'Delivery Maracaibo';
-    if (delTypeDesc === 'delivery-maracaibo') delTypeDesc = '🛵 Delivery a Domicilio (Maracaibo)';
-    if (delTypeDesc === 'retiro-personal') delTypeDesc = '🛍️ Retiro en Tienda Física';
-    if (delTypeDesc === 'envio-nacional') delTypeDesc = '📦 Envío Nacional (MRW/Tealca/Zoom)';
+    if (delTypeDesc === 'delivery-maracaibo' || delTypeDesc === 'Delivery en Vehículo') delTypeDesc = '🚗 Delivery en Vehículo Particular (Maracaibo)';
+    if (delTypeDesc === 'retiro-personal' || delTypeDesc === 'Retiro en Tienda') delTypeDesc = '🛍️ Retiro en Tienda Física';
+    if (delTypeDesc === 'envio-nacional' || delTypeDesc === 'Envío Nacional') delTypeDesc = '📦 Envío Nacional (MRW/Tealca/Zoom)';
     setTxt('ticket-delivery-type', delTypeDesc);
 
     setTxt('ticket-client-name', order.clientName || 'Cliente');
@@ -1705,7 +1816,9 @@
       const coordsInput = document.getElementById('cart-delivery-coords');
       if (coordsInput) {
         coordsInput.value = state.clientProfile.gpsCoords;
-        if (typeof updateDeliveryDistanceCalc === 'function') {
+        if (typeof window.updateDeliveryDistanceCalc === 'function') {
+          window.updateDeliveryDistanceCalc();
+        } else if (typeof updateDeliveryDistanceCalc === 'function') {
           updateDeliveryDistanceCalc();
         }
       }
@@ -2407,12 +2520,13 @@
       if (coords) {
         state.deliveryCoords = `${coords.lat}, ${coords.lng}`;
         const km = calculateDistanceKm(STORE_LOCATION.lat, STORE_LOCATION.lng, coords.lat, coords.lng);
+        state.deliveryDistanceKm = km;
         const fee = getDeliveryFeeByKm(km);
         const rate = Number(state.config.rateBCV || 887.30);
         const feeBs = fee * rate;
 
         if (badgeGpsText) {
-          badgeGpsText.innerHTML = `🛵 <strong>${km} km</strong> desde Urb. El Trébol — Delivery: <strong>$${fee.toFixed(2)}</strong> (Bs. ${feeBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})`;
+          badgeGpsText.innerHTML = `🚗 <strong>${km} km</strong> desde Urb. El Trébol — Delivery: <strong>$${fee.toFixed(2)}</strong> (Bs. ${feeBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})`;
         }
       } else {
         state.deliveryDistanceKm = null;
@@ -2422,6 +2536,7 @@
       }
       updateCartUI();
     }
+    window.updateDeliveryDistanceCalc = updateDeliveryDistanceCalc;
 
     if (delTypeSelect) {
       delTypeSelect.addEventListener('change', updateDeliveryDistanceCalc);
@@ -2453,6 +2568,26 @@
           },
           { enableHighAccuracy: true, timeout: 8000 }
         );
+      });
+    }
+
+    // Subida y compresión de Comprobante / Captura de Pago
+    const payVoucherInput = document.getElementById('pay-input-voucher');
+    if (payVoucherInput) {
+      payVoucherInput.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        const nameEl = document.getElementById('pay-voucher-filename');
+        const previewBox = document.getElementById('pay-voucher-preview-box');
+        const previewImg = document.getElementById('pay-voucher-img-preview');
+        if (!file) return;
+
+        if (nameEl) nameEl.textContent = file.name;
+        compressAndReadImage(file, (dataUrl) => {
+          state.tempPaymentVoucher = dataUrl;
+          if (previewImg) previewImg.src = dataUrl;
+          if (previewBox) previewBox.style.display = 'block';
+          showToast("📸 Comprobante adjuntado con éxito", "success");
+        });
       });
     }
 
