@@ -104,7 +104,9 @@
 
       <!-- BUSCADOR RÁPIDO DE INSUMOS -->
       <div class="search-box-header" id="header-search-wrapper">
-        <span class="search-icon">🔍</span>
+        <span class="search-icon">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </span>
         <input type="text" id="global-search-input" placeholder="Buscar esmaltes, geles, kits, pinceles..." autocomplete="off">
         <button class="clear-search-btn" id="btn-clear-search" style="display:none;">✕</button>
       </div>
@@ -113,25 +115,33 @@
       <div class="nav-actions">
         <!-- BOTÓN INSTALAR APP PWA -->
         <button class="btn-install-header" id="btn-install-pwa" title="Instalar Tiendas Yolo en tu teléfono">
-          <span class="install-icon">📲</span>
+          <span class="install-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+          </span>
           <span class="install-text">Instalar App</span>
         </button>
 
         <!-- BOTÓN MI CUENTA / CLUB MANICURISTA -->
         <button class="account-btn" id="btn-open-account" title="Club Manicurista & Mis Datos">
-          <span class="account-icon">👤</span>
+          <span class="account-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </span>
           <span class="account-badge-text" id="header-user-status">Mi Cuenta</span>
         </button>
 
         <!-- BOTÓN GUÍA DE LA APP / APRENDER A USAR -->
         <button class="help-btn" id="btn-open-help" title="Manual y Enseñanza de Uso de la App">
-          <span class="help-icon">🎓</span>
+          <span class="help-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          </span>
           <span class="help-badge-text">Guía</span>
         </button>
 
         <!-- BOTÓN DE CARRITO -->
         <button class="cart-btn" id="btn-open-cart" title="Ver pedido actual">
-          <span class="cart-icon">🛒</span>
+          <span class="cart-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+          </span>
           <span class="cart-count-badge" id="cart-counter">0</span>
           <span class="cart-total-badge" id="cart-total-header">$0.00</span>
         </button>
@@ -180,13 +190,16 @@
           </div>
           <div class="hero-cta-group">
             <button class="btn-primary" id="btn-hero-explore-kits">
-              📦 Ver Kits Manicuristas
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+              <span>Ver Kits Manicuristas</span>
             </button>
             <button class="btn-secondary" id="btn-hero-calc-gps">
-              📍 Calcular Delivery GPS
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              <span>Calcular Delivery GPS</span>
             </button>
             <button class="btn-secondary" id="btn-hero-quote-generator">
-              📄 Generar Presupuesto
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              <span>Generar Presupuesto</span>
             </button>
             <a href="https://wa.me/584146553430?text=Hola%20Tiendas%20Yolo%2C%20deseo%20m%C3%A1s%20informaci%C3%B3n%20sobre%20sus%20insumos" target="_blank" rel="noopener noreferrer" class="btn-hero-wa" title="WhatsApp 0414-6553430">
               <i class="fa-brands fa-whatsapp"></i>
@@ -887,7 +900,7 @@
             </tr>
             <tr>
               <td colspan="3" class="text-right font-bold">Delivery / Despacho:</td>
-              <td colspan="2" class="font-bold" id="print-quote-delivery-status">Tarifa según destino ($0.50/km)</td>
+              <td colspan="2" class="font-bold" id="print-quote-delivery-status">Tarifa según destino</td>
             </tr>
             <tr class="grand-total-quote-row">
               <td colspan="3" class="text-right font-bold">TOTAL GENERAL:</td>
@@ -898,7 +911,7 @@
         </table>
 
         <div class="quote-terms-box">
-          <p><strong>Condiciones Comerciales:</strong> Precios calculados a la tasa del día. El apartado de mercancía se confirma al verificar el comprobante de pago móvil o divisa. Delivery en Maracaibo calculado por kilometraje GPS ($0.50/km).</p>
+          <p><strong>Condiciones Comerciales:</strong> Precios calculados a la tasa del día. El apartado de mercancía se confirma al verificar el comprobante de pago móvil o divisa. Delivery en Maracaibo calculado según la dirección de entrega.</p>
           <p class="quote-signature-note"><em>“Yo lo compro, Yo lo merezco” — Gracias por preferir a Tiendas Yolo®.</em></p>
         </div>
 
@@ -1110,6 +1123,20 @@
             </div>
           </div>
 
+          <!-- GESTOR DE TONOS / VARIANTES Y FOTO POR CADA TONO -->
+          <div class="form-group" style="margin-top:14px; border-top:1px dashed var(--border-light); padding-top:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <label class="form-label" style="margin-bottom:0; font-weight:700;">🎨 Tonos / Colores (con foto individual por tono):</label>
+              <button type="button" class="btn-micro" id="btn-add-tone-row" style="background:var(--ty-primary-dark); color:#fff; font-weight:700; padding:4px 10px; border-radius:var(--radius-pill); cursor:pointer;">+ Añadir Tono</button>
+            </div>
+            <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">
+              Define cada tono con su color y su foto correspondiente para que al tocar el color en la tienda cambie la imagen automáticamente.
+            </p>
+            <div id="pe-tones-container" style="display:flex; flex-direction:column; gap:8px;">
+              <!-- Se generan dinámicamente -->
+            </div>
+          </div>
+
           <div class="modal-footer-buttons">
             <button type="button" class="btn-danger-outline" id="btn-pe-delete-prod" style="display:none;">🗑️ Eliminar</button>
             <div style="flex:1;"></div>
@@ -1241,7 +1268,7 @@
 
       <div class="modal-body" style="padding:20px;">
         <p style="font-size:0.86rem; color:var(--text-secondary); margin-bottom:14px; line-height:1.4;">
-          Calcula tu tarifa exacta de entrega por distancia en Maracaibo. <strong>Tarifa justa y transparente calculada por GPS: $0.50 por kilómetro recorrido.</strong>
+          Calcula tu tarifa exacta de entrega por distancia en Maracaibo según tu zona o coordenadas GPS.
         </p>
 
         <!-- Botón GPS Automático -->
@@ -1294,9 +1321,6 @@
               <span style="font-size:0.75rem; font-weight:600; color:var(--text-secondary);" id="gps-cost-bs">Bs. 0.00</span>
             </div>
           </div>
-          <div style="font-size:0.76rem; color:var(--text-muted); text-align:center; margin-top:10px;" id="gps-time-estimate">
-            ⏱️ Tiempo estimado de entrega: 25 - 40 min
-          </div>
         </div>
 
         <button type="button" class="btn-primary" id="btn-apply-gps-to-cart" style="width:100%; justify-content:center; padding:12px; font-weight:800;">
@@ -1310,6 +1334,6 @@
   <div id="toast-notification-container" class="toast-container"></div>
 
   <!-- SCRIPT DE TIENDA PÚBLICA -->
-  <script src="app.js?v=20261023e"></script>
+  <script src="app.js?v=20261024_v8"></script>
 </body>
 </html>
