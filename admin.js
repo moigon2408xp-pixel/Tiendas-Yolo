@@ -101,23 +101,23 @@
   // SEGURIDAD & MULTI-USUARIO CON PIN DE ACCESO
   // ============================================================================
   const ADMIN_USERS = {
-    moises: {
-      id: 'moises',
-      name: '👤 Moisés González (Admin)',
-      role: 'Administrador de Sistemas & Dev',
-      pin: '2026'
-    },
-    duena: {
-      id: 'duena',
-      name: '👑 Propietarios (Dirección)',
-      role: 'Dirección General & Finanzas',
+    carlos: {
+      id: 'carlos',
+      name: '👑 Carlos Murillo (Dueño / Fundador)',
+      role: 'Dirección General & Propietario',
       pin: '1234'
     },
-    gerente: {
-      id: 'gerente',
-      name: '💼 Gerencia Operativa',
-      role: 'Gerencia de Tienda & Mostrador',
-      pin: '5678'
+    yaceli: {
+      id: 'yaceli',
+      name: '👑 Yaceli Beltrán (Dueña / Fundadora)',
+      role: 'Dirección General & Propietaria',
+      pin: '1234'
+    },
+    moises: {
+      id: 'moises',
+      name: '👤 Moisés González (Soporte Técnico & Dev)',
+      role: 'Administrador de Sistemas & Dev',
+      pin: '2026'
     }
   };
 
@@ -126,7 +126,7 @@
     const pinModal = document.getElementById('pin-lock-modal');
     if (!pinModal) return;
 
-    const activeUserId = sessionStorage.getItem('TY_ADMIN_ACTIVE_USER') || 'moises';
+    const activeUserId = sessionStorage.getItem('TY_ADMIN_ACTIVE_USER') || 'carlos';
     const profileNameEl = document.getElementById('admin-profile-name');
     if (profileNameEl && ADMIN_USERS[activeUserId]) {
       profileNameEl.textContent = ADMIN_USERS[activeUserId].name;
@@ -148,8 +148,8 @@
 
   function handleUnlock() {
     const userSelect = document.getElementById('select-admin-user');
-    const selectedUserId = userSelect ? userSelect.value : 'moises';
-    const userObj = ADMIN_USERS[selectedUserId] || ADMIN_USERS.moises;
+    const selectedUserId = userSelect ? userSelect.value : 'carlos';
+    const userObj = ADMIN_USERS[selectedUserId] || ADMIN_USERS.carlos;
 
     const input = document.getElementById('input-admin-pin');
     const enteredPin = input.value.trim();
@@ -558,15 +558,33 @@
     container.innerHTML = filtered.map(order => {
       const rate = Number(state.config.rateBCV || 887.30);
       const totalBs = Number(order.totalUSD) * rate;
+      const clientName = order.cliente || order.clientName || 'Cliente';
+      const orderDate = order.fecha || order.date || '';
+      const delType = order.tipoEntrega || order.deliveryType || 'Delivery';
+      const clientAddr = order.direccion || order.clientAddress || '';
+      const phone = order.telefono || order.clientPhone || '';
+      const payMethod = order.metodoPago || order.paymentMethod || 'Pago Móvil';
+      const payRef = order.referenciaPago || order.paymentRef || '';
+      const payBank = order.bancoOrigen || order.paymentBank || '';
+      const voucher = order.voucherImg || null;
+
+      // Enlace de Google Maps para el conductor en vehículo
+      let navUrl = order.deliveryNavUrl || null;
+      if (!navUrl) {
+        const rawCoords = order.deliveryCoords || (clientAddr && /(-?\d{1,2}\.\d+)[,\s]+(-?\d{1,3}\.\d+)/.test(clientAddr) ? clientAddr : null);
+        if (rawCoords) {
+          navUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(rawCoords)}`;
+        }
+      }
 
       return `
         <div class="admin-order-card">
           <div class="admin-order-card-header">
             <div>
               <span class="order-id-badge">#${order.id}</span>
-              <strong style="margin-left: 8px; font-size: 1.05rem;">${order.cliente}</strong>
+              <strong style="margin-left: 8px; font-size: 1.05rem;">${clientName}</strong>
               <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
-                📅 ${order.fecha} • 📍 ${order.tipoEntrega} ${order.direccion ? `(${order.direccion})` : ''}
+                📅 ${orderDate} • 📍 ${delType} ${clientAddr ? `(${clientAddr})` : ''}
               </div>
             </div>
             <div style="text-align: right;">
@@ -582,13 +600,13 @@
 
           <div class="admin-order-body">
             <div class="order-items-compact">
-              <strong>Insumos:</strong> ${order.items ? order.items.map(i => `${i.qty}x ${i.nombre}`).join(', ') : 'Insumos de uñas'}
+              <strong>Insumos:</strong> ${order.items ? order.items.map(i => `${i.qty || i.quantity || 1}x ${i.nombre}`).join(', ') : 'Insumos de uñas'}
             </div>
             <div class="order-payment-meta">
-              <span>💳 <strong>Pago:</strong> ${order.metodoPago || 'Pago Móvil'}</span>
-              ${order.referenciaPago ? `<span>🔖 <strong>Ref:</strong> ${order.referenciaPago}</span>` : ''}
-              ${order.bancoOrigen ? `<span>🏦 <strong>Banco:</strong> ${order.bancoOrigen}</span>` : ''}
-              ${order.telefono ? `<span>📱 <strong>WhatsApp:</strong> ${order.telefono}</span>` : ''}
+              <span>💳 <strong>Pago:</strong> ${payMethod}</span>
+              ${payRef ? `<span>🔖 <strong>Ref:</strong> ${payRef}</span>` : ''}
+              ${payBank ? `<span>🏦 <strong>Banco:</strong> ${payBank}</span>` : ''}
+              ${phone ? `<span>📱 <strong>WhatsApp:</strong> ${phone}</span>` : ''}
             </div>
           </div>
 
@@ -605,7 +623,17 @@
               </select>
             </div>
 
-            <div style="display: flex; gap: 8px;">
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              ${navUrl ? `
+                <a href="${navUrl}" target="_blank" rel="noopener noreferrer" class="btn-primary" style="padding: 6px 12px; font-size: 0.8rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; background: #0f9d58; color: #fff;" title="Abrir ruta directa en Google Maps para el chofer">
+                  🚗 Ruta en Maps
+                </a>
+              ` : ''}
+              ${voucher ? `
+                <button class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px; border-color: var(--ty-primary); font-weight: 700;" data-action="view-voucher" data-order-id="${order.id}">
+                  📸 Ver Comprobante
+                </button>
+              ` : ''}
               <button class="btn-whatsapp-outline" style="padding: 6px 12px; font-size: 0.8rem;" data-action="notify-client" data-order-id="${order.id}">
                 📲 Notificar
               </button>
@@ -634,6 +662,26 @@
           if (state.config.sheetsApiUrl) {
             syncWithSheets('update_order_status', { orderId: orderId, newStatus: newStatus });
           }
+        }
+      });
+    });
+
+    container.querySelectorAll('[data-action="view-voucher"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const order = state.orders.find(o => o.id === btn.dataset.orderId);
+        if (order && order.voucherImg) {
+          const viewer = document.getElementById('modal-voucher-viewer');
+          const img = document.getElementById('voucher-viewer-img');
+          const title = document.getElementById('voucher-viewer-title');
+          const ref = document.getElementById('voucher-viewer-ref');
+          if (viewer && img) {
+            img.src = order.voucherImg;
+            if (title) title.textContent = `📸 Comprobante • Pedido #${order.id} (${order.cliente || order.clientName || 'Cliente'})`;
+            if (ref) ref.textContent = `Método: ${order.metodoPago || order.paymentMethod || 'Pago'} • Ref: ${order.referenciaPago || order.paymentRef || 'S/R'}`;
+            viewer.style.display = 'flex';
+          }
+        } else {
+          showToast("Este pedido no contiene captura de comprobante.", "info");
         }
       });
     });
@@ -1617,6 +1665,17 @@
     const delivKmInput = document.getElementById('cfg-delivery-per-km');
     if (delivKmInput) delivKmInput.value = 0.50;
 
+    // Reglas del Club Manicurista VIP (Dueños)
+    if (document.getElementById('cfg-vip-active')) {
+      document.getElementById('cfg-vip-active').value = (state.config.vipClubActive !== false) ? 'true' : 'false';
+    }
+    if (document.getElementById('cfg-vip-min-orders')) {
+      document.getElementById('cfg-vip-min-orders').value = state.config.vipMinOrders || 5;
+    }
+    if (document.getElementById('cfg-vip-discount-percent')) {
+      document.getElementById('cfg-vip-discount-percent').value = state.config.vipDiscountPercent || 10;
+    }
+
     // Cuentas de Pago
     try {
       const pmSettings = JSON.parse(localStorage.getItem('ty_payment_settings') || '{}');
@@ -2015,6 +2074,38 @@
         saveState();
         renderAdminDashboard();
         showToast("Parámetros y PIN actualizados.", "success");
+      });
+    }
+
+    // Guardar Reglas del Club Manicurista VIP (Dueños)
+    const btnSaveVip = document.getElementById('btn-save-vip-config');
+    if (btnSaveVip) {
+      btnSaveVip.addEventListener('click', () => {
+        const vipActive = document.getElementById('cfg-vip-active').value === 'true';
+        const vipMinOrders = parseInt(document.getElementById('cfg-vip-min-orders').value, 10) || 5;
+        const vipDiscountPercent = parseFloat(document.getElementById('cfg-vip-discount-percent').value) || 10;
+
+        state.config.vipClubActive = vipActive;
+        state.config.vipMinOrders = vipMinOrders;
+        state.config.vipDiscountPercent = vipDiscountPercent;
+        saveState();
+        showToast("👑 Reglas del Club Manicurista VIP guardadas con éxito.", "success");
+      });
+    }
+
+    // Controladores del Visor de Comprobante de Pago
+    const closeVoucherBtn = document.getElementById('btn-close-voucher-viewer');
+    const closeVoucherModalBtn = document.getElementById('btn-close-voucher-modal');
+    const voucherModal = document.getElementById('modal-voucher-viewer');
+    if (closeVoucherBtn && voucherModal) {
+      closeVoucherBtn.addEventListener('click', () => { voucherModal.style.display = 'none'; });
+    }
+    if (closeVoucherModalBtn && voucherModal) {
+      closeVoucherModalBtn.addEventListener('click', () => { voucherModal.style.display = 'none'; });
+    }
+    if (voucherModal) {
+      voucherModal.addEventListener('click', (e) => {
+        if (e.target === voucherModal) voucherModal.style.display = 'none';
       });
     }
 
