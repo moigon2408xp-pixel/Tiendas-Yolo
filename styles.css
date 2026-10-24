@@ -2893,6 +2893,14 @@ body.theme-dark .footer-col-title {
   text-decoration: underline;
 }
 
+.footer-links .bio-social-bar a,
+.footer-links .bio-social-icon,
+.footer-links .bio-social-icon:hover {
+  text-decoration: none !important;
+  border-bottom: none !important;
+  outline: none;
+}
+
 .footer-admin-link {
   display: flex;
   flex-direction: column;
@@ -4735,6 +4743,103 @@ body.theme-dark .club-intro-card p {
   font-weight: 700;
   color: var(--text-main);
 }
+
+/* ============================================================================
+   BOTONES WHATSAPP DE ALTO CONTRASTE EN HERO CARD
+   ============================================================================ */
+.btn-hero-wa {
+  background: #ffffff !important;
+  color: #2b0b1d !important;
+  border: 1.5px solid #25D366 !important;
+  padding: 10px 18px !important;
+  border-radius: var(--radius-pill) !important;
+  font-weight: 700 !important;
+  font-size: 0.88rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  text-decoration: none !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16) !important;
+  transition: all var(--trans-fast) !important;
+  white-space: nowrap !important;
+}
+.btn-hero-wa i {
+  color: #25D366 !important;
+  font-size: 1.25rem !important;
+}
+.btn-hero-wa:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  background: #f0fdf4 !important;
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35) !important;
+  border-color: #16a34a !important;
+}
+.btn-hero-wa.wa-sales {
+  border-color: #10b981 !important;
+}
+.btn-hero-wa.wa-sales i {
+  color: #10b981 !important;
+}
+
+/* ============================================================================
+   PERIOD FILTER BUTTONS (ACTIVE STATE) & CUSTOM RANGE INPUTS
+   ============================================================================ */
+.btn-filter-date {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-filter-date:hover {
+  border-color: var(--ty-primary);
+  color: var(--ty-primary-dark);
+}
+.btn-filter-date.active {
+  background: var(--ty-primary) !important;
+  color: #ffffff !important;
+  border-color: var(--ty-primary-dark) !important;
+  box-shadow: 0 2px 8px rgba(234, 111, 191, 0.4) !important;
+}
+#finance-custom-range-inputs {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-subtle);
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-rose);
+}
+
+/* FOOTER PHONES CLEANUP */
+.footer-phones-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+.footer-phone-link {
+  color: var(--text-secondary) !important;
+  text-decoration: none !important;
+  font-size: 0.88rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease;
+}
+.footer-phone-link:hover {
+  color: #25D366 !important;
+  text-decoration: none !important;
+}
+.footer-rif-badge {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
 
 
 
