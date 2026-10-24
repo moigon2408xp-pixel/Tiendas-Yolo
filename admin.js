@@ -98,17 +98,46 @@
   }
 
   // ============================================================================
-  // SEGURIDAD & PIN DE ACCESO
+  // SEGURIDAD & MULTI-USUARIO CON PIN DE ACCESO
   // ============================================================================
+  const ADMIN_USERS = {
+    moises: {
+      id: 'moises',
+      name: '👤 Moisés González (Admin)',
+      role: 'Administrador de Sistemas & Dev',
+      pin: '2026'
+    },
+    duena: {
+      id: 'duena',
+      name: '👑 Propietarios (Dirección)',
+      role: 'Dirección General & Finanzas',
+      pin: '1234'
+    },
+    gerente: {
+      id: 'gerente',
+      name: '💼 Gerencia Operativa',
+      role: 'Gerencia de Tienda & Mostrador',
+      pin: '5678'
+    }
+  };
+
   function checkAuthentication() {
     const isAuth = sessionStorage.getItem(PIN_SESSION_KEY);
     const pinModal = document.getElementById('pin-lock-modal');
     if (!pinModal) return;
 
+    const activeUserId = sessionStorage.getItem('TY_ADMIN_ACTIVE_USER') || 'moises';
+    const profileNameEl = document.getElementById('admin-profile-name');
+    if (profileNameEl && ADMIN_USERS[activeUserId]) {
+      profileNameEl.textContent = ADMIN_USERS[activeUserId].name;
+    }
+
     if (isAuth === 'true') {
       pinModal.style.display = 'none';
     } else {
       pinModal.style.display = 'flex';
+      const userSelect = document.getElementById('select-admin-user');
+      if (userSelect) userSelect.value = activeUserId;
       const input = document.getElementById('input-admin-pin');
       if (input) {
         input.value = '';
@@ -118,17 +147,26 @@
   }
 
   function handleUnlock() {
+    const userSelect = document.getElementById('select-admin-user');
+    const selectedUserId = userSelect ? userSelect.value : 'moises';
+    const userObj = ADMIN_USERS[selectedUserId] || ADMIN_USERS.moises;
+
     const input = document.getElementById('input-admin-pin');
     const enteredPin = input.value.trim();
-    const correctPin = String(state.config.adminPin || '2026');
 
-    if (enteredPin === correctPin) {
+    // Moisés puede usar el PIN configurado en Ajustes o su predeterminado 2026
+    const expectedPin = (selectedUserId === 'moises' && state.config.adminPin) ? String(state.config.adminPin) : userObj.pin;
+
+    if (enteredPin === expectedPin) {
       sessionStorage.setItem(PIN_SESSION_KEY, 'true');
+      sessionStorage.setItem('TY_ADMIN_ACTIVE_USER', selectedUserId);
+      const profileNameEl = document.getElementById('admin-profile-name');
+      if (profileNameEl) profileNameEl.textContent = userObj.name;
       document.getElementById('pin-lock-modal').style.display = 'none';
-      showToast("¡Bienvenido al Panel de Gestión de Tiendas Yolo!", "success");
+      showToast(`¡Bienvenido, ${userObj.name}!`, "success");
       renderAllAdminModules();
     } else {
-      showToast("PIN de seguridad incorrecto.", "error");
+      showToast(`PIN incorrecto para ${userObj.role}.`, "error");
       input.value = '';
       input.focus();
     }
@@ -166,7 +204,7 @@
       state.config.adminPin = '2026';
     }
     if (!state.config.rateBCV) {
-      state.config.rateBCV = 883.40;
+      state.config.rateBCV = 887.30;
     }
 
     // Seed de Manicuristas / CRM si está vacío para dar valor inmediato (solo primera vez)
@@ -324,7 +362,7 @@
 
   // DASHBOARD GENERAL
   function renderAdminDashboard() {
-    const rate = Number(state.config.rateBCV || 883.40);
+    const rate = Number(state.config.rateBCV || 887.30);
 
     const totalSalesUSD = state.orders
       .filter(o => o.estado !== 'Cancelado')
@@ -378,7 +416,7 @@
     const container = document.getElementById('dashboard-accounts-container');
     if (!container) return;
 
-    const rate = Number(state.config.rateBCV || 883.40);
+    const rate = Number(state.config.rateBCV || 887.30);
     const accounts = [
       { name: '💵 Efectivo $', key: 'Efectivo $' },
       { name: '📲 Pago Móvil (Bs)', key: 'Pago Móvil' },
@@ -518,7 +556,7 @@
     }
 
     container.innerHTML = filtered.map(order => {
-      const rate = Number(state.config.rateBCV || 883.40);
+      const rate = Number(state.config.rateBCV || 887.30);
       const totalBs = Number(order.totalUSD) * rate;
 
       return `
@@ -661,7 +699,7 @@
       return;
     }
 
-    const rate = Number(state.config.rateBCV || 886.23);
+    const rate = Number(state.config.rateBCV || 887.30);
 
     tbody.innerHTML = filtered.map(quote => {
       const totalUSD = Number(quote.subtotalUSD || quote.totalUSD || 0);
@@ -714,12 +752,28 @@
     if (period === 'today') {
       return d.toDateString() === now.toDateString();
     } else if (period === 'week') {
-      const diffDays = (now - d) / (1000 * 60 * 60 * 24);
-      return diffDays >= 0 && diffDays <= 7;
+      // Semana contable en curso: de lunes a domingo
+      const day = now.getDay();
+      const diffToMon = (day === 0 ? -6 : 1) - day;
+      const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + diffToMon);
+      monday.setHours(0, 0, 0, 0);
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      sunday.setHours(23, 59, 59, 999);
+      return d >= monday && d <= sunday;
     } else if (period === 'month') {
       return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
     } else if (period === 'year') {
       return d.getFullYear() === now.getFullYear();
+    } else if (period === 'custom') {
+      if (state.financeCustomFrom && state.financeCustomTo) {
+        const from = new Date(state.financeCustomFrom);
+        from.setHours(0, 0, 0, 0);
+        const to = new Date(state.financeCustomTo);
+        to.setHours(23, 59, 59, 999);
+        return d >= from && d <= to;
+      }
+      return true;
     }
     return true;
   }
@@ -729,7 +783,7 @@
     const tbody = document.getElementById('finances-table-body');
     if (!tbody) return;
 
-    const rate = Number(state.config.rateBCV || 883.40);
+    const rate = Number(state.config.rateBCV || 887.30);
 
     // Período contable seleccionado
     const period = state.financeDatePeriod || 'today';
@@ -1142,7 +1196,7 @@
     const modal = document.getElementById('modal-quote-viewer');
     if (!modal) return;
 
-    const rate = Number(state.config.rateBCV || 883.40);
+    const rate = Number(state.config.rateBCV || 887.30);
     const quoteId = quoteData ? quoteData.id : "COT-" + new Date().getFullYear() + "-" + ("0000" + ((state.quotes ? state.quotes.length : 0) + 1)).slice(-4);
     const dateStr = quoteData ? quoteData.fecha : new Date().toLocaleDateString('es-VE');
     const clientName = quoteData ? quoteData.cliente : "Academia de Uñas";
@@ -1191,7 +1245,7 @@
     const modal = document.getElementById('modal-daily-close-report');
     if (!modal) return;
 
-    const rate = Number(state.config.rateBCV || 883.40);
+    const rate = Number(state.config.rateBCV || 887.30);
     const today = new Date().toISOString().split('T')[0];
     const nowTime = new Date().toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' });
 
@@ -1267,7 +1321,7 @@
     const opt = selectProd.options[selectProd.selectedIndex];
     const price = opt ? Number(opt.dataset.price || 0) : 0;
     const qty = Math.max(1, Number(qtyInput.value) || 1);
-    const rate = Number(state.config.rateBCV || 883.40);
+    const rate = Number(state.config.rateBCV || 887.30);
 
     const totalUSD = price * qty;
     const totalBs = totalUSD * rate;
@@ -1295,7 +1349,7 @@
       return;
     }
 
-    const rate = Number(state.config.rateBCV || 883.40);
+    const rate = Number(state.config.rateBCV || 887.30);
     const totalUSD = product.precioUSD * qty;
     const totalBs = totalUSD * rate;
     const orderId = `TY-POS-${Math.floor(Math.random() * 90000 + 10000)}`;
@@ -1479,7 +1533,7 @@
     const account = document.getElementById('fin-account').value;
     const date = document.getElementById('fin-date').value || new Date().toISOString().split('T')[0];
     const amountUSD = Number(document.getElementById('fin-amount-usd').value);
-    const rate = Number(state.config.rateBCV || 883.40);
+    const rate = Number(state.config.rateBCV || 887.30);
     const amountBs = Number(document.getElementById('fin-amount-bs').value) || (amountUSD * rate);
     const ref = document.getElementById('fin-ref').value.trim();
 
@@ -1555,7 +1609,7 @@
     const sheetsUrlInput = document.getElementById('cfg-sheets-api-url');
     if (sheetsUrlInput) sheetsUrlInput.value = state.config.sheetsApiUrl || DEFAULT_SHEETS_URL;
     const rateInput = document.getElementById('cfg-rate-bcv');
-    if (rateInput) rateInput.value = state.config.rateBCV || 883.40;
+    if (rateInput) rateInput.value = state.config.rateBCV || 887.30;
     const waInput = document.getElementById('cfg-whatsapp');
     if (waInput) waInput.value = state.config.whatsappNumber || '584146553430';
     const pinInput = document.getElementById('cfg-admin-pin');
@@ -1722,6 +1776,41 @@
       });
     });
 
+    // Filtros de Período Contable en Finanzas
+    document.querySelectorAll('.btn-filter-date').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const period = btn.dataset.period;
+        document.querySelectorAll('.btn-filter-date').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.financeDatePeriod = period;
+
+        const customBox = document.getElementById('finance-custom-range-inputs');
+        if (customBox) {
+          customBox.style.display = period === 'custom' ? 'flex' : 'none';
+        }
+
+        if (period !== 'custom') {
+          renderFinancesTable();
+        }
+      });
+    });
+
+    const btnApplyCustom = document.getElementById('btn-apply-custom-range');
+    if (btnApplyCustom) {
+      btnApplyCustom.addEventListener('click', () => {
+        const from = document.getElementById('fin-range-from').value;
+        const to = document.getElementById('fin-range-to').value;
+        if (!from || !to) {
+          showToast("Selecciona las fechas 'Desde' y 'Hasta'.", "warning");
+          return;
+        }
+        state.financeCustomFrom = from;
+        state.financeCustomTo = to;
+        renderFinancesTable();
+        showToast(`Período contable filtrado: ${from} al ${to}`, "info");
+      });
+    }
+
     // Modales Cerrar
     document.querySelectorAll('[data-close-modal]').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -1798,7 +1887,7 @@
     if (finAmountUsdInput) {
       finAmountUsdInput.addEventListener('input', (e) => {
         const val = Number(e.target.value) || 0;
-        const rate = Number(state.config.rateBCV || 883.40);
+        const rate = Number(state.config.rateBCV || 887.30);
         const finAmountBs = document.getElementById('fin-amount-bs');
         if (finAmountBs) finAmountBs.value = (val * rate).toFixed(2);
       });
@@ -2004,7 +2093,7 @@
 
     function recalculateQuoteBuilderTotals() {
       const discountPct = Number(document.getElementById('qb-discount-pct') ? document.getElementById('qb-discount-pct').value : 0) || 0;
-      const rate = Number(state.config.rateBCV || 883.40);
+      const rate = Number(state.config.rateBCV || 887.30);
 
       const totalSelling = currentQuoteItems.reduce((sum, item) => sum + (item.precio * item.qty), 0);
       const totalCost = currentQuoteItems.reduce((sum, item) => sum + (item.costo * item.qty), 0);
@@ -2279,34 +2368,20 @@
   }
 
   // =========================================================================
-  // GESTIÓN DE PERFILES DE ADMINISTRACIÓN (DUEÑA / GERENTE)
+  // GESTIÓN DE PERFILES DE ADMINISTRACIÓN MULTI-USUARIO
   // =========================================================================
-  const ADMIN_PROFILES = [
-    { id: 'duena', name: '👑 Dueña (Dirección General)', role: 'Dueña' },
-    { id: 'gerente', name: '💼 Gerente (Manager Operativo)', role: 'Gerente' }
-  ];
-
   function initAdminProfileSwitcher() {
     const badgeEl = document.getElementById('admin-profile-badge');
     const nameEl = document.getElementById('admin-profile-name');
-    let currentProfileId = localStorage.getItem('TY_ACTIVE_ADMIN_PROFILE') || 'duena';
+    const activeUserId = sessionStorage.getItem('TY_ADMIN_ACTIVE_USER') || 'moises';
+    const activeUser = ADMIN_USERS[activeUserId] || ADMIN_USERS.moises;
 
-    function updateBadge() {
-      const prof = ADMIN_PROFILES.find(p => p.id === currentProfileId) || ADMIN_PROFILES[0];
-      if (nameEl) nameEl.textContent = prof.name;
-      if (badgeEl) badgeEl.title = `Sesión activa: ${prof.name} (Toca para alternar)`;
-    }
-
-    updateBadge();
-
+    if (nameEl) nameEl.textContent = activeUser.name;
     if (badgeEl) {
+      badgeEl.title = `Sesión activa: ${activeUser.name} (Toca para cambiar de usuario o bloquear)`;
       badgeEl.style.cursor = 'pointer';
       badgeEl.onclick = () => {
-        currentProfileId = currentProfileId === 'duena' ? 'gerente' : 'duena';
-        localStorage.setItem('TY_ACTIVE_ADMIN_PROFILE', currentProfileId);
-        updateBadge();
-        const prof = ADMIN_PROFILES.find(p => p.id === currentProfileId);
-        showToast(`Perfil cambiado a: ${prof.name}`, 'info');
+        handleLockSession();
       };
     }
   }
@@ -2349,7 +2424,7 @@
       console.warn("Tasa BCV obtenida de caché local:", err.message);
     }
 
-    const fallbackRate = Number(state.config.rateBCV || 886.23);
+    const fallbackRate = Number(state.config.rateBCV || 887.30);
     const topRateEl = document.getElementById('topbar-bcv-rate');
     if (topRateEl) topRateEl.textContent = `Bs. ${fallbackRate.toFixed(2)}`;
     const pillEl = document.getElementById('topbar-bcv-pill');
