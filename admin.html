@@ -530,9 +530,9 @@
           👤 Usuario:
         </label>
         <select id="select-admin-user" class="form-select" style="width:100%; padding:10px 12px; font-size:0.9rem; font-weight:600; border-radius:var(--radius-md);">
-          <option value="moises" selected>👤 Moisés González (Administrador de Sistemas)</option>
-          <option value="duena">👑 Propietarios (Dirección General & Finanzas)</option>
-          <option value="gerente">💼 Gerencia Operativa (Ventas & Mostrador)</option>
+          <option value="carlos" selected>👑 Carlos Murillo (Dueño / Fundador)</option>
+          <option value="yaceli">👑 Yaceli Beltrán (Dueña / Fundadora)</option>
+          <option value="moises">👤 Moisés González (Soporte Técnico & Dev)</option>
         </select>
       </div>
       
@@ -548,7 +548,7 @@
       </button>
 
       <p style="font-size:0.75rem; color:var(--text-muted); margin-top:14px; line-height:1.4;">
-        Moisés González: <strong>2026</strong> · Propietarios: <strong>1234</strong> · Gerencia: <strong>5678</strong>
+        Carlos / Yaceli: <strong>1234</strong> · Moisés González: <strong>2026</strong>
       </p>
       <div style="margin-top:12px;">
         <a href="./" style="font-size:0.85rem; color:var(--ty-rose-gold); text-decoration:none; font-weight:600;">
@@ -1156,6 +1156,39 @@
           <button class="btn-primary" id="btn-save-commercial-config">💾 Guardar Parámetros</button>
         </div>
 
+        <!-- REGLAS DEL CLUB MANICURISTA VIP (CONFIGURACIÓN PROPIETARIOS) -->
+        <div class="settings-card" style="border: 2px solid var(--border-rose); background: linear-gradient(to bottom right, var(--bg-surface), #fff8fb);">
+          <div class="card-icon-title">
+            <span class="card-icon">👑</span>
+            <div>
+              <h4 class="card-heading" style="color:var(--ty-primary);">Reglas del Club Manicurista VIP</h4>
+              <p class="card-subheading">Control exclusivo para los dueños: define los requisitos de lealtad y el porcentaje de descuento automático.</p>
+            </div>
+          </div>
+
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label for="cfg-vip-active" class="form-label">Estado del Club VIP:</label>
+              <select id="cfg-vip-active" class="form-select">
+                <option value="true" selected>✅ Activo (Aplicar beneficios)</option>
+                <option value="false">⏸️ Pausado</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="cfg-vip-min-orders" class="form-label">Pedidos Mínimos para ser VIP:</label>
+              <input type="number" id="cfg-vip-min-orders" class="form-input" value="5" min="1" step="1">
+              <small style="color:var(--text-muted); font-size:0.75rem;">Clientas con esta cantidad de pedidos acceden al estatus VIP.</small>
+            </div>
+            <div class="form-group">
+              <label for="cfg-vip-discount-percent" class="form-label">% Descuento VIP en Compras:</label>
+              <input type="number" id="cfg-vip-discount-percent" class="form-input" value="10" min="1" max="50" step="1">
+              <small style="color:var(--text-muted); font-size:0.75rem;">Porcentaje de descuento automático aplicado en su carrito.</small>
+            </div>
+          </div>
+
+          <button class="btn-primary" id="btn-save-vip-config" style="background:var(--ty-primary);">👑 Guardar Reglas VIP</button>
+        </div>
+
         <!-- CONFIGURACIÓN DE CUENTAS & MÉTODOS DE PAGO -->
         <div class="settings-card">
           <div class="card-icon-title">
@@ -1242,7 +1275,7 @@
             </div>
             <div class="form-group">
               <label for="cfg-top-announcement" class="form-label">Barra Superior de Anuncio:</label>
-              <input type="text" id="cfg-top-announcement" class="form-input" value="Maracaibo: Delivery por GPS a $0.50/km">
+              <input type="text" id="cfg-top-announcement" class="form-input" value="Maracaibo: Delivery en Vehículo con Tarifa por GPS">
             </div>
           </div>
 
@@ -1777,9 +1810,26 @@
     </div>
   </div>
 
+  <!-- MODAL VISOR DE COMPROBANTE DE PAGO -->
+  <div id="modal-voucher-viewer" class="admin-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:99999; align-items:center; justify-content:center; padding:16px;">
+    <div style="background:var(--bg-surface); max-width:550px; width:100%; border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-xl); border:1px solid var(--border-light); animation:scaleIn 0.2s ease-out;">
+      <div style="padding:14px 18px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-light); background:var(--bg-subtle);">
+        <strong id="voucher-viewer-title" style="font-size:1rem; color:var(--text-main);">📸 Comprobante de Pago</strong>
+        <button type="button" id="btn-close-voucher-viewer" style="background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-muted); line-height:1;">&times;</button>
+      </div>
+      <div style="padding:16px; text-align:center; max-height:75vh; overflow-y:auto; background:#18181b;">
+        <img id="voucher-viewer-img" src="" alt="Comprobante" style="max-width:100%; max-height:65vh; border-radius:6px; object-fit:contain; box-shadow:0 4px 16px rgba(0,0,0,0.6);">
+      </div>
+      <div style="padding:12px 18px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-light); background:var(--bg-subtle);">
+        <span id="voucher-viewer-ref" style="font-size:0.82rem; color:var(--text-secondary); font-weight:600;">Ref: -</span>
+        <button type="button" class="btn-secondary" id="btn-close-voucher-modal" style="padding:6px 14px; font-size:0.85rem;">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast-notification-container" class="toast-container"></div>
 
   <!-- SCRIPT PRIVADO DEL PANEL DE GESTIÓN -->
-  <script src="admin.js?v=20261024_v8"></script>
+  <script src="admin.js?v=20261024_v9"></script>
 </body>
 </html>
