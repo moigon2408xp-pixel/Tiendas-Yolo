@@ -311,12 +311,12 @@
       unidad: "Unidad",
       destacado: "NO",
       activo: "SI",
-      imagenURL: "logo-yolo.png",
+      imagenURL: "spider-gel-negro.jpg",
       colores: [
-        { nombre: "Negro Intenso", hex: "#111827" },
-        { nombre: "Blanco Puro", hex: "#ffffff" },
-        { nombre: "Oro Metálico", hex: "#ca8a04" },
-        { nombre: "Plata Brillo", hex: "#9ca3af" }
+        { nombre: "Negro Intenso", hex: "#111827", imagenURL: "spider-gel-negro.jpg" },
+        { nombre: "Blanco Puro", hex: "#ffffff", imagenURL: "spider-gel-blanco.jpg" },
+        { nombre: "Oro Metálico", hex: "#ca8a04", imagenURL: "spider-gel-oro.jpg" },
+        { nombre: "Plata Brillo", hex: "#9ca3af", imagenURL: "spider-gel-plata.jpg" }
       ]
     },
     {
@@ -484,6 +484,18 @@
         state.config = Object.assign({}, DEFAULT_CONFIG);
         state.cart = [];
         saveData();
+      }
+
+      // Asegurar que Spider Gel tenga sus fotos y tonos cargados en la sesión actual
+      const spiderProd = state.products.find(p => p.id === 'TY-PROD-018' || (p.nombre && p.nombre.toLowerCase().includes('spider gel')));
+      if (spiderProd) {
+        spiderProd.imagenURL = "spider-gel-negro.jpg";
+        spiderProd.colores = [
+          { nombre: "Negro Intenso", hex: "#111827", imagenURL: "spider-gel-negro.jpg" },
+          { nombre: "Blanco Puro", hex: "#ffffff", imagenURL: "spider-gel-blanco.jpg" },
+          { nombre: "Oro Metálico", hex: "#ca8a04", imagenURL: "spider-gel-oro.jpg" },
+          { nombre: "Plata Brillo", hex: "#9ca3af", imagenURL: "spider-gel-plata.jpg" }
+        ];
       }
     } catch (e) {
       console.error("Error al cargar datos:", e);
@@ -679,7 +691,8 @@
 
     let html = `
       <button class="category-chip ${state.activeCategory === 'all' ? 'active' : ''}" data-category="all">
-        💅 Todos los Insumos <span class="chip-count">${allCount}</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        Todos los Insumos <span class="chip-count">${allCount}</span>
       </button>
     `;
 
@@ -705,24 +718,20 @@
   }
 
   function getCategoryIcon(cat) {
+    const wrap = (svgPath) => `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;">${svgPath}</svg>`;
     const map = {
-      'Esmaltes Semipermanentes': '💅',
-      'Preparadores': '💧',
-      'Uñas Postizas Decoradas': '✨',
-      'Pinceles': '🖌️',
-      'Otros': '🎀',
-      'Limas': '🪄',
-      'Tips Uñas Jelly/softgel': '💎',
-      'Geles': '🧪',
-      'Decoraciones': '🌟',
-      'Herramientas': '⚙️',
-      'Esmaltes': '💅',
-      'Geles y Acrílicos': '💎',
-      'Pinceles y Herramientas': '🖌️',
-      'Lámparas y Equipos': '💡',
-      'Kits': '🎁'
+      'Esmaltes Semipermanentes': wrap('<path d="M12 2a4 4 0 0 0-4 4v3h8V6a4 4 0 0 0-4-4z"></path><rect x="6" y="9" width="12" height="13" rx="2"></rect><line x1="12" y1="13" x2="12" y2="18"></line>'),
+      'Preparadores': wrap('<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>'),
+      'Uñas Postizas Decoradas': wrap('<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>'),
+      'Pinceles': wrap('<path d="M18.37 2.63L14 7l3 3 4.37-4.37a2.12 2.12 0 1 0-3-3z"></path><path d="M9 12l-7 7v3h3l7-7"></path><path d="M13 8l3 3"></path>'),
+      'Limas': wrap('<line x1="4" y1="20" x2="20" y2="4"></line><line x1="9" y1="15" x2="15" y2="9"></line>'),
+      'Tips Uñas Jelly y Softgel': wrap('<path d="M6 3h12l4 6-10 12L2 9z"></path>'),
+      'Geles': wrap('<path d="M10 2v7.31a6 6 0 1 0 4 0V2z"></path><line x1="8" y1="2" x2="16" y2="2"></line>'),
+      'Decoraciones': wrap('<circle cx="12" cy="12" r="4"></circle><line x1="12" y1="2" x2="12" y2="4"></line><line x1="12" y1="20" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"></line><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="4" y2="12"></line><line x1="20" y1="12" x2="22" y2="12"></line>'),
+      'Herramientas': wrap('<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>'),
+      'Kits': wrap('<rect x="3" y="8" width="18" height="13" rx="2"></rect><path d="M12 8v13"></path><path d="M3 13h18"></path><path d="M12 8a3 3 0 1 0-3-3 3 3 0 0 0 3 3z"></path><path d="M12 8a3 3 0 1 1 3-3 3 3 0 0 1-3 3z"></path>')
     };
-    return map[cat] || '💅';
+    return map[cat] || wrap('<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>');
   }
 
   // Paleta de filtros de tono inspirada en InsuShop
@@ -1550,7 +1559,9 @@
 
     document.getElementById('print-quote-subtotal-usd').textContent = `$${subtotalUSD.toFixed(2)}`;
     document.getElementById('print-quote-subtotal-bs').textContent = `Bs. ${subtotalBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    document.getElementById('print-quote-delivery-status').textContent = `$${deliveryUSD.toFixed(2)} (${state.deliveryDistanceKm || 'Est.'} km - Cobro por recorrido)`;
+    document.getElementById('print-quote-delivery-status').textContent = state.deliveryDistanceKm 
+      ? `$${deliveryUSD.toFixed(2)} (${state.deliveryDistanceKm} km)` 
+      : `$${deliveryUSD.toFixed(2)} (Tarifa según destino)`;
     document.getElementById('print-quote-grand-usd').textContent = `$${grandUSD.toFixed(2)}`;
     document.getElementById('print-quote-grand-bs').textContent = `Bs. ${grandBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
@@ -1825,7 +1836,77 @@
 
     document.getElementById('prod-editor-modal-title').textContent = "✏️ Editar Producto";
     document.getElementById('btn-pe-delete-prod').style.display = 'inline-block';
+    
+    // Cargar gestor de tonos con fotos
+    renderEditorTones(prod.colores || []);
+    
     document.getElementById('modal-product-editor').style.display = 'flex';
+  }
+
+  function renderEditorTones(tonesList) {
+    const container = document.getElementById('pe-tones-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    tonesList.forEach((tone) => {
+      addToneEditorRow(tone.nombre || '', tone.hex || '#111827', tone.imagenURL || '');
+    });
+
+    const addBtn = document.getElementById('btn-add-tone-row');
+    if (addBtn) {
+      addBtn.onclick = () => addToneEditorRow('', '#e05297', '');
+    }
+  }
+
+  function addToneEditorRow(name = '', hex = '#111827', imgUrl = '') {
+    const container = document.getElementById('pe-tones-container');
+    if (!container) return;
+
+    const row = document.createElement('div');
+    row.className = 'pe-tone-row';
+    row.innerHTML = `
+      <input type="color" class="pe-tone-color" value="${hex}">
+      <input type="text" class="pe-tone-name form-input" value="${name}" placeholder="Nombre tono (ej: Negro Intenso)">
+      <div class="pe-tone-img-wrap">
+        <input type="text" class="pe-tone-img form-input" value="${imgUrl}" placeholder="Foto o ruta del tono">
+        <img src="${resolveImgPath(imgUrl || 'logo-yolo.png')}" alt="Tono" class="pe-tone-thumb" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
+        <label class="btn-micro" style="cursor:pointer; padding:6px 8px;" title="Subir foto para este tono">
+          📷<input type="file" class="pe-tone-file-input" accept="image/*" style="display:none;">
+        </label>
+      </div>
+      <button type="button" class="btn-delete-tone" title="Eliminar tono">✕</button>
+    `;
+
+    const fileInput = row.querySelector('.pe-tone-file-input');
+    const imgInput = row.querySelector('.pe-tone-img');
+    const thumbImg = row.querySelector('.pe-tone-thumb');
+    const delBtn = row.querySelector('.btn-delete-tone');
+
+    if (fileInput) {
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          compressAndReadImage(file, (dataUrl) => {
+            imgInput.value = dataUrl;
+            thumbImg.src = dataUrl;
+          });
+        }
+      });
+    }
+
+    if (imgInput) {
+      imgInput.addEventListener('input', () => {
+        thumbImg.src = resolveImgPath(imgInput.value.trim() || 'logo-yolo.png');
+      });
+    }
+
+    if (delBtn) {
+      delBtn.addEventListener('click', () => {
+        row.remove();
+      });
+    }
+
+    container.appendChild(row);
   }
 
   function openNewProduct() {
@@ -1843,6 +1924,7 @@
 
     document.getElementById('prod-editor-modal-title').textContent = "➕ Añadir Nuevo Insumo (Código Automático)";
     document.getElementById('btn-pe-delete-prod').style.display = 'none';
+    renderEditorTones([]);
     document.getElementById('modal-product-editor').style.display = 'flex';
   }
 
@@ -1931,6 +2013,22 @@
     const desc = document.getElementById('pe-input-desc').value.trim();
     const img = document.getElementById('pe-input-img').value.trim() || 'logo-yolo.png';
 
+    // Recopilar tonos y fotos asignadas por cada tono
+    const toneRows = document.querySelectorAll('#pe-tones-container .pe-tone-row');
+    const collectedTones = [];
+    toneRows.forEach(r => {
+      const hex = r.querySelector('.pe-tone-color').value;
+      const tName = r.querySelector('.pe-tone-name').value.trim();
+      const tImg = r.querySelector('.pe-tone-img').value.trim();
+      if (tName) {
+        collectedTones.push({
+          nombre: tName,
+          hex: hex,
+          imagenURL: tImg || img
+        });
+      }
+    });
+
     if (id) {
       // Editar existente
       const prod = state.products.find(p => p.id === id);
@@ -1943,11 +2041,16 @@
         prod.stockActual = stock;
         prod.descripcion = desc;
         prod.imagenURL = img;
+        if (collectedTones.length > 0) {
+          prod.colores = collectedTones;
+        } else {
+          delete prod.colores;
+        }
       }
     } else {
       // Crear nuevo con código único e irrepetible
       const newId = `TY-${sku}`;
-      state.products.unshift({
+      const newProd = {
         id: newId,
         sku: sku,
         nombre: name,
@@ -1961,7 +2064,9 @@
         destacado: "SI",
         activo: "SI",
         imagenURL: img
-      });
+      };
+      if (collectedTones.length > 0) newProd.colores = collectedTones;
+      state.products.unshift(newProd);
     }
 
     saveData();
@@ -2419,7 +2524,7 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
         const client = document.getElementById('print-client-name').textContent;
         const total = document.getElementById('print-quote-grand-usd').textContent;
         const totalBs = document.getElementById('print-quote-grand-bs').textContent;
-        const text = `💅 *TIENDAS YOLO® — COTIZACIÓN FORMAL*\n📄 *ID:* ${id}\n👤 *Para:* ${client}\n💎 *TOTAL:* ${total} (${totalBs})\n_Validez: 7 días continuos. Delivery en Maracaibo calculado por kilometraje GPS ($0.50/km desde Urb. El Trébol)._`;
+        const text = `💅 *TIENDAS YOLO® — COTIZACIÓN FORMAL*\n📄 *ID:* ${id}\n👤 *Para:* ${client}\n💎 *TOTAL:* ${total} (${totalBs})\n_Validez: 7 días continuos. Delivery en Maracaibo según dirección de entrega._`;
         window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
       });
     }
@@ -2745,11 +2850,9 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
     const feeBs = feeUSD * rate;
 
     const lblZone = document.getElementById('gps-zone-label');
-    const lblFree = document.getElementById('gps-free-badge');
     const lblDist = document.getElementById('gps-dist-km');
     const lblCostUSD = document.getElementById('gps-cost-usd');
     const lblCostBs = document.getElementById('gps-cost-bs');
-    const lblTime = document.getElementById('gps-time-estimate');
 
     if (lblZone) lblZone.textContent = `📍 Ubicación: ${zoneName}`;
     if (lblDist) lblDist.textContent = `${km.toFixed(1)} km`;
@@ -2760,15 +2863,6 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
     }
     if (lblCostBs) {
       lblCostBs.textContent = `Bs. ${feeBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    }
-    if (lblFree) {
-      lblFree.textContent = "Tarifa oficial: $0.50/km desde Urb. El Trébol (Mín. $1.00)";
-      lblFree.style.color = "var(--text-muted)";
-    }
-    if (lblTime) {
-      const minMin = Math.round(15 + (km * 2.5));
-      const maxMin = Math.round(minMin + 15);
-      lblTime.textContent = `⏱️ Tiempo estimado de entrega: ${minMin} - ${maxMin} min`;
     }
   }
 
@@ -2883,6 +2977,30 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
     selectProductColor: function(prodId, colorIdx, e) {
       if (e) e.stopPropagation();
       state.selectedColors[prodId] = colorIdx;
+      
+      const card = document.querySelector(`.product-card[data-product-id="${prodId}"]`);
+      const prod = state.products.find(p => p.id === prodId);
+      if (card && prod && prod.colores && prod.colores[colorIdx]) {
+        const col = prod.colores[colorIdx];
+        const img = card.querySelector('.product-img');
+        if (img && col.imagenURL) {
+          img.style.opacity = '0.4';
+          img.style.transition = 'opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1)';
+          setTimeout(() => {
+            img.src = resolveImgPath(col.imagenURL);
+            img.style.opacity = '1';
+          }, 110);
+        }
+        const swatchLabel = card.querySelector('.swatch-label strong');
+        if (swatchLabel) swatchLabel.textContent = col.nombre;
+        
+        const swatches = card.querySelectorAll('.swatch-dot');
+        swatches.forEach((s, idx) => {
+          if (idx === colorIdx) s.classList.add('active');
+          else s.classList.remove('active');
+        });
+        return;
+      }
       renderProducts();
     },
     adjustCardQty,
