@@ -520,18 +520,35 @@
       <img src="logo-yolo.png" alt="Tiendas Yolo" class="pin-logo" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
       <h3 style="font-family:var(--font-serif); font-size:1.4rem; color:var(--ty-primary); margin-bottom:4px;">Tiendas Yolo®</h3>
       <p style="font-size:0.86rem; color:var(--text-secondary); margin-bottom:14px;">
-        Panel de Gestión, Finanzas & Mostrador.<br>
-        Ingresa el PIN de seguridad para acceder:
+        Acceso Seguro al Panel de Gestión & Finanzas.<br>
+        Selecciona tu usuario e ingresa tu PIN:
       </p>
+
+      <!-- SELECTOR DE USUARIO -->
+      <div style="margin-bottom:14px; text-align:left;">
+        <label for="select-admin-user" style="font-size:0.78rem; font-weight:700; color:var(--text-main); display:block; margin-bottom:5px;">
+          👤 Usuario:
+        </label>
+        <select id="select-admin-user" class="form-select" style="width:100%; padding:10px 12px; font-size:0.9rem; font-weight:600; border-radius:var(--radius-md);">
+          <option value="moises" selected>👤 Moisés González (Administrador de Sistemas)</option>
+          <option value="duena">👑 Propietarios (Dirección General & Finanzas)</option>
+          <option value="gerente">💼 Gerencia Operativa (Ventas & Mostrador)</option>
+        </select>
+      </div>
       
-      <input type="password" id="input-admin-pin" class="pin-input" maxlength="6" placeholder="••••" autocomplete="off" autofocus>
+      <div style="margin-bottom:16px;">
+        <label for="input-admin-pin" style="font-size:0.78rem; font-weight:700; color:var(--text-main); display:block; text-align:left; margin-bottom:5px;">
+          🔑 PIN de Seguridad:
+        </label>
+        <input type="password" id="input-admin-pin" class="pin-input" maxlength="6" placeholder="••••" autocomplete="off" autofocus>
+      </div>
       
-      <button class="btn-primary" id="btn-unlock-pin" style="width:100%; justify-content:center; padding:14px; font-weight:800; font-size:1rem;">
-        🔓 Desbloquear Sistema
+      <button class="btn-primary" id="btn-unlock-pin" style="width:100%; justify-content:center; padding:14px; font-weight:800; font-size:1rem; border-radius:var(--radius-pill);">
+        🔓 Ingresar al Sistema
       </button>
 
-      <p style="font-size:0.78rem; color:var(--text-muted); margin-top:16px;">
-        PIN inicial predeterminado: <strong>2026</strong>
+      <p style="font-size:0.75rem; color:var(--text-muted); margin-top:14px; line-height:1.4;">
+        Moisés González: <strong>2026</strong> · Propietarios: <strong>1234</strong> · Gerencia: <strong>5678</strong>
       </p>
       <div style="margin-top:12px;">
         <a href="./" style="font-size:0.85rem; color:var(--ty-rose-gold); text-decoration:none; font-weight:600;">
@@ -566,7 +583,7 @@
       <!-- Tasa Oficial BCV en vivo (Click para actualizar) -->
       <div class="bcv-admin-pill" id="topbar-bcv-pill" title="Tasa oficial BCV actualizada en tiempo real (Clic para refrescar)">
         <span class="bcv-pulse-dot"></span>
-        <span>BCV: <strong id="topbar-bcv-rate">Bs. 886.23</strong> / $</span>
+        <span>BCV: <strong id="topbar-bcv-rate">Bs. 887.30</strong> / $</span>
       </div>
 
       <!-- Estado Google Sheets en vivo -->
@@ -585,10 +602,10 @@
         🎓
       </button>
 
-      <!-- Alternador de Perfil: Dueña / Dirección General vs Gerente / Operativo -->
-      <div class="admin-profile-pill" id="admin-profile-badge" title="Toca aquí para alternar perfil administrativo (Dueña ↔ Gerente)">
+      <!-- Perfil de Usuario Autenticado -->
+      <div class="admin-profile-pill" id="admin-profile-badge" title="Toca aquí para cambiar de usuario o bloquear sesión" style="cursor:pointer;">
         <span class="bcv-pulse-dot" style="background:#ea6fbf; box-shadow:0 0 8px #ea6fbf;"></span>
-        <span id="admin-profile-name">👑 Dueña (Dirección General)</span>
+        <span id="admin-profile-name">👤 Moisés González (Admin)</span>
       </div>
 
       <!-- Forzar Actualización en Dispositivos PWA -->
@@ -777,6 +794,7 @@
     <div id="subtab-admin-finances" class="admin-subtab-content" style="display:none;">
       
       <!-- BARRA DE FILTRO POR FECHAS CONTABLES -->
+      <!-- BARRA DE FILTRO POR FECHAS CONTABLES -->
       <div class="finance-date-filter-bar">
         <span style="font-weight:700; font-size:0.88rem; color:var(--text-main);">📅 Período Contable:</span>
         <button type="button" class="btn-filter-date active" data-period="today">Hoy</button>
@@ -784,14 +802,28 @@
         <button type="button" class="btn-filter-date" data-period="month">Este Mes</button>
         <button type="button" class="btn-filter-date" data-period="year">Este Año</button>
         <button type="button" class="btn-filter-date" data-period="all">Histórico Completo</button>
+        <button type="button" class="btn-filter-date" data-period="custom" id="btn-period-custom">📆 Rango Personalizado</button>
+
+        <div id="finance-custom-range-inputs" style="display:none; align-items:center; gap:8px; margin-top:8px; width:100%; flex-wrap:wrap; background:rgba(234,111,191,0.08); padding:8px 12px; border-radius:var(--radius-md); border:1px dashed var(--border-rose);">
+          <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Desde:</span>
+          <input type="date" id="fin-range-from" class="form-input" style="padding:5px 9px; font-size:0.82rem; width:auto; border-radius:var(--radius-sm);">
+          <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Hasta:</span>
+          <input type="date" id="fin-range-to" class="form-input" style="padding:5px 9px; font-size:0.82rem; width:auto; border-radius:var(--radius-sm);">
+          <button type="button" class="btn-primary" id="btn-apply-custom-range" style="padding:5px 14px; font-size:0.82rem; border-radius:var(--radius-pill);">
+            🔍 Filtrar Rango
+          </button>
+        </div>
       </div>
 
       <!-- CUADRÍCULA MULTI-DIVISA -->
       <div class="finance-currencies-grid">
         <div class="currency-card pm-card">
           <div class="currency-card-header">
-            <span class="currency-name">📲 Pago Móvil Banesco</span>
-            <span>🇻🇪</span>
+            <span class="currency-name" style="display:inline-flex; align-items:center; gap:6px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00796B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3" ry="3"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line><path d="M9 6h6"></path></svg>
+              Pago Móvil Banesco
+            </span>
+            <span style="font-size:0.8rem; font-weight:700; color:#00796B; background:rgba(0,121,107,0.1); padding:2px 8px; border-radius:10px;">VES</span>
           </div>
           <div class="currency-val-main" id="cur-pm-usd">$0.00</div>
           <div class="currency-val-sub" id="cur-pm-bs">Bs. 0.00</div>
@@ -799,8 +831,11 @@
 
         <div class="currency-card cash-card">
           <div class="currency-card-header">
-            <span class="currency-name">💵 Efectivo Dólares ($)</span>
-            <span>🇺🇸</span>
+            <span class="currency-name" style="display:inline-flex; align-items:center; gap:6px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg>
+              Efectivo Dólares ($)
+            </span>
+            <span style="font-size:0.8rem; font-weight:700; color:#15803d; background:rgba(21,128,61,0.1); padding:2px 8px; border-radius:10px;">USD</span>
           </div>
           <div class="currency-val-main" id="cur-cash-usd">$0.00</div>
           <div class="currency-val-sub">Caja Fuerte Tienda</div>
@@ -808,8 +843,11 @@
 
         <div class="currency-card binance-card">
           <div class="currency-card-header">
-            <span class="currency-name">🟡 Binance Pay ($)</span>
-            <span>USDT</span>
+            <span class="currency-name" style="display:inline-flex; align-items:center; gap:6px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#F0B90B"><path d="M12 2.5L7.7 6.8l2.6 2.6L12 7.7l1.7 1.7 2.6-2.6L12 2.5zm0 14.3l-1.7 1.7-2.6-2.6L12 20.2l4.3-4.3-2.6-2.6-1.7 1.7zm-6.2-6.2l-2.6 2.6 2.6 2.6 2.6-2.6-2.6-2.6zm12.4 0l-2.6 2.6 2.6 2.6 2.6-2.6-2.6-2.6zM12 9.4L9.4 12l2.6 2.6 2.6-2.6-2.6-2.6z"/></svg>
+              Binance Pay ($)
+            </span>
+            <span style="font-size:0.8rem; font-weight:700; color:#B78103; background:rgba(240,185,11,0.15); padding:2px 8px; border-radius:10px;">USDT</span>
           </div>
           <div class="currency-val-main" id="cur-binance-usd">$0.00</div>
           <div class="currency-val-sub">Cripto & Dólares Digitales</div>
@@ -819,7 +857,9 @@
       <!-- TARJETAS DE RESULTADOS FINANCIEROS -->
       <div class="kpi-grid" style="margin-bottom:20px;">
         <div class="kpi-card">
-          <div class="kpi-icon-wrap" style="background:#d1fae5; color:#065f46;">📥</div>
+          <div class="kpi-icon-wrap" style="background:#d1fae5; color:#065f46;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"></path></svg>
+          </div>
           <div class="kpi-info">
             <span class="kpi-title">Ingresos Totales</span>
             <h3 class="kpi-value" id="fin-pill-in-val">$0.00</h3>
@@ -827,7 +867,9 @@
           </div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-icon-wrap" style="background:#fee2e2; color:#991b1b;">📦</div>
+          <div class="kpi-icon-wrap" style="background:#fee2e2; color:#991b1b;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+          </div>
           <div class="kpi-info">
             <span class="kpi-title">Costo de Mercancía</span>
             <h3 class="kpi-value" id="fin-pill-cogs-val" style="color:#ef4444;">$0.00</h3>
@@ -835,7 +877,9 @@
           </div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-icon-wrap" style="background:#fef3c7; color:#92400e;">📤</div>
+          <div class="kpi-icon-wrap" style="background:#fef3c7; color:#92400e;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9m0 0l-4 4m4-4l4 4M4 7V5a2 2 0 012-2h12a2 2 0 012 2v2"></path></svg>
+          </div>
           <div class="kpi-info">
             <span class="kpi-title">Gastos Operativos</span>
             <h3 class="kpi-value" id="fin-pill-out-val" style="color:#f59e0b;">$0.00</h3>
@@ -843,7 +887,9 @@
           </div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-icon-wrap" style="background:#dcfce7; color:#15803d;">💰</div>
+          <div class="kpi-icon-wrap" style="background:#dcfce7; color:#15803d;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path></svg>
+          </div>
           <div class="kpi-info">
             <span class="kpi-title">Utilidad Neta Real</span>
             <h3 class="kpi-value highlight-profit" id="fin-pill-net-val">$0.00</h3>
@@ -1084,7 +1130,7 @@
           <div class="form-grid-3">
             <div class="form-group">
               <label for="cfg-rate-bcv" class="form-label">Tasa del Día (Bs / USD):</label>
-              <input type="number" step="0.01" id="cfg-rate-bcv" class="form-input" value="883.40">
+              <input type="number" step="0.01" id="cfg-rate-bcv" class="form-input" value="887.30">
             </div>
             <div class="form-group">
               <label for="cfg-whatsapp" class="form-label">WhatsApp de Pedidos:</label>
@@ -1387,7 +1433,7 @@
         </div>
         <div class="row-item">
           <span>Tasa Oficial BCV:</span>
-          <span id="rz-rate">Bs. 883.40 / $</span>
+          <span id="rz-rate">Bs. 887.30 / $</span>
         </div>
 
         <div class="divider-line"></div>
@@ -1683,7 +1729,7 @@
             <div class="quote-pill-id" id="print-quote-id">COT-2026-0001</div>
             <p><strong>Fecha:</strong> <span id="print-quote-date">21/10/2026</span></p>
             <p><strong>Validez:</strong> <span id="print-quote-validity">7 días hábiles</span></p>
-            <p><strong>Tasa referencial:</strong> <span id="print-quote-rate">Bs. 883.40 / $</span></p>
+            <p><strong>Tasa referencial:</strong> <span id="print-quote-rate">Bs. 887.30 / $</span></p>
           </div>
         </div>
 
