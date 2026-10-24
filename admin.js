@@ -169,8 +169,9 @@
       state.config.rateBCV = 883.40;
     }
 
-    // Seed de Manicuristas / CRM si está vacío para dar valor inmediato
-    if (!state.clients || state.clients.length === 0) {
+    // Seed de Manicuristas / CRM si está vacío para dar valor inmediato (solo primera vez)
+    const clientsSeeded = localStorage.getItem('TY_CLIENTS_SEEDED');
+    if (!state.clients || (!clientsSeeded && state.clients.length === 0)) {
       state.clients = [
         {
           id: "CLI-001",
@@ -228,6 +229,7 @@
           instagram: "@nailsbysofi.ve"
         }
       ];
+      localStorage.setItem('TY_CLIENTS_SEEDED', 'true');
       saveState();
     }
 
@@ -249,6 +251,7 @@
       console.warn("No se pudo guardar en admin:", e);
     }
   }
+  const saveData = saveState;
 
   function updateCloudIndicator() {
     const pill = document.getElementById('topbar-cloud-pill');
@@ -991,7 +994,7 @@
       c._orders = clientOrders;
       c._orderCount = clientOrders.length;
       c._hasActiveOrder = clientOrders.some(o => ['Pendiente', 'Confirmado', 'En Preparación', 'En Delivery'].includes(o.estado));
-      c._isVip = c._orderCount >= 3 || (c.nivelFidelidad && c.nivelFidelidad.includes('VIP'));
+      c._isVip = (c.nivelFidelidad && c.nivelFidelidad.includes('VIP')) || c._orderCount >= 10;
     });
 
     // Update filter counts in DOM
@@ -1089,7 +1092,7 @@
     const quoteId = quoteData ? quoteData.id : "COT-" + new Date().getFullYear() + "-" + ("0000" + ((state.quotes ? state.quotes.length : 0) + 1)).slice(-4);
     const dateStr = quoteData ? quoteData.fecha : new Date().toLocaleDateString('es-VE');
     const clientName = quoteData ? quoteData.cliente : "Academia de Uñas";
-    const clientPhone = quoteData ? quoteData.telefono : "0426-5604070";
+    const clientPhone = quoteData ? quoteData.telefono : "0414-6553430";
     const clientSalon = quoteData ? (quoteData.salonAcademia || "Studio") : "Salón VIP";
     const subtotalUSD = quoteData ? Number(quoteData.subtotalUSD || quoteData.totalUSD || 0) : 0;
     const items = quoteData ? quoteData.items : [];
@@ -1500,20 +1503,18 @@
     const rateInput = document.getElementById('cfg-rate-bcv');
     if (rateInput) rateInput.value = state.config.rateBCV || 883.40;
     const waInput = document.getElementById('cfg-whatsapp');
-    if (waInput) waInput.value = state.config.whatsappNumber || '584265604070';
+    if (waInput) waInput.value = state.config.whatsappNumber || '584146553430';
     const pinInput = document.getElementById('cfg-admin-pin');
     if (pinInput) pinInput.value = state.config.adminPin || '2026';
-    const delivFreeInput = document.getElementById('cfg-delivery-free-min');
-    if (delivFreeInput) delivFreeInput.value = state.config.deliveryFreeMinUSD || 15.00;
-    const delivFeeInput = document.getElementById('cfg-delivery-flat-fee');
-    if (delivFeeInput) delivFeeInput.value = state.config.deliveryFlatFeeUSD || 2.00;
+    const delivKmInput = document.getElementById('cfg-delivery-per-km');
+    if (delivKmInput) delivKmInput.value = 0.50;
 
     // Cuentas de Pago
     try {
       const pmSettings = JSON.parse(localStorage.getItem('ty_payment_settings') || '{}');
       if (document.getElementById('cfg-pm-bank')) document.getElementById('cfg-pm-bank').value = pmSettings.pmBank || 'Banesco (0134)';
       if (document.getElementById('cfg-pm-id')) document.getElementById('cfg-pm-id').value = pmSettings.pmId || 'V-28123456';
-      if (document.getElementById('cfg-pm-phone')) document.getElementById('cfg-pm-phone').value = pmSettings.pmPhone || '0426-5604070';
+      if (document.getElementById('cfg-pm-phone')) document.getElementById('cfg-pm-phone').value = pmSettings.pmPhone || '0414-6553430';
       if (document.getElementById('cfg-binance-id')) document.getElementById('cfg-binance-id').value = pmSettings.binanceId || '829140291';
       if (document.getElementById('cfg-binance-email')) document.getElementById('cfg-binance-email').value = pmSettings.binanceEmail || 'pagos@tiendasyolo.com';
       if (document.getElementById('cfg-zelle-email')) document.getElementById('cfg-zelle-email').value = pmSettings.zelleEmail || 'tiendasyolove@gmail.com';
@@ -1526,7 +1527,7 @@
       if (document.getElementById('cfg-banner-title')) document.getElementById('cfg-banner-title').value = bSettings.heroTitle || 'Insumos Profesionales para Manicuristas de Alto Nivel';
       if (document.getElementById('cfg-banner-desc')) document.getElementById('cfg-banner-desc').value = bSettings.heroDesc || 'Todo para tu mesa de trabajo: Esmaltes M&Y, Base Rubber, Geles Constructores, Spider Gel, Pinceles Liner y Kits para Principiantes con entrega inmediata en Maracaibo y envíos a toda Venezuela.';
       if (document.getElementById('cfg-banner-quote')) document.getElementById('cfg-banner-quote').value = bSettings.heroQuote || 'Yo lo compro, Yo lo merezco.';
-      if (document.getElementById('cfg-top-announcement')) document.getElementById('cfg-top-announcement').value = bSettings.topAnnouncement || 'Delivery Gratis desde $15';
+      if (document.getElementById('cfg-top-announcement')) document.getElementById('cfg-top-announcement').value = bSettings.topAnnouncement || '📍 Delivery en Maracaibo con cobro según destino';
     } catch(e){}
 
     const curVer = localStorage.getItem('ty_system_version') || 'v3.2_Oficial';
@@ -1772,7 +1773,7 @@
         const qId = document.getElementById('print-quote-id').textContent;
         const cName = document.getElementById('print-client-name').textContent;
         const tUSD = document.getElementById('print-quote-grand-usd').textContent;
-        const text = encodeURIComponent(`💅 *TIENDAS YOLO® — COTIZACIÓN FORMAL*\n📄 *ID:* ${qId}\n👤 *Cliente:* ${cName}\n💎 *TOTAL:* ${tUSD}\n_Validez: 7 días continuos. Delivery gratis desde $15 en Maracaibo._`);
+        const text = encodeURIComponent(`💅 *TIENDAS YOLO® — COTIZACIÓN FORMAL*\n📄 *ID:* ${qId}\n👤 *Cliente:* ${cName}\n💎 *TOTAL:* ${tUSD}\n_Validez: 7 días continuos. Delivery en Maracaibo por kilometraje GPS ($0.50/km desde Urb. El Trébol)._`);
         window.open(`https://wa.me/?text=${text}`, '_blank');
       });
     }
@@ -1867,8 +1868,7 @@
         state.config.rateBCV = Number(document.getElementById('cfg-rate-bcv').value);
         state.config.whatsappNumber = document.getElementById('cfg-whatsapp').value.trim();
         state.config.adminPin = document.getElementById('cfg-admin-pin').value.trim() || '2026';
-        state.config.deliveryFreeMinUSD = Number(document.getElementById('cfg-delivery-free-min').value);
-        state.config.deliveryFlatFeeUSD = Number(document.getElementById('cfg-delivery-flat-fee').value);
+        state.config.deliveryPerKm = 0.50;
         saveState();
         renderAdminDashboard();
         showToast("Parámetros y PIN actualizados.", "success");
@@ -2145,7 +2145,7 @@
         const paymentSettings = {
           pmBank: document.getElementById('cfg-pm-bank') ? document.getElementById('cfg-pm-bank').value.trim() : 'Banesco (0134)',
           pmId: document.getElementById('cfg-pm-id') ? document.getElementById('cfg-pm-id').value.trim() : 'V-28123456',
-          pmPhone: document.getElementById('cfg-pm-phone') ? document.getElementById('cfg-pm-phone').value.trim() : '0426-5604070',
+          pmPhone: document.getElementById('cfg-pm-phone') ? document.getElementById('cfg-pm-phone').value.trim() : '0414-6553430',
           binanceId: document.getElementById('cfg-binance-id') ? document.getElementById('cfg-binance-id').value.trim() : '829140291',
           binanceEmail: document.getElementById('cfg-binance-email') ? document.getElementById('cfg-binance-email').value.trim() : 'pagos@tiendasyolo.com',
           zelleEmail: document.getElementById('cfg-zelle-email') ? document.getElementById('cfg-zelle-email').value.trim() : 'tiendasyolove@gmail.com',
