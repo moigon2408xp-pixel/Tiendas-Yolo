@@ -387,16 +387,16 @@
     sheetsApiUrl: DEFAULT_SHEETS_URL,
     rateBCV: 883.40,
     rateLastUpdated: new Date().toISOString(),
-    whatsappNumber: "584265604070",
-    deliveryFreeMinUSD: 15.00,
+    whatsappNumber: "584146553430",
+    deliveryFreeMinUSD: null,
     deliveryFlatFeeUSD: 2.50,
     adminPin: "2026",
-    paymentInfo: "Banesco (0134) | CI: V-28123456 | Telf: 0426-5604070\nBinance Pay ID: 829140291 (USDT)"
+    paymentInfo: "Banesco (0134) | CI: V-28123456 | Telf: 0414-6553430\nBinance Pay ID: 829140291 (USDT)"
   };
 
-  // Coordenadas oficiales de Tiendas Yolo Maracaibo (Centro / 5 de Julio)
+  // Coordenadas oficiales de Tiendas Yolo Maracaibo (Urb. El Trébol / Circunvalación 2 Sur)
   const STORE_LOCATION = {
-    name: "Tiendas Yolo® Maracaibo (Barrio Nueva Independencia)",
+    name: "Tiendas Yolo® Maracaibo (Urb. El Trébol / C-2 Sur)",
     lat: 10.60542008723256,
     lng: -71.6592591041028
   };
@@ -450,6 +450,7 @@
     config: Object.assign({}, DEFAULT_CONFIG),
     clientProfile: null,
     activeCategory: 'all',
+    activeColorFilter: 'all',
     searchQuery: '',
     sortCriteria: 'featured',
     cardQuantities: {},
@@ -555,14 +556,19 @@
   // Generador de códigos de producto (SKU) automáticos, únicos e irrepetibles
   function generateUniqueProductSKU(category, currentProducts = state.products) {
     const prefixes = {
+      'Esmaltes Semipermanentes': 'ESM',
+      'Preparadores': 'PREP',
+      'Press ON': 'PON',
+      'Pinceles': 'PIN',
+      'Limas': 'LIM',
+      'Tips Uñas Jelly y Softgel': 'TIP',
+      'Tips Uñas Jelly/softgel': 'TIP',
+      'Geles': 'GEL',
+      'Decoraciones': 'DEC',
+      'Herramientas': 'HER',
+      'Otros': 'YOLO',
       'Esmaltes': 'ESM',
-      'Geles y Acrílicos': 'GEL',
-      'Pinceles y Herramientas': 'PIN',
-      'Lámparas y Equipos': 'LAM',
-      'Kits': 'KIT',
-      'Líquidos y Preparación': 'LIQ',
-      'Pestañas y Belleza': 'PES',
-      'Decoración': 'DEC'
+      'Kits': 'KIT'
     };
     const prefix = prefixes[category] || 'YOLO';
 
@@ -719,11 +725,88 @@
     return map[cat] || '💅';
   }
 
+  // Paleta de filtros de tono inspirada en InsuShop
+  const FILTER_COLOR_PALETTE = [
+    { id: 'all', name: 'Todos los Tonos', hex: null },
+    { id: 'cherry', name: 'Rojo / Cherry', hex: '#dc2626' },
+    { id: 'pink', name: 'Rosa / Rose Gold', hex: '#fb7185' },
+    { id: 'nude', name: 'Nude / Beige', hex: '#d97706' },
+    { id: 'purple', name: 'Púrpura / Amatista', hex: '#a855f7' },
+    { id: 'gold', name: 'Dorado / Gold', hex: '#eab308' },
+    { id: 'silver', name: 'Plata / Silver / 808080', hex: '#808080' },
+    { id: 'black', name: 'Negro Intenso', hex: '#1e293b' },
+    { id: 'white', name: 'Blanco Puro', hex: '#ffffff' }
+  ];
+
+  function renderColorFilterBar() {
+    const container = document.getElementById('color-filter-container');
+    if (!container) return;
+
+    let html = `
+      <button type="button" class="btn-filter-color-all ${state.activeColorFilter === 'all' ? 'active' : ''}" data-color="all">
+        Todos
+      </button>
+    `;
+
+    FILTER_COLOR_PALETTE.forEach(c => {
+      if (c.id === 'all') return;
+      const isActive = state.activeColorFilter === c.id;
+      html += `
+        <button type="button" 
+                class="btn-filter-color-dot ${isActive ? 'active' : ''}" 
+                style="background-color: ${c.hex};" 
+                data-color="${c.id}" 
+                title="${c.name}">
+        </button>
+      `;
+    });
+
+    container.innerHTML = html;
+
+    container.querySelectorAll('[data-color]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.activeColorFilter = btn.dataset.color;
+        renderColorFilterBar();
+        renderProducts();
+      });
+    });
+  }
+
   function getFilteredProducts() {
     let prods = state.products.filter(p => p.activo !== 'NO');
 
     if (state.activeCategory !== 'all') {
       prods = prods.filter(p => p.categoria === state.activeCategory);
+    }
+
+    if (state.activeColorFilter && state.activeColorFilter !== 'all') {
+      const cFilter = state.activeColorFilter.toLowerCase();
+      prods = prods.filter(p => {
+        if (p.colores && Array.isArray(p.colores)) {
+          const matched = p.colores.some(c => {
+            const h = (c.hex || '').toLowerCase();
+            const n = (c.nombre || '').toLowerCase();
+            if (cFilter === 'cherry' && (n.includes('cherry') || n.includes('rojo') || h.includes('dc2626') || h.includes('ef4444'))) return true;
+            if (cFilter === 'pink' && (n.includes('pink') || n.includes('rose') || n.includes('rosa') || h.includes('fb7185') || h.includes('e05297'))) return true;
+            if (cFilter === 'nude' && (n.includes('nude') || n.includes('caramel') || n.includes('beige') || h.includes('d97706') || h.includes('e2b29f'))) return true;
+            if (cFilter === 'purple' && (n.includes('purple') || n.includes('amatista') || n.includes('violet') || h.includes('a855f7') || h.includes('6b21a8'))) return true;
+            if (cFilter === 'gold' && (n.includes('gold') || n.includes('dorad') || h.includes('eab308') || h.includes('ffd54f'))) return true;
+            if (cFilter === 'silver' && (n.includes('silver') || n.includes('plata') || n.includes('star') || h.includes('d1d5db') || h.includes('94a3b8') || h.includes('808080'))) return true;
+            if (cFilter === 'black' && (n.includes('black') || n.includes('negro') || h.includes('000000') || h.includes('1e293b') || h.includes('1e1b1e'))) return true;
+            if (cFilter === 'white' && (n.includes('white') || n.includes('blanco') || h.includes('ffffff'))) return true;
+            return h.includes(cFilter) || n.includes(cFilter);
+          });
+          if (matched) return true;
+        }
+        const text = `${p.nombre || ''} ${p.descripcion || ''}`.toLowerCase();
+        if (cFilter === 'cherry' && (text.includes('cherry') || text.includes('rojo'))) return true;
+        if (cFilter === 'pink' && (text.includes('rosa') || text.includes('pink') || text.includes('rose'))) return true;
+        if (cFilter === 'nude' && (text.includes('nude') || text.includes('caramel'))) return true;
+        if (cFilter === 'purple' && (text.includes('amatista') || text.includes('purple') || text.includes('violeta'))) return true;
+        if (cFilter === 'gold' && (text.includes('gold') || text.includes('dorado'))) return true;
+        if (cFilter === 'silver' && (text.includes('silver') || text.includes('plata') || text.includes('808080'))) return true;
+        return false;
+      });
     }
 
     if (state.searchQuery.trim() !== '') {
@@ -791,11 +874,15 @@
       const priceUSD = Number(p.precioUSD || 0);
       const priceBs = priceUSD * rate;
       const isFeatured = p.destacado === 'SI';
-      const imgSrc = resolveImgPath(p.imagenURL || 'logo-yolo.png');
+      const selectedColorIdx = state.selectedColors[p.id] || 0;
+      const selectedColor = (p.colores && p.colores[selectedColorIdx]) ? p.colores[selectedColorIdx] : null;
+      const effectiveImg = (selectedColor && selectedColor.imagenURL) || p.imagenURL || 'logo-yolo.png';
+      const imgSrc = resolveImgPath(effectiveImg);
       const qty = state.cardQuantities[p.id] || 1;
+      const isOutOfStock = Number(p.stockActual || 0) <= 0;
 
       return `
-        <article class="product-card" data-product-id="${p.id}">
+        <article class="product-card ${isOutOfStock ? 'card-out-of-stock' : ''}" data-product-id="${p.id}">
           
           <!-- OVERLAY DE MODO EDICIÓN DUEÑA -->
           <div class="card-edit-overlay">
@@ -806,6 +893,7 @@
 
           <div class="product-image-container">
             ${isFeatured ? '<span class="badge-tag featured">⭐ Destacado</span>' : ''}
+            ${isOutOfStock ? '<span class="badge-tag" style="background:#ef4444; color:#fff; top:8px; left:8px;">🔴 Agotado</span>' : ''}
             <img src="${imgSrc}" alt="${p.nombre}" class="product-img" loading="lazy" onerror="this.onerror=null; this.src='assets/logo-yolo.png'">
           </div>
 
@@ -835,14 +923,20 @@
 
             <div class="product-card-actions-wrapper">
               <div class="card-qty-stepper">
-                <button type="button" class="btn-stepper" onclick="window.YoloApp.adjustCardQty('${p.id}', -1)">-</button>
+                <button type="button" class="btn-stepper" ${isOutOfStock ? 'disabled' : ''} onclick="window.YoloApp.adjustCardQty('${p.id}', -1)">-</button>
                 <span class="stepper-val" id="stepper-val-${p.id}">${qty}</span>
-                <button type="button" class="btn-stepper" onclick="window.YoloApp.adjustCardQty('${p.id}', 1)">+</button>
+                <button type="button" class="btn-stepper" ${isOutOfStock ? 'disabled' : ''} onclick="window.YoloApp.adjustCardQty('${p.id}', 1)">+</button>
               </div>
 
-              <button class="btn-add-cart-primary" onclick="window.YoloApp.addToCart('${p.id}')">
-                <span>🛒 Agregar</span>
-              </button>
+              ${isOutOfStock ? `
+                <button class="btn-add-cart-primary" disabled style="opacity:0.55; cursor:not-allowed; background:#64748b;">
+                  <span>Agotado</span>
+                </button>
+              ` : `
+                <button class="btn-add-cart-primary" onclick="window.YoloApp.addToCart('${p.id}')">
+                  <span>🛒 Agregar</span>
+                </button>
+              `}
             </div>
           </div>
         </article>
@@ -865,20 +959,59 @@
     const prod = state.products.find(p => p.id === prodId);
     if (!prod) return;
 
+    const available = Number(prod.stockActual || 0);
+    if (available <= 0) {
+      showToast(`⚠️ Este insumo se encuentra actualmente agotado en inventario.`, "warning");
+      return;
+    }
+
     const qtyToAdd = state.cardQuantities[prodId] || 1;
     const existing = state.cart.find(item => item.id === prodId);
+    const inCart = existing ? existing.quantity : 0;
 
-    if (existing) {
-      existing.quantity += qtyToAdd;
+    if (inCart + qtyToAdd > available) {
+      const remaining = available - inCart;
+      if (remaining <= 0) {
+        showToast(`⚠️ Ya tienes en tu pedido todo el stock disponible (${available} unidades).`, "warning");
+        return;
+      }
+      const selectedColorIdx = state.selectedColors[prod.id] || 0;
+      const selectedColor = (prod.colores && prod.colores[selectedColorIdx]) ? prod.colores[selectedColorIdx] : null;
+      const itemImg = (selectedColor && selectedColor.imagenURL) || prod.imagenURL || 'logo-yolo.png';
+      const itemName = selectedColor ? `${prod.nombre} (${selectedColor.nombre})` : prod.nombre;
+
+      if (existing) {
+        existing.quantity = available;
+      } else {
+        state.cart.push({
+          id: prod.id,
+          nombre: itemName,
+          categoria: prod.categoria,
+          precioUSD: Number(prod.precioUSD || 0),
+          imagenURL: itemImg,
+          quantity: remaining
+        });
+      }
+      showToast(`⚠️ Solo disponemos de ${available} unidades en inventario. Se ajustaron ${remaining} a tu pedido.`, "info");
     } else {
-      state.cart.push({
-        id: prod.id,
-        nombre: prod.nombre,
-        categoria: prod.categoria,
-        precioUSD: Number(prod.precioUSD || 0),
-        imagenURL: prod.imagenURL || 'logo-yolo.png',
-        quantity: qtyToAdd
-      });
+      const selectedColorIdx = state.selectedColors[prod.id] || 0;
+      const selectedColor = (prod.colores && prod.colores[selectedColorIdx]) ? prod.colores[selectedColorIdx] : null;
+      const itemImg = (selectedColor && selectedColor.imagenURL) || prod.imagenURL || 'logo-yolo.png';
+      const itemName = selectedColor ? `${prod.nombre} (${selectedColor.nombre})` : prod.nombre;
+
+      if (existing) {
+        existing.quantity += qtyToAdd;
+      } else {
+        state.cart.push({
+          id: prod.id,
+          nombre: itemName,
+          categoria: prod.categoria,
+          precioUSD: Number(prod.precioUSD || 0),
+          imagenURL: itemImg,
+          quantity: qtyToAdd
+        });
+      }
+      showToast(`🌸 ¡${qtyToAdd}x ${itemName.substring(0, 24)}... agregado!`, "success");
     }
 
     state.cardQuantities[prodId] = 1;
@@ -887,7 +1020,6 @@
 
     saveData();
     updateCartUI();
-    showToast(`🌸 ¡${qtyToAdd}x ${prod.nombre.substring(0, 24)}... agregado!`, "success");
   }
 
   function updateCartUI() {
@@ -902,14 +1034,13 @@
 
     const delTypeSelect = document.getElementById('cart-delivery-type');
     const delType = delTypeSelect ? delTypeSelect.value : 'delivery-maracaibo';
-    const isFreeDelivery = subtotalUSD >= Number(state.config.deliveryFreeMinUSD || 15.00) || delType === 'retiro-personal';
 
     let deliveryUSD = 0;
-    if (subtotalUSD > 0 && !isFreeDelivery) {
+    if (subtotalUSD > 0) {
       if (delType === 'retiro-personal' || delType === 'envio-nacional') {
         deliveryUSD = 0;
       } else {
-        deliveryUSD = getDeliveryFeeByKm(state.deliveryDistanceKm, subtotalUSD);
+        deliveryUSD = getDeliveryFeeByKm(state.deliveryDistanceKm);
       }
     }
 
@@ -920,27 +1051,6 @@
     if (mCounter) mCounter.textContent = totalQty;
     if (headerTotal) headerTotal.textContent = `$${subtotalUSD.toFixed(2)}`;
 
-    // Actualizar barra de delivery gratis
-    const fillEl = document.getElementById('delivery-progress-fill');
-    const statusEl = document.getElementById('delivery-progress-status');
-    const textEl = document.getElementById('delivery-progress-text');
-    const minUSD = Number(state.config.deliveryFreeMinUSD || 15.00);
-
-    if (fillEl && statusEl && textEl) {
-      const pct = Math.min(100, (subtotalUSD / minUSD) * 100);
-      fillEl.style.width = `${pct}%`;
-      statusEl.textContent = `$${subtotalUSD.toFixed(2)} / $${minUSD.toFixed(2)}`;
-
-      if (isFreeDelivery) {
-        textEl.textContent = "🎉 ¡Felicidades! Tienes Delivery GRATIS en Maracaibo 🚚";
-        fillEl.style.background = "#10b981";
-      } else {
-        const diff = (minUSD - subtotalUSD).toFixed(2);
-        textEl.textContent = `🚚 Agrega $${diff} más para Delivery GRATIS en Maracaibo`;
-        fillEl.style.background = "linear-gradient(90deg, #d47a94, #701a49)";
-      }
-    }
-
     // Actualizar totales en el drawer
     const sSub = document.getElementById('cart-summary-subtotal');
     const sDel = document.getElementById('cart-summary-delivery');
@@ -950,14 +1060,11 @@
     if (sSub) sSub.textContent = `$${subtotalUSD.toFixed(2)}`;
     if (sDel) {
       if (delType === 'retiro-personal') {
-        sDel.textContent = "Retiro en Tienda (Gratis)";
+        sDel.textContent = "Retiro Personal (Sin Costo)";
         sDel.className = "free-delivery font-bold";
       } else if (delType === 'envio-nacional') {
-        sDel.textContent = "Cobro en Destino (MRW / Tealca)";
+        sDel.textContent = "Cobro a Destino (MRW / Tealca / Zoom)";
         sDel.className = "font-bold";
-      } else if (isFreeDelivery) {
-        sDel.textContent = "¡GRATIS!";
-        sDel.className = "free-delivery font-bold";
       } else {
         sDel.textContent = `$${deliveryUSD.toFixed(2)}${state.deliveryDistanceKm ? ` (${state.deliveryDistanceKm} km)` : ''}`;
         sDel.className = "font-bold";
@@ -1049,15 +1156,12 @@
 
     const subtotalUSD = state.cart.reduce((sum, item) => sum + (item.precioUSD * item.quantity), 0);
     const delType = document.getElementById('cart-delivery-type').value;
-    const isFree = subtotalUSD >= Number(state.config.deliveryFreeMinUSD || 15.00) || delType === 'retiro-personal';
     
     let deliveryUSD = 0;
-    if (subtotalUSD > 0 && !isFree) {
-      if (delType === 'retiro-personal' || delType === 'envio-nacional') {
-        deliveryUSD = 0;
-      } else {
-        deliveryUSD = getDeliveryFeeByKm(state.deliveryDistanceKm, subtotalUSD);
-      }
+    if (delType === 'retiro-personal' || delType === 'envio-nacional') {
+      deliveryUSD = 0;
+    } else {
+      deliveryUSD = getDeliveryFeeByKm(state.deliveryDistanceKm);
     }
 
     const totalUSD = subtotalUSD + deliveryUSD;
@@ -1147,6 +1251,17 @@
       localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(state.clientProfile));
     }
 
+    // Descontar inventario de insumos vendidos
+    if (completedOrder.items && Array.isArray(completedOrder.items)) {
+      completedOrder.items.forEach(it => {
+        const p = state.products.find(prod => prod.id === it.id);
+        if (p) {
+          p.stockActual = Math.max(0, (p.stockActual || 0) - it.quantity);
+        }
+      });
+      renderProducts();
+    }
+
     state.cart = [];
     saveData();
     updateCartUI();
@@ -1213,11 +1328,14 @@
 
     const delEl = document.getElementById('ticket-delivery-usd');
     if (delEl) {
-      if (order.deliveryUSD === 0 || Number(order.subtotalUSD) >= 15 || order.deliveryType === 'retiro-personal') {
-        delEl.textContent = "¡GRATIS!";
-        delEl.className = "text-success font-bold";
+      if (order.deliveryType === 'retiro-personal') {
+        delEl.textContent = "Retiro Personal (Sin Costo)";
+        delEl.className = "font-bold";
+      } else if (order.deliveryType === 'envio-nacional') {
+        delEl.textContent = "Cobro a Destino (Nacional)";
+        delEl.className = "font-bold";
       } else {
-        delEl.textContent = `$${Number(order.deliveryUSD).toFixed(2)}${order.deliveryKm ? ` (${order.deliveryKm} km)` : ''}`;
+        delEl.textContent = `$${Number(order.deliveryUSD || 0).toFixed(2)}${order.deliveryKm ? ` (${order.deliveryKm} km)` : ''}`;
         delEl.className = "font-bold";
       }
     }
@@ -1244,6 +1362,12 @@
     const waBtn = document.getElementById('btn-wa-delivery-note');
     if (waBtn) {
       waBtn.onclick = () => {
+        const delText = order.deliveryType === 'retiro-personal' 
+          ? 'Retiro Personal (Sin Costo)' 
+          : (order.deliveryType === 'envio-nacional' 
+            ? 'Envío Nacional (Cobro a Destino)' 
+            : `$${Number(order.deliveryUSD || 0).toFixed(2)}${order.deliveryKm ? ` (${order.deliveryKm} km)` : ''}`);
+
         const text =
           `🧾 *TIENDAS YOLO® — NOTA DE ENTREGA REGISTRADA*\n` +
           `━━━━━━━━━━━━━━━━━━━━\n` +
@@ -1258,12 +1382,12 @@
           `━━━━━━━━━━━━━━━━━━━━\n` +
           `📦 *Insumos:*\n${(order.items || []).map(i => `• ${i.quantity}x ${i.nombre} ($${(i.precioUSD * i.quantity).toFixed(2)})`).join('\n')}\n` +
           `━━━━━━━━━━━━━━━━━━━━\n` +
-          `🚚 *Delivery:* ${order.deliveryUSD === 0 ? '¡GRATIS!' : `$${Number(order.deliveryUSD).toFixed(2)}`}\n` +
+          `🚚 *Delivery:* ${delText}\n` +
           `💎 *TOTAL PAGADO:* $${Number(order.totalUSD).toFixed(2)} (Bs. ${totalBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})\n` +
           `━━━━━━━━━━━━━━━━━━━━\n` +
           `✨ _“Yo lo compro, Yo lo merezco”_`;
 
-        window.open(`https://wa.me/584265604070?text=${encodeURIComponent(text)}`, '_blank');
+        window.open(`https://wa.me/584146553430?text=${encodeURIComponent(text)}`, '_blank');
       };
     }
 
@@ -1347,21 +1471,18 @@
 
     let items = state.cart;
     if (!items || items.length === 0) {
-      // Si el carrito está vacío, cotizar kits o insumos principales de muestra
-      items = state.products.slice(0, 4).map(p => ({
-        id: p.id,
-        nombre: p.nombre,
-        categoria: p.categoria,
-        precioUSD: Number(p.precioUSD),
-        quantity: 1
-      }));
-      showToast("📄 Cotización generada con insumos principales del catálogo", "info");
+      showToast("🛍️ Tu pedido está vacío. Agrega al carrito los insumos que deseas cotizar antes de generar el presupuesto.", "info");
+      const grid = document.getElementById('products-grid-container');
+      if (grid) grid.scrollIntoView({ behavior: 'smooth' });
+      return;
     }
 
     const subtotalUSD = items.reduce((sum, item) => sum + (Number(item.precioUSD) * item.quantity), 0);
     const rate = Number(state.config.rateBCV || 883.40);
     const subtotalBs = subtotalUSD * rate;
-    const isFree = subtotalUSD >= Number(state.config.deliveryFreeMinUSD || 15.00);
+    const deliveryUSD = state.deliveryDistanceKm ? getDeliveryFeeByKm(state.deliveryDistanceKm) : 2.50;
+    const grandUSD = subtotalUSD + deliveryUSD;
+    const grandBs = grandUSD * rate;
 
     const cNameEl = document.getElementById('cart-client-name');
     const cPhoneEl = document.getElementById('cart-client-phone');
@@ -1369,7 +1490,7 @@
     const cAddrEl = document.getElementById('cart-delivery-address');
 
     const clientName = (state.clientProfile && state.clientProfile.name) || (cNameEl ? cNameEl.value.trim() : '') || 'Manicurista / Salón Solicitante';
-    const clientPhone = (state.clientProfile && state.clientProfile.phone) || (cPhoneEl ? cPhoneEl.value.trim() : '') || '0426-5604070';
+    const clientPhone = (state.clientProfile && state.clientProfile.phone) || (cPhoneEl ? cPhoneEl.value.trim() : '') || '0414-6553430';
     const clientSalon = (state.clientProfile && state.clientProfile.salon) || (cSalonEl ? cSalonEl.value.trim() : '') || 'Estudio de Belleza';
     const clientAddress = (state.clientProfile && state.clientProfile.address) || (cAddrEl ? cAddrEl.value.trim() : '') || 'Maracaibo, Zulia';
 
@@ -1401,9 +1522,9 @@
 
     document.getElementById('print-quote-subtotal-usd').textContent = `$${subtotalUSD.toFixed(2)}`;
     document.getElementById('print-quote-subtotal-bs').textContent = `Bs. ${subtotalBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    document.getElementById('print-quote-delivery-status').textContent = isFree ? "¡DELIVERY GRATIS EN MARACAIBO!" : "$2.00 Delivery / Despacho";
-    document.getElementById('print-quote-grand-usd').textContent = `$${subtotalUSD.toFixed(2)}`;
-    document.getElementById('print-quote-grand-bs').textContent = `Bs. ${subtotalBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    document.getElementById('print-quote-delivery-status').textContent = `$${deliveryUSD.toFixed(2)} (${state.deliveryDistanceKm || 'Est.'} km - Cobro por recorrido)`;
+    document.getElementById('print-quote-grand-usd').textContent = `$${grandUSD.toFixed(2)}`;
+    document.getElementById('print-quote-grand-bs').textContent = `Bs. ${grandBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
     const quoteObj = {
       id: quoteId,
@@ -1414,7 +1535,9 @@
       clientAddress,
       items,
       subtotalUSD,
-      totalBs: subtotalBs,
+      deliveryUSD,
+      totalUSD: grandUSD,
+      totalBs: grandBs,
       createdAt: new Date().toISOString()
     };
     state.quotes.unshift(quoteObj);
@@ -1657,16 +1780,65 @@
     document.getElementById('modal-product-editor').style.display = 'flex';
   }
 
+  function compressAndReadImage(file, callback) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function (evt) {
+      const img = new Image();
+      img.onload = function () {
+        const canvas = document.createElement('canvas');
+        const MAX_DIM = 600;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_DIM) {
+            height = Math.round(height * (MAX_DIM / width));
+            width = MAX_DIM;
+          }
+        } else {
+          if (height > MAX_DIM) {
+            width = Math.round(width * (MAX_DIM / height));
+            height = MAX_DIM;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+        callback(dataUrl);
+      };
+      img.src = evt.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
   function quickChangePhoto(prodId) {
     const prod = state.products.find(p => p.id === prodId);
     if (!prod) return;
-    const newImg = prompt(`🖼️ Ingresa el nombre del archivo o enlace de la imagen para "${prod.nombre}":`, prod.imagenURL || 'logo-yolo.png');
-    if (newImg && newImg.trim() !== '') {
-      prod.imagenURL = newImg.trim();
-      saveData();
-      renderProducts();
-      showToast("🖼️ Imagen actualizada correctamente", "success");
-    }
+
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.style.display = 'none';
+    document.body.appendChild(fileInput);
+
+    fileInput.onchange = (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (file) {
+        compressAndReadImage(file, (dataUrl) => {
+          prod.imagenURL = dataUrl;
+          saveData();
+          renderProducts();
+          showToast(`📸 ¡Foto de "${prod.nombre}" actualizada con éxito!`, "success");
+          if (fileInput.parentNode) document.body.removeChild(fileInput);
+        });
+      } else {
+        if (fileInput.parentNode) document.body.removeChild(fileInput);
+      }
+    };
+    fileInput.click();
   }
 
   function deleteProduct(prodId) {
@@ -1818,6 +1990,9 @@
       let tapCount = 0;
       let tapTimer = null;
       logoTrigger.addEventListener('click', (e) => {
+        if (state.isEditMode) {
+          e.preventDefault();
+        }
         tapCount++;
         if (tapCount === 1) {
           tapTimer = setTimeout(() => { tapCount = 0; }, 600);
@@ -1946,13 +2121,15 @@
     const btnTheme = document.getElementById('btn-toggle-theme');
     if (btnTheme) {
       btnTheme.addEventListener('click', () => {
-        document.body.classList.toggle('theme-dark');
-        const isDark = document.body.classList.contains('theme-dark');
+        const isDark = document.body.classList.toggle('theme-dark');
+        document.documentElement.classList.toggle('theme-dark', isDark);
         localStorage.setItem('TY_THEME', isDark ? 'dark' : 'light');
+        showToast(isDark ? "🌙 Modo Oscuro Activado" : "☀️ Modo Claro Activado", "info");
       });
     }
     if (localStorage.getItem('TY_THEME') === 'dark') {
       document.body.classList.add('theme-dark');
+      document.documentElement.classList.add('theme-dark');
     }
 
     // 5. Búsqueda y Ordenamiento
@@ -2014,7 +2191,7 @@
     const copyPmBtn = document.getElementById('btn-copy-pm');
     if (copyPmBtn) {
       copyPmBtn.addEventListener('click', () => {
-        const text = `Pago Móvil Banesco (0134)\nTeléfono: 0426-5604070\nCédula: V-28123456\nMonto: ${document.getElementById('copy-pm-bs').textContent}`;
+        const text = `Pago Móvil Banesco (0134)\nTeléfono: 0414-6553430\nCédula: V-28123456\nMonto: ${document.getElementById('copy-pm-bs').textContent}`;
         navigator.clipboard.writeText(text).then(() => {
           showToast("📋 ¡Datos de Pago Móvil copiados!", "success");
         });
@@ -2056,12 +2233,12 @@
       if (coords) {
         state.deliveryCoords = `${coords.lat}, ${coords.lng}`;
         const km = calculateDistanceKm(STORE_LOCATION.lat, STORE_LOCATION.lng, coords.lat, coords.lng);
-        state.deliveryDistanceKm = km;
-        const fee = getDeliveryFeeByKm(km, subtotalUSD);
-        const isFree = subtotalUSD >= Number(state.config.deliveryFreeMinUSD || 15.00);
+        const fee = getDeliveryFeeByKm(km);
+        const rate = Number(state.config.rateBCV || 883.40);
+        const feeBs = fee * rate;
 
         if (badgeGpsText) {
-          badgeGpsText.innerHTML = `🛵 <strong>${km} km</strong> desde Tiendas Yolo — Delivery: <strong>${isFree ? '¡GRATIS!' : `$${fee.toFixed(2)}`}</strong>`;
+          badgeGpsText.innerHTML = `🛵 <strong>${km} km</strong> desde Urb. El Trébol — Delivery: <strong>$${fee.toFixed(2)}</strong> (Bs. ${feeBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})`;
         }
       } else {
         state.deliveryDistanceKm = null;
@@ -2124,11 +2301,18 @@
 
         const subtotal = state.cart.reduce((s, i) => s + (i.precioUSD * i.quantity), 0);
         const rate = Number(state.config.rateBCV || 883.40);
-        const isFree = subtotal >= Number(state.config.deliveryFreeMinUSD || 15.00) || delType === 'retiro-personal';
         
         let deliveryFee = 0;
-        if (!isFree && delType === 'delivery-maracaibo') {
-          deliveryFee = getDeliveryFeeByKm(state.deliveryDistanceKm, subtotal);
+        let deliveryLabel = '';
+        if (delType === 'retiro-personal') {
+          deliveryFee = 0;
+          deliveryLabel = 'Retiro Personal (Sin Costo)';
+        } else if (delType === 'envio-nacional') {
+          deliveryFee = 0;
+          deliveryLabel = 'Envío Nacional (Cobro en Destino MRW/Tealca/Zoom)';
+        } else {
+          deliveryFee = getDeliveryFeeByKm(state.deliveryDistanceKm);
+          deliveryLabel = `$${deliveryFee.toFixed(2)} ($0.50/km desde Urb. El Trébol)`;
         }
 
         const grandTotal = subtotal + deliveryFee;
@@ -2140,18 +2324,18 @@
 👤 *Manicurista:* ${name}
 📞 *Teléfono:* ${phone}
 ${salon ? `💅 *Salón:* ${salon}\n` : ''}📍 *Entrega:* ${address} (${delType})
-${state.deliveryDistanceKm ? `🛵 *Distancia GPS:* ${state.deliveryDistanceKm} km desde Tiendas Yolo\n` : ''}${coords ? `🗺️ *Ubicación Maps:* https://maps.google.com/?q=${coords.replace(/\s+/g, '')}\n` : ''}💳 *Método de Pago:* ${method}
+${state.deliveryDistanceKm ? `🛵 *Distancia GPS:* ${state.deliveryDistanceKm} km desde Urb. El Trébol\n` : ''}${coords ? `🗺️ *Ubicación Maps:* https://maps.google.com/?q=${coords.replace(/\s+/g, '')}\n` : ''}💳 *Método de Pago:* ${method}
 ━━━━━━━━━━━━━━━━━━━━
 📦 *INSUMOS SOLICITADOS:*
 ${state.cart.map(i => `• ${i.quantity}x ${i.nombre} ($${(i.precioUSD * i.quantity).toFixed(2)})`).join('\n')}
 ━━━━━━━━━━━━━━━━━━━━
 💵 *Subtotal:* $${subtotal.toFixed(2)}
-🚚 *Delivery:* ${delType === 'retiro-personal' ? 'Retiro en Tienda (Gratis)' : (isFree ? '¡GRATIS!' : `$${deliveryFee.toFixed(2)}`)}
+🚚 *Delivery:* ${deliveryLabel}
 💎 *TOTAL A PAGAR:* $${grandTotal.toFixed(2)} (Bs. ${grandTotalBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})
 ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━━━━━━━━━━
 ✨ _“Yo lo compro, Yo lo merezco”_`;
 
-        window.open(`https://wa.me/584265604070?text=${encodeURIComponent(text)}`, '_blank');
+        window.open(`https://wa.me/584146553430?text=${encodeURIComponent(text)}`, '_blank');
       });
     }
 
@@ -2166,7 +2350,7 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
         const client = document.getElementById('print-client-name').textContent;
         const total = document.getElementById('print-quote-grand-usd').textContent;
         const totalBs = document.getElementById('print-quote-grand-bs').textContent;
-        const text = `💅 *TIENDAS YOLO® — COTIZACIÓN FORMAL*\n📄 *ID:* ${id}\n👤 *Para:* ${client}\n💎 *TOTAL:* ${total} (${totalBs})\n_Validez: 7 días continuos. Delivery gratis desde $15 en Maracaibo._`;
+        const text = `💅 *TIENDAS YOLO® — COTIZACIÓN FORMAL*\n📄 *ID:* ${id}\n👤 *Para:* ${client}\n💎 *TOTAL:* ${total} (${totalBs})\n_Validez: 7 días continuos. Delivery en Maracaibo calculado por kilometraje GPS ($0.50/km desde Urb. El Trébol)._`;
         window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
       });
     }
@@ -2270,19 +2454,20 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
     const helpBannerBtn = document.getElementById('btn-help-guide-banner');
     if (helpBannerBtn) helpBannerBtn.addEventListener('click', openLearningGuideModal);
 
-    // Modo Oscuro / Claro
-    const themeBtn = document.getElementById('btn-toggle-theme');
-    if (themeBtn) {
-      themeBtn.addEventListener('click', () => {
-        document.body.classList.toggle('theme-dark');
-        const isDark = document.body.classList.contains('theme-dark');
-        localStorage.setItem('TY_THEME', isDark ? 'dark' : 'light');
-        showToast(isDark ? "🌙 Modo Oscuro Activado" : "☀️ Modo Claro Activado", "info");
+    const peFileInput = document.getElementById('pe-file-upload-input');
+    if (peFileInput) {
+      peFileInput.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (file) {
+          compressAndReadImage(file, (dataUrl) => {
+            const inputImg = document.getElementById('pe-input-img');
+            const previewImg = document.getElementById('pe-img-preview');
+            if (inputImg) inputImg.value = dataUrl;
+            if (previewImg) previewImg.src = dataUrl;
+            showToast("📸 Foto cargada y optimizada", "info");
+          });
+        }
       });
-    }
-
-    if (localStorage.getItem('TY_THEME') === 'dark') {
-      document.body.classList.add('theme-dark');
     }
 
     // 13. Tasa del Día interactiva (BCV en vivo)
@@ -2363,7 +2548,7 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
     const btnCopyPm = document.getElementById('btn-copy-pm');
     if (btnCopyPm) {
       btnCopyPm.addEventListener('click', () => {
-        const phone = document.getElementById('copy-pm-phone') ? document.getElementById('copy-pm-phone').textContent : '04265604070';
+        const phone = document.getElementById('copy-pm-phone') ? document.getElementById('copy-pm-phone').textContent : '04146553430';
         const id = document.getElementById('copy-pm-id') ? document.getElementById('copy-pm-id').textContent : 'V-28123456';
         const bs = document.getElementById('copy-pm-bs') ? document.getElementById('copy-pm-bs').textContent : '';
         const copyText = `Pago Móvil Tiendas Yolo:\nBanco: Banesco (0134)\nTeléfono: ${phone}\nCédula: ${id}\nMonto: ${bs}`;
@@ -2387,7 +2572,47 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
       });
     }
 
-    // 16. Iniciar Atajos y Seguridad
+    // 16. InsuShop Nav Tabs (Catálogo / Sobre Nosotros)
+    const tabCatalog = document.getElementById('tab-nav-catalog');
+    const tabAbout = document.getElementById('tab-nav-about');
+    const aboutSection = document.getElementById('section-sobre-nosotros');
+    const catalogHeader = document.querySelector('.catalog-header-row');
+
+    if (tabCatalog) {
+      tabCatalog.addEventListener('click', () => {
+        if (tabAbout) tabAbout.classList.remove('active');
+        tabCatalog.classList.add('active');
+        if (catalogHeader) {
+          catalogHeader.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    }
+
+    if (tabAbout) {
+      tabAbout.addEventListener('click', () => {
+        if (tabCatalog) tabCatalog.classList.remove('active');
+        tabAbout.classList.add('active');
+        if (aboutSection) {
+          aboutSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    }
+
+    // 17. Acordeón de Preguntas Frecuentes (FAQ InsuShop Style)
+    document.querySelectorAll('.faq-accordion-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const item = header.closest('.faq-accordion-item');
+        if (item) {
+          const isOpen = item.classList.contains('open');
+          document.querySelectorAll('.faq-accordion-item').forEach(it => it.classList.remove('open'));
+          if (!isOpen) {
+            item.classList.add('open');
+          }
+        }
+      });
+    });
+
+    // 18. Iniciar Atajos y Seguridad
     initAdminSecurityAndShortcuts();
   }
 
@@ -2414,11 +2639,9 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
 
   function updateGpsCalculationDisplay(km, zoneName = 'Ubicación seleccionada') {
     state.deliveryDistanceKm = parseFloat(km.toFixed(1));
-    const subtotal = state.cart.reduce((s, it) => s + (it.precioUSD * it.quantity), 0);
-    const feeUSD = getDeliveryFeeByKm(km, subtotal);
+    const feeUSD = getDeliveryFeeByKm(km);
     const rate = Number(state.config.rateBCV || 883.40);
     const feeBs = feeUSD * rate;
-    const isFree = subtotal >= Number(state.config.deliveryFreeMinUSD || 15.00);
 
     const lblZone = document.getElementById('gps-zone-label');
     const lblFree = document.getElementById('gps-free-badge');
@@ -2431,20 +2654,15 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
     if (lblDist) lblDist.textContent = `${km.toFixed(1)} km`;
 
     if (lblCostUSD) {
-      if (isFree) {
-        lblCostUSD.textContent = "¡GRATIS!";
-        lblCostUSD.style.color = "#10b981";
-      } else {
-        lblCostUSD.textContent = `$${feeUSD.toFixed(2)}`;
-        lblCostUSD.style.color = "var(--ty-primary)";
-      }
+      lblCostUSD.textContent = `$${feeUSD.toFixed(2)}`;
+      lblCostUSD.style.color = "var(--ty-primary)";
     }
     if (lblCostBs) {
-      lblCostBs.textContent = isFree ? "Pedido superior a $15" : `Bs. ${feeBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      lblCostBs.textContent = `Bs. ${feeBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
     if (lblFree) {
-      lblFree.textContent = isFree ? "🎉 ¡Delivery Gratis Activo!" : "✓ Gratuito en compras > $15";
-      lblFree.style.color = isFree ? "#10b981" : "var(--ty-primary)";
+      lblFree.textContent = "Tarifa oficial: $0.50/km desde Urb. El Trébol (Mín. $1.00)";
+      lblFree.style.color = "var(--text-muted)";
     }
     if (lblTime) {
       const minMin = Math.round(15 + (km * 2.5));
@@ -2604,6 +2822,7 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
   document.addEventListener('DOMContentLoaded', () => {
     loadData();
     renderCategories();
+    renderColorFilterBar();
     renderProducts();
     updateCartUI();
     setupEventListeners();
