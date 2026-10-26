@@ -23,7 +23,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <link rel="stylesheet" href="styles.css?v=20261024a">
+  <link rel="stylesheet" href="styles.css?v=20261026_v12">
 </head>
 <body class="theme-light">
 
@@ -717,7 +717,33 @@
 
             <div class="form-group">
               <label for="pay-input-bank" class="form-label">Banco Emisor del Cliente: *</label>
-              <input type="text" id="pay-input-bank" class="form-input" placeholder="Ej: Banesco, Mercantil, BDV" required>
+              <select id="pay-input-bank" class="select-styled" required>
+                <option value="">-- Selecciona tu Banco Emisor --</option>
+                <option value="Banesco (0134)" selected>0134 - Banesco Banco Universal</option>
+                <option value="Banco de Venezuela (0102)">0102 - Banco de Venezuela (BDV)</option>
+                <option value="Banco Mercantil (0105)">0105 - Banco Mercantil</option>
+                <option value="Banco Provincial (0108)">0108 - Banco Provincial (BBVA)</option>
+                <option value="BNC Banco Nacional de Crédito (0151)">0151 - BNC Banco Nacional de Crédito</option>
+                <option value="Bancamiga (0172)">0172 - Bancamiga Banco Universal</option>
+                <option value="Bancaribe (0114)">0114 - Bancaribe Banco Universal</option>
+                <option value="Banco Exterior (0115)">0115 - Banco Exterior</option>
+                <option value="Banco Venezolano de Crédito (0104)">0104 - Banco Venezolano de Crédito</option>
+                <option value="Banco Bicentenario (0175)">0175 - Banco Bicentenario del Pueblo</option>
+                <option value="Banco del Tesoro (0163)">0163 - Banco del Tesoro</option>
+                <option value="Banplus (0174)">0174 - Banplus Banco Universal</option>
+                <option value="Banco Plaza (0138)">0138 - Banco Plaza</option>
+                <option value="Banco Caroní (0128)">0128 - Banco Caroní</option>
+                <option value="100% Banco (0156)">0156 - 100% Banco</option>
+                <option value="Bancrecer (0168)">0168 - Bancrecer</option>
+                <option value="Banco Activo (0171)">0171 - Banco Activo</option>
+                <option value="BANFANB (0177)">0177 - BANFANB</option>
+                <option value="Banco Sofitasa (0137)">0137 - Banco Sofitasa</option>
+                <option value="DelSur Banco Universal (0157)">0157 - DelSur Banco Universal</option>
+                <option value="Banco Agrícola de Venezuela (0166)">0166 - Banco Agrícola de Venezuela</option>
+                <option value="Mi Banco (0169)">0169 - Mi Banco Microfinanciero</option>
+                <option value="N58 Banco Digital (0191)">0191 - N58 Banco Digital</option>
+                <option value="Otro Banco Nacional">Otro Banco Nacional</option>
+              </select>
             </div>
           </div>
 
@@ -1321,7 +1347,8 @@
         <!-- Coordenadas directas opcionales -->
         <div class="form-group" style="margin-bottom:16px;">
           <label class="form-label" for="input-custom-gps-link">O pega coordenadas o enlace de Google Maps:</label>
-          <input type="text" id="input-custom-gps-link" class="form-input" placeholder="Ej: 10.6427, -71.6125 o enlace de maps">
+          <input type="text" id="input-custom-gps-link" class="form-input" placeholder="Ej: 10.6427, -71.6125 o enlace de Google Maps">
+          <small id="gps-link-helper-msg" style="display:none; margin-top:6px; font-size:0.78rem; font-weight:600; line-height:1.3;"></small>
         </div>
 
         <!-- TARJETA DE RESULTADOS DEL CÁLCULO -->
@@ -1352,7 +1379,6 @@
   <!-- TOAST DE NOTIFICACIONES -->
   <div id="toast-notification-container" class="toast-container"></div>
 
-  <!-- SCRIPT DE TIENDA PÚBLICA -->
-  <script src="app.js?v=20261024_v9"></script>
+  <script src="app.js?v=20261026_v12"></script>
 </body>
 </html>
