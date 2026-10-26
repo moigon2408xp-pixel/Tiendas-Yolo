@@ -66,36 +66,7 @@
     return candidateSKU;
   }
 
-  // ============================================================================
-  // TASA OFICIAL BCV EN TIEMPO REAL
-  // ============================================================================
-  async function fetchLiveBcvRateAdmin(notify = false) {
-    try {
-      const response = await fetch(BCV_API_URL);
-      if (!response.ok) throw new Error("HTTP " + response.status);
-      const data = await response.json();
-      if (data && data.promedio && !isNaN(data.promedio)) {
-        const liveRate = Number(data.promedio);
-        state.config.rateBCV = liveRate;
-        saveState();
 
-        const bcvEl = document.getElementById('topbar-bcv-rate');
-        if (bcvEl) bcvEl.textContent = `Bs. ${liveRate.toFixed(2)}`;
-        const cfgInput = document.getElementById('cfg-rate-bcv');
-        if (cfgInput) cfgInput.value = liveRate.toFixed(2);
-
-        if (notify) {
-          showToast(`Tasa BCV oficial actualizada: Bs. ${liveRate.toFixed(2)} / $`, "success");
-        }
-        renderAllAdminModules();
-      }
-    } catch (e) {
-      console.warn("No se pudo obtener la tasa en vivo del BCV en admin:", e);
-      if (notify) {
-        showToast("No se pudo conectar a la API del BCV en este momento.", "error");
-      }
-    }
-  }
 
   // ============================================================================
   // SEGURIDAD & MULTI-USUARIO CON PIN DE ACCESO
@@ -1210,8 +1181,8 @@
           <span>Invertido: <strong>$${(c.totalCompradoUSD || 0).toFixed(2)}</strong></span>
         </div>
         <div style="display:flex; gap:8px;">
-          <button class="btn-whatsapp-outline" style="flex:1; justify-content:center; padding:8px 12px; font-size:0.84rem;" data-action="chat-client" data-phone="${c.telefono}">
-            💬 WhatsApp
+          <button class="btn-primary" style="flex:1; justify-content:center; padding:9px 12px; font-size:0.84rem; font-weight:700; background:linear-gradient(135deg, #10b981, #059669); border:none; color:#fff;" data-action="chat-client" data-phone="${c.telefono}" data-name="${c.nombre || 'Manicurista'}">
+            📲 Coordinar Pedido / WhatsApp
           </button>
           <button class="btn-action-icon" style="background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; border-radius:var(--radius-sm); padding:6px 12px; cursor:pointer;" data-action="delete-client" data-id="${c.id || c.telefono}" title="Eliminar clienta del CRM">
             🗑️
@@ -1224,7 +1195,9 @@
       btn.addEventListener('click', () => {
         let phone = btn.dataset.phone.replace(/\D/g, '');
         if (!phone.startsWith('58')) phone = '58' + phone.replace(/^0+/, '');
-        window.open(`https://wa.me/${phone}?text=${encodeURIComponent('💅 ¡Hola! Te escribimos de Tiendas Yolo para saludarte y compartirte nuestras promociones en insumos para uñas del día.')}`, '_blank');
+        const clientName = btn.dataset.name || 'Manicurista';
+        const msg = `💅 ¡Hola ${clientName}! Te saludamos cordialmente de Tiendas Yolo (Maracaibo). Nos comunicamos para coordinar los detalles de tus pedidos y despachos de insumos para uñas. ¿En qué podemos apoyarte hoy?`;
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
       });
     });
 
@@ -1681,7 +1654,19 @@
     // Cuentas de Pago
     try {
       const pmSettings = JSON.parse(localStorage.getItem('ty_payment_settings') || '{}');
-      if (document.getElementById('cfg-pm-bank')) document.getElementById('cfg-pm-bank').value = pmSettings.pmBank || 'Banesco (0134)';
+      const bankSelect = document.getElementById('cfg-pm-bank');
+      if (bankSelect) {
+        const savedBank = pmSettings.pmBank || 'Banesco (0134)';
+        let found = false;
+        for (let opt of bankSelect.options) {
+          if (opt.value === savedBank || opt.text.includes(savedBank) || savedBank.includes(opt.value)) {
+            bankSelect.value = opt.value;
+            found = true;
+            break;
+          }
+        }
+        if (!found) bankSelect.value = 'Banesco (0134)';
+      }
       if (document.getElementById('cfg-pm-id')) document.getElementById('cfg-pm-id').value = pmSettings.pmId || 'V-28123456';
       if (document.getElementById('cfg-pm-phone')) document.getElementById('cfg-pm-phone').value = pmSettings.pmPhone || '0414-6553430';
       if (document.getElementById('cfg-binance-id')) document.getElementById('cfg-binance-id').value = pmSettings.binanceId || '829140291';
@@ -2069,13 +2054,21 @@
     const btnSaveComm = document.getElementById('btn-save-commercial-config');
     if (btnSaveComm) {
       btnSaveComm.addEventListener('click', () => {
-        state.config.rateBCV = Number(document.getElementById('cfg-rate-bcv').value);
+        const newRate = Number(document.getElementById('cfg-rate-bcv').value);
+        if (newRate > 0) {
+          state.config.rateBCV = newRate;
+          state.config.isManualRate = true;
+          const topRateEl = document.getElementById('topbar-bcv-rate');
+          if (topRateEl) topRateEl.textContent = `Bs. ${newRate.toFixed(2)}`;
+        }
         state.config.whatsappNumber = document.getElementById('cfg-whatsapp').value.trim();
         state.config.adminPin = document.getElementById('cfg-admin-pin').value.trim() || '2026';
         state.config.deliveryPerKm = 0.50;
         saveState();
         renderAdminDashboard();
-        showToast("Parámetros y PIN actualizados.", "success");
+        renderAllAdminModules();
+        syncWithSheets('update_config', { key: 'rateBCV', value: state.config.rateBCV });
+        showToast("💾 Parámetros y tasa del día actualizados con éxito.", "success");
       });
     }
 
@@ -2483,6 +2476,11 @@
   // CONSULTA EN TIEMPO REAL TASA OFICIAL BCV
   // =========================================================================
   async function fetchLiveBcvRateAdmin(showFeedback = false) {
+    if (state.config.isManualRate && !showFeedback) {
+      const topRateEl = document.getElementById('topbar-bcv-rate');
+      if (topRateEl) topRateEl.textContent = `Bs. ${Number(state.config.rateBCV || 887.30).toFixed(2)}`;
+      return;
+    }
     try {
       const topRateEl = document.getElementById('topbar-bcv-rate');
       const pillEl = document.getElementById('topbar-bcv-pill');
@@ -2501,8 +2499,11 @@
         if (liveRate > 0) {
           state.config.rateBCV = liveRate;
           state.config.rateLastUpdated = new Date().toISOString();
+          state.config.isManualRate = false;
           saveState();
           if (topRateEl) topRateEl.textContent = `Bs. ${liveRate.toFixed(2)}`;
+          const cfgRateInput = document.getElementById('cfg-rate-bcv');
+          if (cfgRateInput) cfgRateInput.value = liveRate.toFixed(2);
           if (pillEl) pillEl.style.opacity = '1';
           if (showFeedback) {
             showToast(`💵 Tasa BCV Oficial actualizada: Bs. ${liveRate.toFixed(2)} / $`, 'success');
