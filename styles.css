@@ -66,7 +66,8 @@
 }
 
 /* TEMA OSCURO LUXURY */
-body.theme-dark {
+body.theme-dark,
+html.theme-dark {
   --bg-app: #14050d;
   --bg-surface: #200916;
   --bg-surface-glass: rgba(32, 9, 22, 0.9);
@@ -77,6 +78,7 @@ body.theme-dark {
   --text-secondary: #d1b1c3;
   --text-muted: #9e7f92;
 
+  --ty-primary-dark: #f472b6;
   --border-light: rgba(212, 122, 148, 0.2);
   --border-rose: rgba(212, 122, 148, 0.45);
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -2553,20 +2555,56 @@ body.theme-dark .card-heading {
   margin-top: 4px;
 }
 
-/* Tarjeta Binance Pay */
+/* Tarjeta Binance Pay - Alto contraste Luxury para temas Claro y Oscuro */
 .bank-pill-card[data-bank-card="binance"] {
-  border-color: rgba(243, 186, 47, 0.55);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(254, 249, 231, 0.95));
+  border-color: rgba(243, 186, 47, 0.65);
+  background: linear-gradient(135deg, #fffdf2, #fef9e3);
+  color: #1e2026;
+  box-shadow: 0 2px 10px rgba(243, 186, 47, 0.12);
+}
+.bank-pill-card[data-bank-card="binance"] strong,
+.bank-pill-card[data-bank-card="binance"] span:not(.binance-badge-brand) {
+  color: #1e2026;
+}
+.bank-pill-card[data-bank-card="binance"] .bank-pill-details p {
+  color: #2d3139;
 }
 .binance-badge-brand {
   background: #f3ba2f;
-  color: #1e2026;
+  color: #1e2026 !important;
   font-weight: 800;
   font-size: 0.72rem;
-  padding: 2px 8px;
+  padding: 3px 8px;
   border-radius: 4px;
   display: inline-block;
   letter-spacing: 0.02em;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* Modo Oscuro para Tarjeta Binance Pay */
+body.theme-dark .bank-pill-card[data-bank-card="binance"],
+html.theme-dark .bank-pill-card[data-bank-card="binance"] {
+  background: linear-gradient(135deg, rgba(243, 186, 47, 0.15), rgba(39, 13, 28, 0.95));
+  border-color: rgba(243, 186, 47, 0.5);
+  color: #fdf2f6;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+body.theme-dark .bank-pill-card[data-bank-card="binance"] strong,
+html.theme-dark .bank-pill-card[data-bank-card="binance"] strong {
+  color: #ffffff !important;
+}
+body.theme-dark .bank-pill-card[data-bank-card="binance"] .bank-pill-details p,
+html.theme-dark .bank-pill-card[data-bank-card="binance"] .bank-pill-details p {
+  color: #fef08a !important;
+}
+body.theme-dark .bank-pill-card[data-bank-card="binance"] #copy-binance-id,
+html.theme-dark .bank-pill-card[data-bank-card="binance"] #copy-binance-id {
+  color: #ffffff !important;
+  font-weight: 700;
+}
+body.theme-dark .bank-pill-card[data-bank-card="binance"] em,
+html.theme-dark .bank-pill-card[data-bank-card="binance"] em {
+  color: #e2e8f0 !important;
 }
 
 /* ============================================================================
