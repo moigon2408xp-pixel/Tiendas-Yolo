@@ -16,8 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <link rel="stylesheet" href="styles.css?v=20261024a">
+  <link rel="stylesheet" href="styles.css?v=20261026_v12">
   <style>
     /* Estilos Luxury Backoffice Tiendas Yolo */
     :root {
@@ -1157,7 +1156,7 @@
         </div>
 
         <!-- REGLAS DEL CLUB MANICURISTA VIP (CONFIGURACIÓN PROPIETARIOS) -->
-        <div class="settings-card" style="border: 2px solid var(--border-rose); background: linear-gradient(to bottom right, var(--bg-surface), #fff8fb);">
+        <div class="settings-card" style="border: 2px solid var(--border-rose); background: linear-gradient(to bottom right, var(--bg-surface), var(--bg-subtle));">
           <div class="card-icon-title">
             <span class="card-icon">👑</span>
             <div>
@@ -1203,8 +1202,32 @@
             <h5 style="font-size:0.9rem; font-weight:700; color:var(--ty-primary-dark); margin-bottom:10px;">📲 Datos para Pago Móvil (Bolívares Bs.)</h5>
             <div class="form-grid-3">
               <div class="form-group">
-                <label for="cfg-pm-bank" class="form-label">Banco:</label>
-                <input type="text" id="cfg-pm-bank" class="form-input" value="Banesco (0134)" placeholder="Ej: Banesco, Mercantil, BDV">
+                <label for="cfg-pm-bank" class="form-label">Banco Oficial:</label>
+                <select id="cfg-pm-bank" class="form-select">
+                  <option value="Banesco (0134)" selected>0134 - Banesco Banco Universal</option>
+                  <option value="Banco de Venezuela (0102)">0102 - Banco de Venezuela (BDV)</option>
+                  <option value="Banco Mercantil (0105)">0105 - Banco Mercantil</option>
+                  <option value="Banco Provincial (0108)">0108 - Banco Provincial (BBVA)</option>
+                  <option value="BNC Banco Nacional de Crédito (0151)">0151 - BNC Banco Nacional de Crédito</option>
+                  <option value="Bancamiga (0172)">0172 - Bancamiga Banco Universal</option>
+                  <option value="Bancaribe (0114)">0114 - Bancaribe Banco Universal</option>
+                  <option value="Banco Exterior (0115)">0115 - Banco Exterior</option>
+                  <option value="Banco Venezolano de Crédito (0104)">0104 - Banco Venezolano de Crédito</option>
+                  <option value="Banco Bicentenario (0175)">0175 - Banco Bicentenario del Pueblo</option>
+                  <option value="Banco del Tesoro (0163)">0163 - Banco del Tesoro</option>
+                  <option value="Banplus (0174)">0174 - Banplus Banco Universal</option>
+                  <option value="Banco Plaza (0138)">0138 - Banco Plaza</option>
+                  <option value="Banco Caroní (0128)">0128 - Banco Caroní</option>
+                  <option value="100% Banco (0156)">0156 - 100% Banco</option>
+                  <option value="Bancrecer (0168)">0168 - Bancrecer</option>
+                  <option value="Banco Activo (0171)">0171 - Banco Activo</option>
+                  <option value="BANFANB (0177)">0177 - BANFANB</option>
+                  <option value="Banco Sofitasa (0137)">0137 - Banco Sofitasa</option>
+                  <option value="DelSur Banco Universal (0157)">0157 - DelSur Banco Universal</option>
+                  <option value="Banco Agrícola de Venezuela (0166)">0166 - Banco Agrícola de Venezuela</option>
+                  <option value="Mi Banco (0169)">0169 - Mi Banco Microfinanciero</option>
+                  <option value="N58 Banco Digital (0191)">0191 - N58 Banco Digital</option>
+                </select>
               </div>
               <div class="form-group">
                 <label for="cfg-pm-id" class="form-label">Cédula / RIF:</label>
@@ -1830,6 +1853,6 @@
   <div id="toast-notification-container" class="toast-container"></div>
 
   <!-- SCRIPT PRIVADO DEL PANEL DE GESTIÓN -->
-  <script src="admin.js?v=20261024_v10"></script>
+  <script src="admin.js?v=20261026_v12"></script>
 </body>
 </html>
