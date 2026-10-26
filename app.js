@@ -404,7 +404,12 @@
     lng: -71.6592591041028
   };
 
-  // Fórmula de Haversine para cálculo de distancia en línea recta precisa
+  // Rutagrama Urbano de Maracaibo: Factor de desvío vial sobre distancia ortodrómica (Haversine)
+  // En la red vial urbana de Maracaibo (circunvalaciones C-1, C-2, avenidas principales),
+  // la ruta vehicular es ~25% mayor a la línea recta.
+  const URBAN_CIRCUITY_FACTOR = 1.25;
+
+  // Fórmula de Haversine + Factor de Rutagrama Vial Urbano de Maracaibo
   function calculateDistanceKm(lat1, lon1, lat2, lon2) {
     const R = 6371; // Radio de la Tierra en km
     const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -414,7 +419,9 @@
       Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
       Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return Math.round((R * c) * 10) / 10; // Redondeado a 1 decimal
+    const straightKm = R * c;
+    const roadKm = straightKm * URBAN_CIRCUITY_FACTOR;
+    return Math.round(roadKm * 10) / 10; // Redondeado a 1 decimal
   }
 
   // Validador y corrector de coordenadas geográficas de Maracaibo y Zulia
@@ -432,7 +439,57 @@
     return { lat, lng };
   }
 
-  // Extractor inteligente de coordenadas (lat/lng directas, enlaces Google Maps, daddr, !3d/!4d)
+  // Catálogo de enlaces cortos frecuentes o pre-resueltos de clientes
+  const KNOWN_MAPS_SHORTLINKS = {
+    'UqVAbrW1Vt7RPokCA': { lat: 10.529848, lng: -71.683681, label: 'San Francisco / Maracaibo Sur' }
+  };
+
+  // Verifica si es un enlace corto de Google Maps (maps.app.goo.gl o goo.gl/maps)
+  function isShortGoogleMapsUrl(str) {
+    if (!str || typeof str !== 'string') return false;
+    return /maps\.app\.goo\.gl\/|goo\.gl\/maps\//i.test(str.trim());
+  }
+
+  // Resolver en backend serverless o catálogo enlaces cortos de Maps
+  async function resolveShortGoogleMapsUrl(shortUrl) {
+    if (!shortUrl) return null;
+    const cleanUrl = shortUrl.trim();
+
+    // 1. Verificación instantánea en enlaces pre-resueltos
+    const codeMatch = cleanUrl.match(/(?:maps\.app\.goo\.gl|goo\.gl\/maps)\/([a-zA-Z0-9_-]+)/i);
+    if (codeMatch && codeMatch[1] && KNOWN_MAPS_SHORTLINKS[codeMatch[1]]) {
+      const entry = KNOWN_MAPS_SHORTLINKS[codeMatch[1]];
+      return sanitizeMaracaiboCoords(entry.lat, entry.lng);
+    }
+
+    // 2. Consulta al backend Google Apps Script en la nube
+    try {
+      const sheetsUrl = (state.config && state.config.sheetsApiUrl) || DEFAULT_SHEETS_URL;
+      const target = `${sheetsUrl}?action=resolve_maps_url&url=${encodeURIComponent(cleanUrl)}`;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 6500);
+      const res = await fetch(target, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (res.ok) {
+        const json = await res.json();
+        if (json && json.success && json.data) {
+          if (json.data.matchedCoords) {
+            const parsed = parseCoordinatesString(json.data.matchedCoords);
+            if (parsed) return parsed;
+          }
+          if (json.data.finalUrl) {
+            const parsed = parseCoordinatesString(json.data.finalUrl);
+            if (parsed) return parsed;
+          }
+        }
+      }
+    } catch (err) {
+      console.warn("No se pudo resolver el enlace de Maps en backend:", err.message);
+    }
+    return null;
+  }
+
+  // Extractor inteligente de coordenadas (lat/lng directas, enlaces Google Maps, daddr, search, !3d/!4d)
   function parseCoordinatesString(str) {
     if (!str || typeof str !== 'string') return null;
     const trimmed = str.trim();
@@ -449,14 +506,20 @@
       return sanitizeMaracaiboCoords(parseFloat(atMatch[1]), parseFloat(atMatch[2]));
     }
 
-    // 3. Parámetros de query: ?q=, &q=, daddr=, destination=, ll=
-    const queryMatch = trimmed.match(/(?:[?&]|\b)(?:q|daddr|destination|ll)=(-?\d{1,2}\.\d+)[,\s]+(-?\d{1,3}\.\d+)/);
+    // 3. Redirección de Google Maps search: /maps/search/10.529848,+-71.683681
+    const searchMatch = trimmed.match(/\/maps\/search\/(-?\d{1,2}\.\d+)[,\s+]+(-?\d{1,3}\.\d+)/);
+    if (searchMatch) {
+      return sanitizeMaracaiboCoords(parseFloat(searchMatch[1]), parseFloat(searchMatch[2]));
+    }
+
+    // 4. Parámetros de query: ?q=, &q=, daddr=, destination=, ll=, query=
+    const queryMatch = trimmed.match(/(?:[?&]|\b)(?:q|daddr|destination|ll|query)=(-?\d{1,2}\.\d+)[,\s+]+(-?\d{1,3}\.\d+)/);
     if (queryMatch) {
       return sanitizeMaracaiboCoords(parseFloat(queryMatch[1]), parseFloat(queryMatch[2]));
     }
 
-    // 4. Coordenadas directas: "10.6427, -71.6125" o "10.6427 -71.6125"
-    const directMatch = trimmed.match(/(-?\d{1,2}\.\d+)[,\s]+(-?\d{1,3}\.\d+)/);
+    // 5. Coordenadas directas: "10.6427, -71.6125" o "10.6427 -71.6125"
+    const directMatch = trimmed.match(/(-?\d{1,2}\.\d+)[,\s+]+(-?\d{1,3}\.\d+)/);
     if (directMatch) {
       return sanitizeMaracaiboCoords(parseFloat(directMatch[1]), parseFloat(directMatch[2]));
     }
@@ -564,10 +627,14 @@
   }
 
   // Consulta en tiempo real de la tasa oficial del BCV
-  async function fetchLiveBcvRate() {
+  async function fetchLiveBcvRate(forceRefresh = false) {
+    if (state.config.isManualRate && !forceRefresh) {
+      updateRateDisplay(false);
+      return;
+    }
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const timeoutId = setTimeout(() => controller.abort(), 4500);
       const res = await fetch("https://ve.dolarapi.com/v1/dolares/oficial", { signal: controller.signal });
       clearTimeout(timeoutId);
       if (res.ok) {
@@ -576,16 +643,23 @@
         if (liveRate > 0) {
           state.config.rateBCV = liveRate;
           state.config.rateLastUpdated = new Date().toISOString();
+          state.config.isManualRate = false;
           saveData();
           updateRateDisplay(true);
           renderProducts();
           updateCartUI();
+          if (forceRefresh) {
+            showToast(`💵 Tasa BCV Oficial actualizada: Bs. ${liveRate.toFixed(2)} / $`, "success");
+          }
           console.log("💵 Tasa BCV Oficial actualizada en vivo:", liveRate);
         }
       }
     } catch (err) {
       console.warn("Tasa BCV obtenida de caché local:", err.message);
       updateRateDisplay(false);
+      if (forceRefresh) {
+        showToast(`Tasa BCV local activa: Bs. ${Number(state.config.rateBCV || 887.30).toFixed(2)}`, "info");
+      }
     }
   }
 
@@ -594,6 +668,15 @@
     const rateEl = document.getElementById('top-rate-display');
     if (rateEl) {
       rateEl.innerHTML = `${isLive ? '🟢' : '💵'} Bs. ${rate.toFixed(2)} / $ ${isLive ? '<span style="font-size:0.7em; opacity:0.85;">(En Vivo BCV)</span>' : ''}`;
+      rateEl.style.cursor = 'pointer';
+      rateEl.title = 'Tasa oficial BCV. Haz clic para consultar en vivo';
+      if (!rateEl.dataset.hasClickListener) {
+        rateEl.dataset.hasClickListener = 'true';
+        rateEl.addEventListener('click', () => {
+          showToast("🔄 Consultando tasa oficial del BCV...", "info");
+          fetchLiveBcvRate(true);
+        });
+      }
     }
   }
 
@@ -1399,6 +1482,18 @@
       localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(state.clientProfile));
     }
 
+    // Registrar o actualizar clienta en el CRM de Tiendas Yolo para coordinar por WhatsApp
+    saveClientToCrm({
+      name: completedOrder.cliente,
+      phone: completedOrder.telefono,
+      salon: completedOrder.salon,
+      address: completedOrder.direccion,
+      instagram: (state.clientProfile && state.clientProfile.instagram) || '',
+      level: (state.clientProfile && state.clientProfile.level) || '🌟 Manicurista VIP Yolo',
+      ordersCount: (state.clientProfile && state.clientProfile.ordersCount) || 1,
+      orderTotalUSD: Number(completedOrder.totalUSD || 0)
+    });
+
     // Descontar inventario de insumos vendidos
     if (completedOrder.items && Array.isArray(completedOrder.items)) {
       completedOrder.items.forEach(it => {
@@ -1798,9 +1893,66 @@
     };
 
     localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(state.clientProfile));
+    saveClientToCrm(state.clientProfile);
     updateClientStatusBadge();
     openClientAccountModal();
     showToast("🌸 ¡Bienvenida al Club Manicurista Tiendas Yolo!", "success");
+  }
+
+  // Guardar y sincronizar clientas automáticamente con el CRM de Tiendas Yolo
+  function saveClientToCrm(profile) {
+    if (!profile || !profile.phone) return;
+    try {
+      const existingData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      const clients = existingData.clients || [];
+      const cleanPhone = (profile.phone || '').replace(/\D/g, '');
+      const idx = clients.findIndex(c => {
+        const cPhone = (c.telefono || '').replace(/\D/g, '');
+        return (cPhone && cleanPhone && (cPhone.includes(cleanPhone) || cleanPhone.includes(cPhone))) ||
+               (c.nombre && profile.name && c.nombre.trim().toLowerCase() === profile.name.trim().toLowerCase());
+      });
+
+      const ordersCount = profile.ordersCount || (idx >= 0 ? (clients[idx].totalPedidos || 1) : 1);
+      const prevSpent = idx >= 0 ? (clients[idx].totalCompradoUSD || 0) : 0;
+      const addSpent = profile.orderTotalUSD ? Number(profile.orderTotalUSD) : 0;
+
+      const clientRecord = {
+        id: idx >= 0 ? clients[idx].id : `CLI-${("000" + (clients.length + 1)).slice(-3)}`,
+        nombre: profile.name || (idx >= 0 ? clients[idx].nombre : 'Clienta Manicurista'),
+        telefono: profile.phone,
+        salonNegocio: profile.salon || (idx >= 0 ? clients[idx].salonNegocio : 'Particular'),
+        zonaMaracaibo: profile.address || (idx >= 0 ? clients[idx].zonaMaracaibo : 'Maracaibo'),
+        nivelFidelidad: profile.level || (idx >= 0 ? clients[idx].nivelFidelidad : '🌟 Manicurista VIP Yolo'),
+        totalPedidos: ordersCount,
+        totalCompradoUSD: prevSpent + addSpent,
+        instagram: profile.instagram || (idx >= 0 ? clients[idx].instagram : '')
+      };
+
+      if (idx >= 0) {
+        clients[idx] = Object.assign({}, clients[idx], clientRecord);
+      } else {
+        clients.push(clientRecord);
+      }
+
+      existingData.clients = clients;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(existingData));
+
+      // Sincronizar en segundo plano con Google Sheets (TY_Clientes)
+      const sheetsUrl = (state.config && state.config.sheetsApiUrl) || DEFAULT_SHEETS_URL;
+      if (sheetsUrl && typeof fetch !== 'undefined') {
+        fetch(sheetsUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'save_client',
+            data: clientRecord
+          })
+        }).catch(err => console.warn("Sync CRM Client error:", err));
+      }
+    } catch(err) {
+      console.warn("Error guardando cliente en CRM:", err);
+    }
   }
 
   function handleAutofillCart() {
@@ -2526,8 +2678,21 @@
         const feeBs = fee * rate;
 
         if (badgeGpsText) {
-          badgeGpsText.innerHTML = `🚗 <strong>${km} km</strong> desde Urb. El Trébol — Delivery: <strong>$${fee.toFixed(2)}</strong> (Bs. ${feeBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})`;
+          badgeGpsText.innerHTML = `🚗 <strong>${km} km</strong> (Ruta vial Maracaibo) — Delivery: <strong>$${fee.toFixed(2)}</strong> (Bs. ${feeBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})`;
         }
+      } else if (isShortGoogleMapsUrl(val)) {
+        if (badgeGpsText) {
+          badgeGpsText.innerHTML = `🛰️ <em>Resolviendo enlace de Google Maps...</em>`;
+        }
+        resolveShortGoogleMapsUrl(val).then(resCoords => {
+          if (resCoords) {
+            if (inputCoords) inputCoords.value = `${resCoords.lat.toFixed(5)}, ${resCoords.lng.toFixed(5)}`;
+            updateDeliveryDistanceCalc();
+          } else if (badgeGpsText) {
+            badgeGpsText.innerHTML = `⚠️ Enlace recibido. Para mayor precisión pega las coordenadas o selecciona tu Parroquia en la calculadora.`;
+          }
+        });
+        return;
       } else {
         state.deliveryDistanceKm = null;
         if (badgeGpsText) {
@@ -2856,13 +3021,74 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
     }
 
     const inputCustomGps = document.getElementById('input-custom-gps-link');
+    let gpsInputDebounceTimer = null;
     if (inputCustomGps) {
       inputCustomGps.addEventListener('input', (e) => {
-        const parsed = parseCoordinatesString(e.target.value);
+        clearTimeout(gpsInputDebounceTimer);
+        const val = e.target.value.trim();
+        const helperEl = document.getElementById('gps-link-helper-msg');
+
+        if (!val) {
+          if (helperEl) helperEl.style.display = 'none';
+          resetGpsCalculationDisplay();
+          return;
+        }
+
+        const parsed = parseCoordinatesString(val);
         if (parsed) {
           const km = calculateDistanceKm(STORE_LOCATION.lat, STORE_LOCATION.lng, parsed.lat, parsed.lng);
           state.deliveryCoords = `${parsed.lat}, ${parsed.lng}`;
           updateGpsCalculationDisplay(km, `Coordenadas: ${parsed.lat.toFixed(4)}, ${parsed.lng.toFixed(4)}`);
+          if (helperEl) {
+            helperEl.style.display = 'block';
+            helperEl.style.color = '#10b981';
+            helperEl.textContent = `✅ Coordenadas válidas detectadas (${parsed.lat.toFixed(4)}, ${parsed.lng.toFixed(4)})`;
+          }
+          return;
+        }
+
+        // Si es enlace corto de Google Maps (maps.app.goo.gl o goo.gl/maps)
+        if (isShortGoogleMapsUrl(val)) {
+          if (helperEl) {
+            helperEl.style.display = 'block';
+            helperEl.style.color = 'var(--ty-primary)';
+            helperEl.innerHTML = `🛰️ <em>Resolviendo enlace de Google Maps con satélite...</em>`;
+          }
+          const lblZone = document.getElementById('gps-zone-label');
+          if (lblZone) lblZone.textContent = '📍 Ubicación: Resolviendo enlace de Maps...';
+
+          gpsInputDebounceTimer = setTimeout(() => {
+            if (inputCustomGps.value.trim() !== val) return;
+            resolveShortGoogleMapsUrl(val).then((resolvedCoords) => {
+              if (inputCustomGps.value.trim() !== val) return;
+              if (resolvedCoords) {
+                const km = calculateDistanceKm(STORE_LOCATION.lat, STORE_LOCATION.lng, resolvedCoords.lat, resolvedCoords.lng);
+                state.deliveryCoords = `${resolvedCoords.lat}, ${resolvedCoords.lng}`;
+                updateGpsCalculationDisplay(km, `Maps: ${resolvedCoords.lat.toFixed(4)}, ${resolvedCoords.lng.toFixed(4)}`);
+                if (helperEl) {
+                  helperEl.style.display = 'block';
+                  helperEl.style.color = '#10b981';
+                  helperEl.textContent = `✅ Ubicación extraída de Maps con éxito (${km.toFixed(1)} km)`;
+                }
+                showToast("📍 Ubicación extraída de Google Maps con éxito", "success");
+              } else {
+                if (helperEl) {
+                  helperEl.style.display = 'block';
+                  helperEl.style.color = '#d97706';
+                  helperEl.innerHTML = `⚠️ <strong>Enlace detectado:</strong> Si no se resuelve automáticamente, <a href="${val}" target="_blank" style="color:var(--ty-primary); font-weight:700; text-decoration:underline;">ábrelo en Maps</a> para copiar las coordenadas numéricas (ej: <code>10.5298, -71.6836</code>) o selecciona tu Parroquia arriba.`;
+                }
+                const lblZone = document.getElementById('gps-zone-label');
+                if (lblZone) lblZone.textContent = '📍 Ubicación: Selecciona tu zona arriba o ingresa coordenadas directas';
+              }
+            });
+          }, 250);
+          return;
+        }
+
+        if (helperEl && val.length > 5) {
+          helperEl.style.display = 'block';
+          helperEl.style.color = 'var(--text-muted)';
+          helperEl.innerHTML = `💡 Pega coordenadas (ej: <code>10.6054, -71.6592</code>) o selecciona tu Parroquia arriba.`;
         }
       });
     }
@@ -2965,14 +3191,33 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
   // ============================================================================
   // CALCULADORA DE DELIVERY GPS MARACAIBO (MODAL INTERACTIVO)
   // ============================================================================
+  function resetGpsCalculationDisplay() {
+    state.deliveryDistanceKm = null;
+    const lblZone = document.getElementById('gps-zone-label');
+    const lblDist = document.getElementById('gps-dist-km');
+    const lblCostUSD = document.getElementById('gps-cost-usd');
+    const lblCostBs = document.getElementById('gps-cost-bs');
+
+    if (lblZone) lblZone.textContent = '📍 Ubicación: Selecciona una zona o ingresa tu enlace GPS';
+    if (lblDist) lblDist.textContent = '-- km';
+    if (lblCostUSD) {
+      lblCostUSD.textContent = '$0.00';
+      lblCostUSD.style.color = 'var(--text-muted)';
+    }
+    if (lblCostBs) lblCostBs.textContent = 'Bs. 0.00';
+  }
+
   function openGpsCalculatorModal() {
     const modal = document.getElementById('modal-gps-calculator');
     if (!modal) return;
 
+    const helperEl = document.getElementById('gps-link-helper-msg');
+    if (helperEl) helperEl.style.display = 'none';
+
     if (state.deliveryDistanceKm) {
       updateGpsCalculationDisplay(state.deliveryDistanceKm, state.deliveryCoords ? `Coordenadas: ${state.deliveryCoords}` : 'Ubicación seleccionada');
     } else {
-      updateGpsCalculationDisplay(2.5, '5 de Julio / Cecilio Acosta');
+      resetGpsCalculationDisplay();
     }
 
     modal.style.display = 'flex';
@@ -2990,7 +3235,7 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
     const lblCostBs = document.getElementById('gps-cost-bs');
 
     if (lblZone) lblZone.textContent = `📍 Ubicación: ${zoneName}`;
-    if (lblDist) lblDist.textContent = `${km.toFixed(1)} km`;
+    if (lblDist) lblDist.textContent = `${km.toFixed(1)} km (Ruta)`;
 
     if (lblCostUSD) {
       lblCostUSD.textContent = `$${feeUSD.toFixed(2)}`;
@@ -3044,7 +3289,8 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
 
   function applyGpsLocationToCart() {
     if (!state.deliveryDistanceKm) {
-      state.deliveryDistanceKm = 2.5;
+      showToast("⚠️ Por favor selecciona una zona en Maracaibo o pega tus coordenadas GPS.", "warning");
+      return;
     }
     const zoneSelect = document.getElementById('select-maracaibo-zone');
     let zoneTitle = 'Maracaibo';
