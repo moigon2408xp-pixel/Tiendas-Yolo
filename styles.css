@@ -550,27 +550,59 @@ body.theme-dark .help-btn {
    HERO BANNER GLAMOUR
    ============================================================================ */
 .hero-glam-card {
-  background: #ea6fbf;
+  background: linear-gradient(135deg, #30021e 0%, #590935 24%, #8c1254 54%, #c62381 80%, #ea6fbf 100%);
   color: var(--text-white);
   border-radius: var(--radius-lg);
-  padding: 36px 40px;
+  padding: 42px 46px;
   margin-bottom: 28px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 10px 32px rgba(234, 111, 191, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 20px 48px -10px rgba(48, 2, 30, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.18) inset;
+  border: 1px solid rgba(255, 255, 255, 0.24);
 }
 
 .hero-glam-card::before {
   content: '';
   position: absolute;
-  top: -50px;
+  top: -80px;
   right: -50px;
-  width: 300px;
-  height: 300px;
+  width: 420px;
+  height: 420px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(231, 177, 162, 0.25) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(253, 224, 71, 0.22) 0%, rgba(234, 111, 191, 0.16) 45%, transparent 72%);
   pointer-events: none;
+  filter: blur(18px);
+}
+
+.hero-glam-card::after {
+  content: '';
+  position: absolute;
+  bottom: -90px;
+  left: 15%;
+  width: 440px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(234, 111, 191, 0.28) 0%, transparent 70%);
+  pointer-events: none;
+  filter: blur(28px);
+}
+
+.hero-bg-photo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: center right;
+  background-repeat: no-repeat;
+  opacity: 0.34;
+  mix-blend-mode: luminosity;
+  pointer-events: none;
+  z-index: 1;
+  mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.25) 35%, rgba(0, 0, 0, 0.85) 70%, rgba(0, 0, 0, 1) 100%);
+  -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.25) 35%, rgba(0, 0, 0, 0.85) 70%, rgba(0, 0, 0, 1) 100%);
+  transition: opacity var(--trans-smooth);
 }
 
 .hero-inner {
@@ -584,67 +616,169 @@ body.theme-dark .help-btn {
 
 .hero-text-side {
   flex: 1;
-  max-width: 720px;
+  max-width: 740px;
 }
 
 .hero-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 4px 12px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(254, 215, 170, 0.45);
+  padding: 6px 14px;
   border-radius: var(--radius-pill);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: #fde047;
-  margin-bottom: 14px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #fef08a;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+.hero-badge-sparkle {
+  font-size: 0.95rem;
+  animation: pulseSparkle 2.2s infinite ease-in-out;
+}
+
+@keyframes pulseSparkle {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.22); opacity: 0.85; }
 }
 
 .hero-headline {
   font-family: var(--font-serif);
-  font-size: 2.3rem;
-  font-weight: 700;
+  font-size: 2.5rem;
+  font-weight: 800;
   line-height: 1.15;
-  margin-bottom: 14px;
-  color: #fff;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  margin-bottom: 16px;
+  letter-spacing: -0.018em;
+  background: linear-gradient(180deg, #ffffff 0%, #fff0f6 40%, #ffd6e6 75%, #fecdd3 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 3px 14px rgba(35, 2, 22, 0.7));
 }
 
 .hero-description {
-  font-size: 1.02rem;
+  font-size: 1.05rem;
   color: #faedf2;
-  margin-bottom: 18px;
-  line-height: 1.55;
+  margin-bottom: 22px;
+  line-height: 1.6;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
 }
 
-.hero-quote-box {
-  background: rgba(0, 0, 0, 0.18);
-  border-left: 3px solid var(--ty-rose-gold);
-  padding: 8px 16px;
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-  margin-bottom: 22px;
+/* ============================================================================
+   FILOSOFÍA TIENDAS YOLO® - MANIFIESTO CARD
+   ============================================================================ */
+.insu-philosophy-card {
+  background: linear-gradient(135deg, rgba(50, 4, 32, 0.96) 0%, rgba(98, 14, 60, 0.94) 48%, rgba(154, 25, 96, 0.92) 100%);
+  color: #fff;
+  border-radius: var(--radius-lg);
+  padding: 38px 44px;
+  margin: 30px 0 26px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(254, 215, 170, 0.38);
+  box-shadow: 0 16px 38px -8px rgba(50, 4, 32, 0.5);
+}
+
+.insu-philosophy-card::before {
+  content: '“';
+  position: absolute;
+  top: -24px;
+  right: 20px;
+  font-family: var(--font-serif);
+  font-size: 12rem;
+  color: rgba(255, 255, 255, 0.05);
+  line-height: 1;
+  pointer-events: none;
+}
+
+.insu-philosophy-badge {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-}
-
-.quote-mark {
-  font-family: var(--font-serif);
-  font-size: 1.8rem;
-  color: var(--ty-rose-gold);
-  line-height: 1;
-}
-
-.quote-text {
-  font-style: italic;
-  font-weight: 600;
-  color: #fef08a;
-  font-size: 0.95rem;
-}
-
-.quote-author {
-  font-size: 0.78rem;
+  gap: 6px;
+  background: rgba(254, 215, 170, 0.16);
+  border: 1px solid rgba(254, 215, 170, 0.45);
   color: #fed7aa;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.insu-philosophy-title {
+  font-family: var(--font-serif);
+  font-size: 1.85rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+  background: linear-gradient(180deg, #ffffff 0%, #fff1f6 50%, #fed7aa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.insu-philosophy-text {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #faedf2;
+  margin-bottom: 18px;
+  font-style: italic;
+}
+
+.insu-philosophy-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 0.84rem;
+}
+
+.insu-philosophy-brand {
+  font-weight: 700;
+  color: #fde047;
+}
+
+.insu-philosophy-city {
+  color: #fed7aa;
+}
+
+/* BADGE DE BENEFICIO PAGO EN DIVISAS / BINANCE */
+.product-cash-benefit-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(22, 163, 74, 0.12), rgba(34, 197, 94, 0.08));
+  border: 1px solid rgba(22, 163, 74, 0.32);
+  color: #15803d;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.74rem;
+  font-weight: 700;
+  margin-top: 6px;
+  line-height: 1.3;
+}
+
+.product-cash-benefit-badge strong {
+  color: #166534;
+  font-size: 0.82rem;
+}
+
+[data-theme="dark"] .product-cash-benefit-badge {
+  background: rgba(34, 197, 94, 0.18);
+  border-color: rgba(74, 222, 128, 0.4);
+  color: #86efac;
+}
+
+[data-theme="dark"] .product-cash-benefit-badge strong {
+  color: #bbf7d0;
 }
 
 .hero-cta-group {
@@ -5020,8 +5154,49 @@ body.theme-dark .club-intro-card p {
   vertical-align: middle;
 }
 
+/* AUTH PHONE LOOKUP CARD */
+.auth-phone-lookup-card {
+  transition: transform var(--trans-fast), box-shadow var(--trans-fast);
+}
 
+.auth-phone-lookup-card:focus-within {
+  box-shadow: 0 4px 16px rgba(234, 111, 191, 0.22);
+  border-color: var(--ty-primary) !important;
+}
 
+.auth-phone-feedback.success {
+  color: #15803d;
+  background: rgba(22, 163, 74, 0.1);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(22, 163, 74, 0.3);
+}
 
+.auth-phone-feedback.error {
+  color: #b91c1c;
+  background: rgba(239, 68, 68, 0.1);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
 
-
+@media (max-width: 640px) {
+  .hero-glam-card {
+    padding: 28px 20px;
+  }
+  .hero-bg-photo {
+    background-position: center center;
+    opacity: 0.22;
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.3) 35%, rgba(0, 0, 0, 0.8) 100%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.3) 35%, rgba(0, 0, 0, 0.8) 100%);
+  }
+  .hero-headline {
+    font-size: 1.85rem !important;
+  }
+  .insu-philosophy-card {
+    padding: 26px 20px;
+  }
+  .insu-philosophy-title {
+    font-size: 1.45rem !important;
+  }
+}
