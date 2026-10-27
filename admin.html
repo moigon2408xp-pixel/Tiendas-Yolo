@@ -1141,10 +1141,14 @@
             </div>
           </div>
 
-          <div class="form-grid-2">
+          <div class="form-grid-3">
             <div class="form-group">
               <label for="cfg-delivery-per-km" class="form-label">Tarifa Delivery por Km ($):</label>
               <input type="number" step="0.10" id="cfg-delivery-per-km" class="form-input" value="0.50" readonly title="Tarifa oficial: $0.50 por km de recorrido">
+            </div>
+            <div class="form-group">
+              <label for="cfg-cash-discount" class="form-label" style="color:var(--ty-primary); font-weight:700;">💵 % Ahorro Divisas / Binance:</label>
+              <input type="number" step="0.5" min="0" max="40" id="cfg-cash-discount" class="form-input" value="10" title="Descuento incentivo para efectivo dólares o Binance USDT vs BCV">
             </div>
             <div class="form-group">
               <label for="cfg-store-gps" class="form-label">Coordenadas Sede Origen (GPS):</label>
@@ -1152,7 +1156,23 @@
             </div>
           </div>
 
-          <button class="btn-primary" id="btn-save-commercial-config">💾 Guardar Parámetros</button>
+          <!-- IMAGEN DE FONDO DEL BANNER HERO -->
+          <div style="margin-top:16px; padding-top:14px; border-top:1px dashed var(--border-light);">
+            <h5 style="font-size:0.88rem; font-weight:700; margin-bottom:8px; color:var(--text-main);">🖼️ Imagen de Fondo del Banner Hero (Estante de Esmaltes)</h5>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="cfg-hero-bg-img" class="form-label">Ruta o URL de la Foto:</label>
+                <input type="text" id="cfg-hero-bg-img" class="form-input" value="hero-banner-shelf.jpg" placeholder="hero-banner-shelf.jpg">
+              </div>
+              <div class="form-group">
+                <label for="cfg-hero-bg-opacity" class="form-label">Opacidad / Intensidad (%):</label>
+                <input type="number" min="0" max="100" step="5" id="cfg-hero-bg-opacity" class="form-input" value="35" title="Opacidad recomendada: 30% a 40%">
+              </div>
+            </div>
+            <span class="form-hint">Permite colocar la foto del estante físico de la tienda con fusión editorial degradada para no restar legibilidad al texto.</span>
+          </div>
+
+          <button class="btn-primary" id="btn-save-commercial-config" style="margin-top:14px;">💾 Guardar Parámetros</button>
         </div>
 
         <!-- REGLAS DEL CLUB MANICURISTA VIP (CONFIGURACIÓN PROPIETARIOS) -->
@@ -1578,7 +1598,47 @@
 
           <div class="form-group">
             <label for="fin-description" class="form-label">Descripción: *</label>
-            <input type="text" id="fin-description" class="form-input" placeholder="Ej: Pago de lote de geles M&Y" required>
+            <input type="text" id="fin-description" class="form-input" placeholder="Ej: Venta de lote de geles y bases rubber a clienta" required>
+          </div>
+
+          <!-- ADJUDICACIÓN DE VENTA INTERNA A CLIENTA (CRM / WHATSAPP) -->
+          <div class="form-group" id="fin-client-section" style="background:var(--bg-subtle); padding:12px; border-radius:var(--radius-sm); border:1px solid var(--border-color); margin-bottom:14px;">
+            <label for="fin-client-select" class="form-label" style="display:flex; justify-content:space-between; align-items:center;">
+              <span>👤 Adjudicar Venta a Clienta / Manicurista (CRM):</span>
+              <button type="button" id="btn-toggle-quick-client" style="font-size:0.75rem; color:var(--ty-primary); cursor:pointer; background:none; border:none; text-decoration:underline; font-weight:700;">
+                + Registrar Nueva Clienta
+              </button>
+            </label>
+            <select id="fin-client-select" class="select-styled">
+              <option value="">-- Venta General / Mostrador (Sin adjudicar) --</option>
+            </select>
+            <p style="font-size:0.72rem; color:var(--text-muted); margin-top:4px; margin-bottom:0;">
+              Al vincular la venta a una manicurista, se suma a su historial de compras y puntos VIP en el sistema y en Google Sheets.
+            </p>
+
+            <!-- SUB-FORMULARIO RÁPIDO PARA CREAR CLIENTA EN EL MOMENTO -->
+            <div id="fin-quick-client-form" style="display:none; margin-top:10px; padding-top:10px; border-top:1px dashed var(--border-rose);">
+              <div class="form-grid-2">
+                <div class="form-group" style="margin-bottom:8px;">
+                  <label class="form-label" style="font-size:0.75rem;">Nombre Completo: *</label>
+                  <input type="text" id="fin-quick-name" class="form-input" placeholder="Ej: Patricia Bermúdez" style="font-size:0.82rem;">
+                </div>
+                <div class="form-group" style="margin-bottom:8px;">
+                  <label class="form-label" style="font-size:0.75rem;">Teléfono / WhatsApp: *</label>
+                  <input type="tel" id="fin-quick-phone" class="form-input" placeholder="0414-XXXXXXX" style="font-size:0.82rem;">
+                </div>
+              </div>
+              <div class="form-grid-2">
+                <div class="form-group" style="margin-bottom:4px;">
+                  <label class="form-label" style="font-size:0.75rem;">Salón / Estudio (Opcional):</label>
+                  <input type="text" id="fin-quick-salon" class="form-input" placeholder="Ej: Studio Uñas Chic" style="font-size:0.82rem;">
+                </div>
+                <div class="form-group" style="margin-bottom:4px;">
+                  <label class="form-label" style="font-size:0.75rem;">Zona / Dirección en Maracaibo:</label>
+                  <input type="text" id="fin-quick-zone" class="form-input" placeholder="Ej: San Francisco / La Coromoto" style="font-size:0.82rem;">
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="form-grid-2">
@@ -1853,6 +1913,6 @@
   <div id="toast-notification-container" class="toast-container"></div>
 
   <!-- SCRIPT PRIVADO DEL PANEL DE GESTIÓN -->
-  <script src="admin.js?v=20261026_v12"></script>
+  <script src="admin.js?v=20261027_v13"></script>
 </body>
 </html>
