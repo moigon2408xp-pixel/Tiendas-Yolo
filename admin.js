@@ -1565,6 +1565,42 @@
       return;
     }
 
+    // Adjudicación de venta a clienta CRM / WhatsApp
+    let assignedClient = null;
+    const clientSelectVal = document.getElementById('fin-client-select') ? document.getElementById('fin-client-select').value : '';
+    const qName = document.getElementById('fin-quick-name') ? document.getElementById('fin-quick-name').value.trim() : '';
+    const qPhone = document.getElementById('fin-quick-phone') ? document.getElementById('fin-quick-phone').value.trim() : '';
+    const qSalon = document.getElementById('fin-quick-salon') ? document.getElementById('fin-quick-salon').value.trim() : '';
+    const qZone = document.getElementById('fin-quick-zone') ? document.getElementById('fin-quick-zone').value.trim() : '';
+
+    if (qName && qPhone) {
+      assignedClient = {
+        id: `CLI-${("000" + (state.clients.length + 1)).slice(-3)}`,
+        nombre: qName,
+        telefono: qPhone,
+        salonNegocio: qSalon || 'Estudio de Uñas',
+        zonaMaracaibo: qZone || 'Maracaibo',
+        nivelFidelidad: '🌟 Manicurista VIP Yolo',
+        totalPedidos: 1,
+        totalCompradoUSD: amountUSD,
+        instagram: ""
+      };
+      state.clients.push(assignedClient);
+      if (state.config.sheetsApiUrl) {
+        syncWithSheets('save_client', assignedClient);
+      }
+    } else if (clientSelectVal) {
+      const idx = state.clients.findIndex(c => (c.id || c.telefono) === clientSelectVal);
+      if (idx >= 0) {
+        state.clients[idx].totalPedidos = (state.clients[idx].totalPedidos || 0) + 1;
+        state.clients[idx].totalCompradoUSD = (state.clients[idx].totalCompradoUSD || 0) + amountUSD;
+        assignedClient = state.clients[idx];
+        if (state.config.sheetsApiUrl) {
+          syncWithSheets('save_client', state.clients[idx]);
+        }
+      }
+    }
+
     const newFinId = `TY-FIN-${("0000" + (state.finances.length + 1)).slice(-4)}`;
     const newEntry = {
       id: newFinId,
@@ -1576,20 +1612,24 @@
       montoUSD: amountUSD,
       montoBs: amountBs,
       idReferencia: ref,
-      notas: "Registrado manualmente en panel administrativo"
+      clienteId: assignedClient ? assignedClient.id : null,
+      clienteNombre: assignedClient ? assignedClient.nombre : null,
+      clienteTelefono: assignedClient ? assignedClient.telefono : null,
+      notas: assignedClient ? `Venta manual adjudicada a ${assignedClient.nombre} (${assignedClient.telefono})` : "Registrado manualmente en panel administrativo"
     };
 
     state.finances.unshift(newEntry);
     saveState();
     renderFinancesTable();
     renderAdminDashboard();
+    renderClientsGrid();
 
     if (state.config.sheetsApiUrl) {
       syncWithSheets('save_finance_movement', newEntry);
     }
 
     document.getElementById('modal-finance-entry').style.display = 'none';
-    showToast("Movimiento financiero registrado.", "success");
+    showToast(assignedClient ? `✅ Venta adjudicada a ${assignedClient.nombre} con éxito.` : "Movimiento financiero registrado.", "success");
   }
 
   // ============================================================================
@@ -1639,6 +1679,15 @@
     if (pinInput) pinInput.value = state.config.adminPin || '2026';
     const delivKmInput = document.getElementById('cfg-delivery-per-km');
     if (delivKmInput) delivKmInput.value = 0.50;
+
+    const cashDiscInput = document.getElementById('cfg-cash-discount');
+    if (cashDiscInput) cashDiscInput.value = state.config.cashDiscountPercent !== undefined ? state.config.cashDiscountPercent : 10;
+
+    const heroBgImgInput = document.getElementById('cfg-hero-bg-img');
+    if (heroBgImgInput) heroBgImgInput.value = state.config.heroBgImage || 'hero-banner-shelf.jpg';
+
+    const heroBgOpacityInput = document.getElementById('cfg-hero-bg-opacity');
+    if (heroBgOpacityInput) heroBgOpacityInput.value = state.config.heroBgOpacity !== undefined ? state.config.heroBgOpacity : 35;
 
     // Reglas del Club Manicurista VIP (Dueños)
     if (document.getElementById('cfg-vip-active')) {
@@ -1905,6 +1954,29 @@
     const formClient = document.getElementById('form-client-entry');
     if (formClient) formClient.addEventListener('submit', handleSaveClient);
 
+    function populateFinanceClientSelect() {
+      const sel = document.getElementById('fin-client-select');
+      if (!sel) return;
+      sel.innerHTML = '<option value="">-- Venta General / Mostrador (Sin adjudicar) --</option>';
+      (state.clients || []).forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id || c.telefono;
+        const salon = c.salonNegocio && c.salonNegocio !== 'Particular' ? ` [${c.salonNegocio}]` : '';
+        opt.textContent = `${c.nombre || 'Clienta'} (${c.telefono || 'Sin tlf'})${salon} - ${c.zonaMaracaibo || 'Maracaibo'}`;
+        sel.appendChild(opt);
+      });
+      const formBox = document.getElementById('fin-quick-client-form');
+      if (formBox) formBox.style.display = 'none';
+      const qName = document.getElementById('fin-quick-name');
+      if (qName) qName.value = '';
+      const qPhone = document.getElementById('fin-quick-phone');
+      if (qPhone) qPhone.value = '';
+      const qSalon = document.getElementById('fin-quick-salon');
+      if (qSalon) qSalon.value = '';
+      const qZone = document.getElementById('fin-quick-zone');
+      if (qZone) qZone.value = '';
+    }
+
     // Finanzas Modal
     const btnNewFin = document.getElementById('btn-new-finance-entry');
     if (btnNewFin) {
@@ -1912,6 +1984,9 @@
         const form = document.getElementById('form-finance-entry');
         if (form) form.reset();
         document.getElementById('fin-date').value = new Date().toISOString().split('T')[0];
+        populateFinanceClientSelect();
+        const clientSec = document.getElementById('fin-client-section');
+        if (clientSec) clientSec.style.display = 'block';
         document.getElementById('modal-finance-entry').style.display = 'flex';
       });
     }
@@ -1922,7 +1997,30 @@
         const form = document.getElementById('form-finance-entry');
         if (form) form.reset();
         document.getElementById('fin-date').value = new Date().toISOString().split('T')[0];
+        populateFinanceClientSelect();
+        const clientSec = document.getElementById('fin-client-section');
+        if (clientSec) clientSec.style.display = 'block';
         document.getElementById('modal-finance-entry').style.display = 'flex';
+      });
+    }
+
+    const btnToggleQuick = document.getElementById('btn-toggle-quick-client');
+    if (btnToggleQuick) {
+      btnToggleQuick.addEventListener('click', () => {
+        const formBox = document.getElementById('fin-quick-client-form');
+        if (formBox) {
+          formBox.style.display = formBox.style.display === 'none' ? 'block' : 'none';
+        }
+      });
+    }
+
+    const finTypeSel = document.getElementById('fin-type');
+    if (finTypeSel) {
+      finTypeSel.addEventListener('change', (e) => {
+        const clientSec = document.getElementById('fin-client-section');
+        if (clientSec) {
+          clientSec.style.display = e.target.value === 'Ingreso' ? 'block' : 'none';
+        }
       });
     }
 
@@ -2064,11 +2162,18 @@
         state.config.whatsappNumber = document.getElementById('cfg-whatsapp').value.trim();
         state.config.adminPin = document.getElementById('cfg-admin-pin').value.trim() || '2026';
         state.config.deliveryPerKm = 0.50;
+        const cashDiscVal = parseFloat(document.getElementById('cfg-cash-discount').value);
+        state.config.cashDiscountPercent = !isNaN(cashDiscVal) ? cashDiscVal : 10;
+        const heroBgImg = document.getElementById('cfg-hero-bg-img') ? document.getElementById('cfg-hero-bg-img').value.trim() : 'hero-banner-shelf.jpg';
+        state.config.heroBgImage = heroBgImg || 'hero-banner-shelf.jpg';
+        const heroOpacityVal = document.getElementById('cfg-hero-bg-opacity') ? parseInt(document.getElementById('cfg-hero-bg-opacity').value, 10) : 35;
+        state.config.heroBgOpacity = !isNaN(heroOpacityVal) ? heroOpacityVal : 35;
         saveState();
         renderAdminDashboard();
         renderAllAdminModules();
         syncWithSheets('update_config', { key: 'rateBCV', value: state.config.rateBCV });
-        showToast("💾 Parámetros y tasa del día actualizados con éxito.", "success");
+        syncWithSheets('update_config', { key: 'cashDiscountPercent', value: state.config.cashDiscountPercent });
+        showToast("💾 Parámetros, banner y descuento en divisas actualizados con éxito.", "success");
       });
     }
 
