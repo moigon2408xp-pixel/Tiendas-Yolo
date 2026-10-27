@@ -394,7 +394,10 @@
     paymentInfo: "Banesco (0134) | CI: V-28123456 | Telf: 0414-6553430\nBinance Pay ID: 829140291 (USDT)",
     vipClubActive: true,
     vipMinOrders: 5,
-    vipDiscountPercent: 10
+    vipDiscountPercent: 10,
+    cashDiscountPercent: 10,
+    heroBgImage: "hero-banner-shelf.jpg",
+    heroBgOpacity: 34
   };
 
   // Coordenadas oficiales de Tiendas Yolo Maracaibo (Urb. El Trébol / Circunvalación 2 Sur)
@@ -992,7 +995,8 @@
       return;
     }
 
-    const rate = Number(state.config.rateBCV || 395.50);
+    const rate = Number(state.config.rateBCV || 887.30);
+    const cashDiscountPct = Number(state.config.cashDiscountPercent !== undefined ? state.config.cashDiscountPercent : 10);
 
     grid.innerHTML = prods.map(p => {
       const priceUSD = Number(p.precioUSD || 0);
@@ -1044,6 +1048,11 @@
               <span class="price-usd">$${priceUSD.toFixed(2)}</span>
               <span class="price-bs">Bs. ${priceBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
+            ${(cashDiscountPct > 0 && priceUSD > 0) ? `
+              <div class="product-cash-benefit-badge" title="Paga menos usando Dólares en Efectivo o Binance USDT">
+                <span>💵 Efectivo / Binance: <strong>$${(priceUSD * (1 - cashDiscountPct / 100)).toFixed(2)}</strong> (-${cashDiscountPct}%)</span>
+              </div>
+            ` : ''}
 
             <div class="product-card-actions-wrapper">
               <div class="card-qty-stepper">
@@ -1171,6 +1180,17 @@
       vipDiscountUSD = Math.round(subtotalUSD * (vipDiscountPct / 100) * 100) / 100;
     }
 
+    // Descuento por Pago en Divisas (Efectivo $ / Binance USDT)
+    const payMethodSelect = document.getElementById('cart-payment-method');
+    const payMethod = payMethodSelect ? payMethodSelect.value : 'Pago Móvil';
+    const cashDiscountPct = Number(state.config.cashDiscountPercent !== undefined ? state.config.cashDiscountPercent : 10);
+    const isCashBenefit = (payMethod === 'Efectivo $' || payMethod === 'Binance') && cashDiscountPct > 0;
+
+    let cashDiscountUSD = 0;
+    if (isCashBenefit && subtotalUSD > 0) {
+      cashDiscountUSD = Math.round((subtotalUSD - vipDiscountUSD) * (cashDiscountPct / 100) * 100) / 100;
+    }
+
     let deliveryUSD = 0;
     if (subtotalUSD > 0) {
       if (delType === 'retiro-personal' || delType === 'envio-nacional') {
@@ -1180,7 +1200,7 @@
       }
     }
 
-    const totalUSD = Math.max(0, subtotalUSD - vipDiscountUSD) + deliveryUSD;
+    const totalUSD = Math.max(0, subtotalUSD - vipDiscountUSD - cashDiscountUSD) + deliveryUSD;
     const totalBs = totalUSD * rate;
 
     if (counter) counter.textContent = totalQty;
@@ -1192,6 +1212,9 @@
     const sVipRow = document.getElementById('cart-vip-discount-row');
     const sVipPct = document.getElementById('cart-vip-pct-label');
     const sVipDisc = document.getElementById('cart-summary-vip-discount');
+    const sCashRow = document.getElementById('cart-cash-discount-row');
+    const sCashPct = document.getElementById('cart-cash-pct-label');
+    const sCashDisc = document.getElementById('cart-summary-cash-discount');
     const sDel = document.getElementById('cart-summary-delivery');
     const sTotUSD = document.getElementById('cart-summary-total-usd');
     const sTotBs = document.getElementById('cart-summary-total-bs');
@@ -1205,6 +1228,16 @@
         sVipDisc.textContent = `-$${vipDiscountUSD.toFixed(2)}`;
       } else {
         sVipRow.style.display = 'none';
+      }
+    }
+
+    if (sCashRow && sCashDisc) {
+      if (isCashBenefit && cashDiscountUSD > 0) {
+        sCashRow.style.display = 'flex';
+        if (sCashPct) sCashPct.textContent = `${cashDiscountPct}%`;
+        sCashDisc.textContent = `-$${cashDiscountUSD.toFixed(2)}`;
+      } else {
+        sCashRow.style.display = 'none';
       }
     }
 
@@ -1333,13 +1366,27 @@
     }
 
     let deliveryUSD = 0;
-    if (delType === 'retiro-personal' || delType === 'envio-nacional') {
-      deliveryUSD = 0;
-    } else {
-      deliveryUSD = getDeliveryFeeByKm(state.deliveryDistanceKm);
+    if (subtotalUSD > 0) {
+      if (delType === 'retiro-personal' || delType === 'envio-nacional') {
+        deliveryUSD = 0;
+      } else {
+        deliveryUSD = getDeliveryFeeByKm(state.deliveryDistanceKm);
+      }
     }
 
-    const totalUSD = Math.max(0, subtotalUSD - vipDiscountUSD) + deliveryUSD;
+    // Método de pago planeado y descuento por divisas
+    const payMethodCart = document.getElementById('cart-payment-method') ? document.getElementById('cart-payment-method').value : 'Pago Móvil';
+    const payInputMethod = document.getElementById('pay-input-method');
+    if (payInputMethod) payInputMethod.value = payMethodCart;
+
+    const cashDiscountPct = Number(state.config.cashDiscountPercent !== undefined ? state.config.cashDiscountPercent : 10);
+    const isCashBenefit = (payMethodCart === 'Efectivo $' || payMethodCart === 'Binance') && cashDiscountPct > 0;
+    let cashDiscountUSD = 0;
+    if (isCashBenefit && subtotalUSD > 0) {
+      cashDiscountUSD = Math.round((subtotalUSD - vipDiscountUSD) * (cashDiscountPct / 100) * 100) / 100;
+    }
+
+    const totalUSD = Math.max(0, subtotalUSD - vipDiscountUSD - cashDiscountUSD) + deliveryUSD;
     const rate = Number(state.config.rateBCV || 887.30);
     const totalBs = totalUSD * rate;
     const coordsVal = document.getElementById('cart-delivery-coords') ? document.getElementById('cart-delivery-coords').value.trim() : '';
@@ -1358,18 +1405,31 @@
       isVIP: isVIP,
       vipDiscountPercent: isVIP ? vipDiscountPct : 0,
       vipDiscountUSD: vipDiscountUSD,
+      cashDiscountPercent: isCashBenefit ? cashDiscountPct : 0,
+      cashDiscountUSD: cashDiscountUSD,
       deliveryUSD: deliveryUSD,
       totalUSD: totalUSD,
       rateBCV: rate,
-      totalBs: totalBs
+      totalBs: totalBs,
+      paymentMethod: payMethodCart
     };
 
     // Actualizar modal de pagos con totales dinámicos
     document.getElementById('pay-modal-usd').textContent = `$${totalUSD.toFixed(2)}`;
     document.getElementById('pay-modal-bs').textContent = `Bs. ${totalBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    document.getElementById('pay-modal-rate-note').textContent = `Tasa: Bs. ${rate.toFixed(2)} / $`;
     const copyPmBs = document.getElementById('copy-pm-bs');
     if (copyPmBs) copyPmBs.textContent = `Bs. ${totalBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+    const rateNoteEl = document.getElementById('pay-modal-rate-note');
+    if (rateNoteEl) {
+      if (isCashBenefit && cashDiscountUSD > 0) {
+        rateNoteEl.innerHTML = `🎉 ¡Descuento de <strong>$${cashDiscountUSD.toFixed(2)}</strong> aplicado por pago en Divisas / Binance!`;
+        rateNoteEl.style.color = '#15803d';
+      } else {
+        rateNoteEl.textContent = `Tasa Oficial BCV: Bs. ${rate.toFixed(2)} / $`;
+        rateNoteEl.style.color = '';
+      }
+    }
 
     // Cargar cuentas bancarias personalizadas por el administrador
     try {
@@ -1385,6 +1445,45 @@
     // Cerrar carrito y abrir modal de pago
     document.getElementById('cart-drawer-modal').style.display = 'none';
     document.getElementById('modal-payment-auth').style.display = 'flex';
+  }
+
+  // Sincronización en tiempo real al cambiar método en el modal de pago
+  function syncPaymentModalWithMethod() {
+    if (!state.currentPaymentOrder) return;
+    const method = document.getElementById('pay-input-method') ? document.getElementById('pay-input-method').value : 'Pago Móvil';
+    const subtotal = state.currentPaymentOrder.subtotalUSD || 0;
+    const vipDisc = state.currentPaymentOrder.vipDiscountUSD || 0;
+    const del = state.currentPaymentOrder.deliveryUSD || 0;
+    const rate = Number(state.config.rateBCV || 887.30);
+    const cashDiscountPct = Number(state.config.cashDiscountPercent !== undefined ? state.config.cashDiscountPercent : 10);
+
+    const isCashBenefit = (method === 'Efectivo $' || method === 'Binance') && cashDiscountPct > 0;
+    const cashDisc = isCashBenefit ? (Math.round((subtotal - vipDisc) * (cashDiscountPct / 100) * 100) / 100) : 0;
+    const totalUSD = Math.max(0, subtotal - vipDisc - cashDisc) + del;
+    const totalBs = totalUSD * rate;
+
+    state.currentPaymentOrder.totalUSD = totalUSD;
+    state.currentPaymentOrder.totalBs = totalBs;
+    state.currentPaymentOrder.cashDiscountUSD = cashDisc;
+    state.currentPaymentOrder.cashDiscountPercent = isCashBenefit ? cashDiscountPct : 0;
+    state.currentPaymentOrder.paymentMethod = method;
+
+    const usdEl = document.getElementById('pay-modal-usd');
+    const bsEl = document.getElementById('pay-modal-bs');
+    const noteEl = document.getElementById('pay-modal-rate-note');
+    const copyPmBs = document.getElementById('copy-pm-bs');
+    if (usdEl) usdEl.textContent = `$${totalUSD.toFixed(2)}`;
+    if (bsEl) bsEl.textContent = `Bs. ${totalBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    if (copyPmBs) copyPmBs.textContent = `Bs. ${totalBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    if (noteEl) {
+      if (isCashBenefit) {
+        noteEl.innerHTML = `🎉 ¡Descuento de <strong>$${cashDisc.toFixed(2)}</strong> aplicado por pago en Divisas / Binance!`;
+        noteEl.style.color = '#15803d';
+      } else {
+        noteEl.textContent = `Tasa Oficial BCV: Bs. ${rate.toFixed(2)} / $`;
+        noteEl.style.color = '';
+      }
+    }
   }
 
   function handlePaymentAuthSubmit(e) {
@@ -1569,6 +1668,27 @@
 
     setTxt('ticket-subtotal-usd', `$${Number(order.subtotalUSD || 0).toFixed(2)}`);
 
+    // Descuento divisas o VIP si aplica
+    const discountRow = document.getElementById('ticket-discount-row');
+    const totalDiscountUSD = (Number(order.vipDiscountUSD) || 0) + (Number(order.cashDiscountUSD) || 0);
+    if (discountRow) {
+      if (totalDiscountUSD > 0) {
+        discountRow.style.display = 'flex';
+        let discLabel = "Ahorro / Descuento:";
+        if (order.cashDiscountUSD > 0 && order.cashDiscountPercent > 0) {
+          discLabel = `Ahorro Divisas (-${order.cashDiscountPercent}%):`;
+        } else if (order.vipDiscountUSD > 0) {
+          discLabel = `Descuento Club Manicurista:`;
+        }
+        const lblEl = document.getElementById('ticket-discount-label');
+        if (lblEl) lblEl.textContent = discLabel;
+        const valEl = document.getElementById('ticket-discount-usd');
+        if (valEl) valEl.textContent = `-$${totalDiscountUSD.toFixed(2)}`;
+      } else {
+        discountRow.style.display = 'none';
+      }
+    }
+
     const delEl = document.getElementById('ticket-delivery-usd');
     if (delEl) {
       if (order.deliveryType === 'retiro-personal') {
@@ -1611,6 +1731,10 @@
             ? 'Envío Nacional (Cobro a Destino)' 
             : `$${Number(order.deliveryUSD || 0).toFixed(2)}${order.deliveryKm ? ` (${order.deliveryKm} km)` : ''}`);
 
+        const discountLine = (order.cashDiscountUSD > 0) 
+          ? `💵 *Ahorro Divisas (-${order.cashDiscountPercent}%):* -$${Number(order.cashDiscountUSD).toFixed(2)}\n`
+          : (order.vipDiscountUSD > 0 ? `🌟 *Ahorro VIP:* -$${Number(order.vipDiscountUSD).toFixed(2)}\n` : '');
+
         const text =
           `🧾 *TIENDAS YOLO® — NOTA DE ENTREGA REGISTRADA*\n` +
           `━━━━━━━━━━━━━━━━━━━━\n` +
@@ -1625,6 +1749,7 @@
           `━━━━━━━━━━━━━━━━━━━━\n` +
           `📦 *Insumos:*\n${(order.items || []).map(i => `• ${i.quantity}x ${i.nombre} ($${(i.precioUSD * i.quantity).toFixed(2)})`).join('\n')}\n` +
           `━━━━━━━━━━━━━━━━━━━━\n` +
+          `${discountLine}` +
           `🚚 *Delivery:* ${delText}\n` +
           `💎 *TOTAL PAGADO:* $${Number(order.totalUSD).toFixed(2)} (Bs. ${totalBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})\n` +
           `━━━━━━━━━━━━━━━━━━━━\n` +
@@ -1874,6 +1999,76 @@
     }
 
     modal.style.display = 'flex';
+  }
+
+  // Búsqueda y autenticación automática de clienta por número de WhatsApp (Audio 1)
+  function lookupClientByPhone(phoneQuery) {
+    const feedbackEl = document.getElementById('lookup-phone-feedback');
+    const cleanQuery = (phoneQuery || '').replace(/\D/g, '');
+    if (!cleanQuery || cleanQuery.length < 7) {
+      if (feedbackEl) {
+        feedbackEl.style.display = 'block';
+        feedbackEl.className = 'auth-phone-feedback error';
+        feedbackEl.textContent = '❌ Por favor ingresa al menos 7 dígitos de tu número de teléfono.';
+      }
+      return;
+    }
+
+    let clients = [];
+    try {
+      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      clients = stored.clients || [];
+    } catch(e) {}
+    if (state.clients && state.clients.length > 0) {
+      clients = state.clients;
+    }
+
+    const found = clients.find(c => {
+      const cPhone = (c.telefono || '').replace(/\D/g, '');
+      return cPhone && (cPhone.includes(cleanQuery) || cleanQuery.includes(cPhone));
+    });
+
+    if (found) {
+      if (document.getElementById('acc-input-name')) document.getElementById('acc-input-name').value = found.nombre || '';
+      if (document.getElementById('acc-input-phone')) document.getElementById('acc-input-phone').value = found.telefono || phoneQuery;
+      if (document.getElementById('acc-input-salon')) document.getElementById('acc-input-salon').value = found.salonNegocio || '';
+      if (document.getElementById('acc-input-address')) document.getElementById('acc-input-address').value = found.zonaMaracaibo || '';
+      if (document.getElementById('acc-input-instagram')) document.getElementById('acc-input-instagram').value = found.instagram || '';
+
+      state.clientProfile = {
+        name: found.nombre || 'Clienta Manicurista',
+        phone: found.telefono || phoneQuery,
+        salon: found.salonNegocio || 'Estudio de Uñas',
+        address: found.zonaMaracaibo || 'Maracaibo',
+        instagram: found.instagram || '',
+        doc: found.cedula || '',
+        level: found.nivelFidelidad || '🌟 Manicurista VIP Yolo',
+        ordersCount: found.totalPedidos || 1,
+        totalCompradoUSD: found.totalCompradoUSD || 0
+      };
+      localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(state.clientProfile));
+      updateClientStatusBadge();
+
+      if (feedbackEl) {
+        feedbackEl.style.display = 'block';
+        feedbackEl.className = 'auth-phone-feedback success';
+        feedbackEl.innerHTML = `✨ ¡Bienvenida de nuevo, <strong>${found.nombre}</strong>! Encontramos tu cuenta con <strong>${found.totalPedidos || 1}</strong> compras registradas. Tus datos se han sincronizado con éxito.`;
+      }
+      showToast(`✨ ¡Bienvenida, ${found.nombre}! Perfil cargado.`, "success");
+
+      setTimeout(() => {
+        openClientAccountModal();
+      }, 1600);
+    } else {
+      if (feedbackEl) {
+        feedbackEl.style.display = 'block';
+        feedbackEl.className = 'auth-phone-feedback error';
+        feedbackEl.innerHTML = `ℹ️ No encontramos compras previas con este número. ¡Puedes completar tus datos en el formulario abajo para registrar tu cuenta y comenzar a acumular beneficios!`;
+      }
+      if (document.getElementById('acc-input-phone')) {
+        document.getElementById('acc-input-phone').value = phoneQuery;
+      }
+    }
   }
 
   function handleProfileSubmit(e) {
@@ -2556,6 +2751,21 @@
     const autofillBtn = document.getElementById('btn-cart-autofill');
     if (autofillBtn) autofillBtn.addEventListener('click', handleAutofillCart);
 
+    // Consulta y autenticación de clienta por Teléfono WhatsApp
+    const btnLookupPhone = document.getElementById('btn-lookup-phone');
+    const inputLookupPhone = document.getElementById('lookup-phone-input');
+    if (btnLookupPhone && inputLookupPhone) {
+      btnLookupPhone.addEventListener('click', () => {
+        lookupClientByPhone(inputLookupPhone.value.trim());
+      });
+      inputLookupPhone.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          lookupClientByPhone(inputLookupPhone.value.trim());
+        }
+      });
+    }
+
     // 4. Modo Oscuro
     const btnTheme = document.getElementById('btn-toggle-theme');
     if (btnTheme) {
@@ -2625,6 +2835,21 @@
 
     const formAuthPay = document.getElementById('form-auth-payment');
     if (formAuthPay) formAuthPay.addEventListener('submit', handlePaymentAuthSubmit);
+
+    // Cambio dinámico de método de pago en carrito y modal de autenticación
+    const cartPaySelect = document.getElementById('cart-payment-method');
+    if (cartPaySelect) {
+      cartPaySelect.addEventListener('change', () => {
+        updateCartUI();
+      });
+    }
+
+    const payInputMethodSelect = document.getElementById('pay-input-method');
+    if (payInputMethodSelect) {
+      payInputMethodSelect.addEventListener('change', () => {
+        syncPaymentModalWithMethod();
+      });
+    }
 
     // Copiar datos de Pago Móvil y Binance Pay
     const copyPmBtn = document.getElementById('btn-copy-pm');
@@ -3331,6 +3556,17 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
       if (bSettings.topAnnouncement) {
         const el = document.getElementById('top-delivery-badge');
         if (el) el.textContent = bSettings.topAnnouncement;
+      }
+
+      // Aplicar imagen de fondo fotográfica del estante de insumos al Banner Hero
+      const photoEl = document.getElementById('hero-bg-photo-layer');
+      if (photoEl) {
+        const bgImg = (state.config && state.config.heroBgImage) || bSettings.heroBgImage || 'hero-banner-shelf.jpg';
+        const opacityVal = (state.config && state.config.heroBgOpacity !== undefined) 
+          ? Number(state.config.heroBgOpacity) 
+          : (bSettings.heroBgOpacity !== undefined ? Number(bSettings.heroBgOpacity) : 34);
+        photoEl.style.backgroundImage = `url('${bgImg}')`;
+        photoEl.style.opacity = Math.max(0, Math.min(100, opacityVal)) / 100;
       }
     } catch(e) {}
   }
