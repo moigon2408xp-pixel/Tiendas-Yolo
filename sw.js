@@ -4,7 +4,7 @@
  * ============================================================================
  */
 
-const CACHE_NAME = 'tiendas-yolo-cache-v12';
+const CACHE_NAME = 'tiendas-yolo-cache-v13';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -23,7 +23,8 @@ const STATIC_ASSETS = [
   './spider-gel-negro.jpg',
   './spider-gel-blanco.jpg',
   './spider-gel-oro.jpg',
-  './spider-gel-plata.jpg'
+  './spider-gel-plata.jpg',
+  './hero-banner-shelf.jpg'
 ];
 
 self.addEventListener('install', event => {
