@@ -590,17 +590,17 @@ body.theme-dark .help-btn {
 .hero-bg-photo {
   position: absolute;
   top: 0;
-  left: 0;
   right: 0;
   bottom: 0;
+  width: clamp(520px, 48vw, 720px);
   background-size: cover;
-  background-position: right 28%;
+  background-position: center top;
   background-repeat: no-repeat;
-  opacity: 0.38;
+  opacity: 0.42;
   pointer-events: none;
   z-index: 1;
-  mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.22) 36%, rgba(0, 0, 0, 0.88) 72%, rgba(0, 0, 0, 1) 100%);
-  -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.22) 36%, rgba(0, 0, 0, 0.88) 72%, rgba(0, 0, 0, 1) 100%);
+  mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.02) 15%, rgba(0, 0, 0, 0.12) 32%, rgba(0, 0, 0, 0.38) 58%, rgba(0, 0, 0, 0.75) 82%, #000 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.02) 15%, rgba(0, 0, 0, 0.12) 32%, rgba(0, 0, 0, 0.38) 58%, rgba(0, 0, 0, 0.75) 82%, #000 100%);
   transition: opacity var(--trans-smooth);
 }
 
@@ -834,6 +834,7 @@ body.theme-dark .help-btn {
   width: 220px;
   background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: var(--radius-lg);
   padding: 20px;
@@ -5184,6 +5185,9 @@ body.theme-dark .club-intro-card p {
     padding: 28px 20px;
   }
   .hero-bg-photo {
+    width: 100%;
+    left: 0;
+    right: 0;
     background-position: center center;
     opacity: 0.22;
     mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.3) 35%, rgba(0, 0, 0, 0.8) 100%);
