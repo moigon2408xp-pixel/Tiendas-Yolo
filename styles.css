@@ -594,14 +594,13 @@ body.theme-dark .help-btn {
   right: 0;
   bottom: 0;
   background-size: cover;
-  background-position: center right;
+  background-position: right 28%;
   background-repeat: no-repeat;
-  opacity: 0.34;
-  mix-blend-mode: luminosity;
+  opacity: 0.38;
   pointer-events: none;
   z-index: 1;
-  mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.25) 35%, rgba(0, 0, 0, 0.85) 70%, rgba(0, 0, 0, 1) 100%);
-  -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.25) 35%, rgba(0, 0, 0, 0.85) 70%, rgba(0, 0, 0, 1) 100%);
+  mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.22) 36%, rgba(0, 0, 0, 0.88) 72%, rgba(0, 0, 0, 1) 100%);
+  -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.22) 36%, rgba(0, 0, 0, 0.88) 72%, rgba(0, 0, 0, 1) 100%);
   transition: opacity var(--trans-smooth);
 }
 
