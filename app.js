@@ -1940,6 +1940,133 @@
   // ============================================================================
   // CLUB MANICURISTA YOLO (CLIENTE FRECUENTE & CUENTA)
   // ============================================================================
+  // Formateadores automáticos para Cédula y Usuario de Instagram (Observación de Clienta Yolo)
+  function formatCedulaValue(val) {
+    if (!val) return '';
+    let str = String(val).trim().toUpperCase();
+    if (!str) return '';
+    const match = str.match(/^([VEJGP])[-_\s]*(.*)$/i);
+    let prefix = 'V-';
+    let rest = str;
+    if (match) {
+      prefix = match[1].toUpperCase() + '-';
+      rest = match[2];
+    } else {
+      rest = str.replace(/^[^\d]*/, '');
+    }
+    const cleanNumbers = rest.replace(/[^0-9]/g, '');
+    return cleanNumbers ? prefix + cleanNumbers : '';
+  }
+
+  function formatInstagramValue(val) {
+    if (!val) return '';
+    let str = String(val).trim();
+    if (!str) return '';
+    str = str.replace(/^https?:\/\/(www\.)?instagram\.com\//i, '');
+    str = str.replace(/[/?#].*$/, '');
+    str = str.replace(/\s+/g, '');
+    const cleanHandle = str.replace(/^@+/, '');
+    return cleanHandle ? '@' + cleanHandle : '';
+  }
+
+  function setupClientFormAutoFormatters() {
+    const inputDoc = document.getElementById('acc-input-doc');
+    const inputIg = document.getElementById('acc-input-instagram');
+
+    if (inputDoc) {
+      // Auto-rellenar V- al hacer clic si está vacío
+      inputDoc.addEventListener('focus', () => {
+        if (!inputDoc.value.trim()) {
+          inputDoc.value = 'V-';
+        }
+      });
+
+      // Permitir borrar con retroceso si solo queda el prefijo
+      inputDoc.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && (inputDoc.value === 'V-' || inputDoc.value === 'V' || inputDoc.value === 'E-' || inputDoc.value === 'J-' || inputDoc.value === 'G-')) {
+          inputDoc.value = '';
+          e.preventDefault();
+        }
+      });
+
+      inputDoc.addEventListener('input', () => {
+        let val = inputDoc.value;
+        if (!val) return;
+
+        // Si teclea una sola letra inicial de nacionalidad/RIF (V, E, J, G, P)
+        if (/^[VEJGPvejgp]$/.test(val)) {
+          inputDoc.value = val.toUpperCase() + '-';
+          return;
+        }
+
+        const match = val.match(/^([VEJGPvejgp])[-_\s]*(.*)$/);
+        if (match) {
+          const prefix = match[1].toUpperCase() + '-';
+          const digits = match[2].replace(/\D/g, '');
+          inputDoc.value = digits ? prefix + digits : prefix;
+        } else {
+          // Si teclea o pega números directamente (ej: 13932700)
+          const digits = val.replace(/\D/g, '');
+          if (digits) {
+            inputDoc.value = 'V-' + digits;
+          }
+        }
+      });
+
+      inputDoc.addEventListener('blur', () => {
+        const val = inputDoc.value.trim();
+        if (/^[VEJGPvejgp]-?$/i.test(val)) {
+          inputDoc.value = '';
+        } else if (val) {
+          inputDoc.value = formatCedulaValue(val);
+        }
+      });
+    }
+
+    if (inputIg) {
+      // Auto-rellenar @ al hacer clic si está vacío
+      inputIg.addEventListener('focus', () => {
+        if (!inputIg.value.trim()) {
+          inputIg.value = '@';
+        }
+      });
+
+      // Permitir borrar con retroceso si solo queda @
+      inputIg.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && inputIg.value === '@') {
+          inputIg.value = '';
+          e.preventDefault();
+        }
+      });
+
+      inputIg.addEventListener('input', () => {
+        let val = inputIg.value;
+        if (!val) return;
+
+        // Limpiar URL si pegan enlace completo de Instagram
+        val = val.replace(/^https?:\/\/(www\.)?instagram\.com\//i, '');
+        val = val.replace(/[/?#].*$/, '');
+        val = val.replace(/\s+/g, '');
+
+        const cleanHandle = val.replace(/^@+/, '');
+        if (cleanHandle.length > 0) {
+          inputIg.value = '@' + cleanHandle;
+        } else if (val.includes('@')) {
+          inputIg.value = '@';
+        }
+      });
+
+      inputIg.addEventListener('blur', () => {
+        const val = inputIg.value.trim();
+        if (val === '@') {
+          inputIg.value = '';
+        } else if (val) {
+          inputIg.value = formatInstagramValue(val);
+        }
+      });
+    }
+  }
+
   function openClientAccountModal() {
     const modal = document.getElementById('modal-client-account');
     const formView = document.getElementById('account-view-form');
@@ -1951,8 +2078,11 @@
       profView.style.display = 'block';
 
       document.getElementById('prof-display-name').textContent = state.clientProfile.name;
-      document.getElementById('prof-display-salon').textContent = `Salón: ${state.clientProfile.salon || 'Particular'} • ${state.clientProfile.instagram || ''}`;
-      document.getElementById('prof-display-phone').textContent = `WhatsApp: ${state.clientProfile.phone}`;
+      const salonText = state.clientProfile.salon ? `Salón: ${state.clientProfile.salon}` : 'Particular';
+      const igText = state.clientProfile.instagram ? ` • ${formatInstagramValue(state.clientProfile.instagram)}` : '';
+      document.getElementById('prof-display-salon').textContent = `${salonText}${igText}`;
+      const docText = state.clientProfile.doc ? `Cédula: ${formatCedulaValue(state.clientProfile.doc)} | ` : '';
+      document.getElementById('prof-display-phone').textContent = `${docText}WhatsApp: ${state.clientProfile.phone}`;
       document.getElementById('prof-display-address').textContent = `Dirección: ${state.clientProfile.address}`;
 
       const profGps = document.getElementById('prof-display-gps');
@@ -1988,9 +2118,9 @@
       if (state.clientProfile) {
         if (document.getElementById('acc-input-name')) document.getElementById('acc-input-name').value = state.clientProfile.name || '';
         if (document.getElementById('acc-input-phone')) document.getElementById('acc-input-phone').value = state.clientProfile.phone || '';
-        if (document.getElementById('acc-input-doc')) document.getElementById('acc-input-doc').value = state.clientProfile.doc || '';
+        if (document.getElementById('acc-input-doc')) document.getElementById('acc-input-doc').value = formatCedulaValue(state.clientProfile.doc || '');
         if (document.getElementById('acc-input-salon')) document.getElementById('acc-input-salon').value = state.clientProfile.salon || '';
-        if (document.getElementById('acc-input-instagram')) document.getElementById('acc-input-instagram').value = state.clientProfile.instagram || '';
+        if (document.getElementById('acc-input-instagram')) document.getElementById('acc-input-instagram').value = formatInstagramValue(state.clientProfile.instagram || '');
         if (document.getElementById('acc-input-address')) document.getElementById('acc-input-address').value = state.clientProfile.address || '';
         if (document.getElementById('acc-input-gps')) document.getElementById('acc-input-gps').value = state.clientProfile.gpsCoords || '';
         const statusGps = document.getElementById('acc-gps-status');
@@ -2031,17 +2161,18 @@
     if (found) {
       if (document.getElementById('acc-input-name')) document.getElementById('acc-input-name').value = found.nombre || '';
       if (document.getElementById('acc-input-phone')) document.getElementById('acc-input-phone').value = found.telefono || phoneQuery;
+      if (document.getElementById('acc-input-doc')) document.getElementById('acc-input-doc').value = formatCedulaValue(found.cedula || '');
       if (document.getElementById('acc-input-salon')) document.getElementById('acc-input-salon').value = found.salonNegocio || '';
       if (document.getElementById('acc-input-address')) document.getElementById('acc-input-address').value = found.zonaMaracaibo || '';
-      if (document.getElementById('acc-input-instagram')) document.getElementById('acc-input-instagram').value = found.instagram || '';
+      if (document.getElementById('acc-input-instagram')) document.getElementById('acc-input-instagram').value = formatInstagramValue(found.instagram || '');
 
       state.clientProfile = {
         name: found.nombre || 'Clienta Manicurista',
         phone: found.telefono || phoneQuery,
         salon: found.salonNegocio || 'Estudio de Uñas',
         address: found.zonaMaracaibo || 'Maracaibo',
-        instagram: found.instagram || '',
-        doc: found.cedula || '',
+        instagram: formatInstagramValue(found.instagram || ''),
+        doc: formatCedulaValue(found.cedula || ''),
         level: found.nivelFidelidad || '🌟 Manicurista VIP Yolo',
         ordersCount: found.totalPedidos || 1,
         totalCompradoUSD: found.totalCompradoUSD || 0
@@ -2075,9 +2206,17 @@
     e.preventDefault();
     const name = document.getElementById('acc-input-name').value.trim();
     const phone = document.getElementById('acc-input-phone').value.trim();
-    const doc = document.getElementById('acc-input-doc').value.trim();
+    let doc = document.getElementById('acc-input-doc').value.trim();
+    if (doc) {
+      doc = formatCedulaValue(doc);
+      if (/^[VEJGPvejgp]-?$/.test(doc)) doc = '';
+    }
     const salon = document.getElementById('acc-input-salon').value.trim();
-    const instagram = document.getElementById('acc-input-instagram').value.trim();
+    let instagram = document.getElementById('acc-input-instagram').value.trim();
+    if (instagram) {
+      instagram = formatInstagramValue(instagram);
+      if (instagram === '@') instagram = '';
+    }
     const address = document.getElementById('acc-input-address').value.trim();
     const gpsCoords = document.getElementById('acc-input-gps') ? document.getElementById('acc-input-gps').value.trim() : '';
 
@@ -3064,7 +3203,9 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
       });
     }
 
-    // 11. Formulario Perfil Clienta Frecuente
+    // 11. Formulario Perfil Clienta Frecuente & Auto-formato de C.I. (V-) e Instagram (@)
+    setupClientFormAutoFormatters();
+
     const formAccount = document.getElementById('form-account-profile');
     if (formAccount) formAccount.addEventListener('submit', handleProfileSubmit);
 
@@ -3076,9 +3217,9 @@ ${notes ? `📝 *Detalles:* ${notes}\n` : ''}━━━━━━━━━━━�
         if (state.clientProfile) {
           document.getElementById('acc-input-name').value = state.clientProfile.name || '';
           document.getElementById('acc-input-phone').value = state.clientProfile.phone || '';
-          document.getElementById('acc-input-doc').value = state.clientProfile.doc || '';
+          document.getElementById('acc-input-doc').value = formatCedulaValue(state.clientProfile.doc || '');
           document.getElementById('acc-input-salon').value = state.clientProfile.salon || '';
-          document.getElementById('acc-input-instagram').value = state.clientProfile.instagram || '';
+          document.getElementById('acc-input-instagram').value = formatInstagramValue(state.clientProfile.instagram || '');
           document.getElementById('acc-input-address').value = state.clientProfile.address || '';
           if (document.getElementById('acc-input-gps')) {
             document.getElementById('acc-input-gps').value = state.clientProfile.gpsCoords || '';
